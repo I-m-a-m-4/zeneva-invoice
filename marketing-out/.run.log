@@ -1,0 +1,25 @@
+
+Zeneva recorder → http://localhost:9007
+   2 take(s) → marketing-out
+   
+   ── pos-desktop-light ─────────────────────────────────
+   ⚠ only 0.8GB of 15.7GB RAM is free — Chrome may be killed mid-take. Close some tabs if this run fails oddly.
+   signing in as b*****@gmail.com
+   signed in — landed on /sales/pos/select-products
+   warming 4 route(s)…
+   capturing…
+   captured 870 frames over 115.3s
+   encoding…
+   scored — 8 clicks, 1 keystroke, no music bed
+   ✓ marketing-out\zeneva-pos-desktop-light.mp4
+     1920×1078 · 115.8s · 3475 frames @ 30/1 · 3.1 MB
+   
+   ── pos-mobile-light ─────────────────────────────────
+   signing in as b*****@gmail.com
+   signed in — landed on /sales/pos/select-products
+   warming 4 route(s)…
+   capturing…
+   ✗ pos-mobile-light: {"css":"button[class*=\"h-11\"][class*=\"w-11\"][class*=\"rounded-lg\"]","nth":2} is covered by svg and never cleared — the click would not reach it
+
+  1/2 take(s) written to marketing-out
+  ✗ pos-mobile-light: {"css":"button[class*=\"h-11\"][class*=\"w-11\"][class*=\"rounded-lg\"]","nth":2} is covered by svg and never cleared — the click would not reach it

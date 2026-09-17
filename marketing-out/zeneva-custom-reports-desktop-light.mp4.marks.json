@@ -1,0 +1,44 @@
+{
+  "flow": "custom-reports",
+  "device": "desktop",
+  "theme": "light",
+  "duration": 29.266666666666666,
+  "clicks": [],
+  "keys": [],
+  "narration": [
+    {
+      "text": "Revenue, order count and average order value over any period.",
+      "at": 4.46666196572359
+    },
+    {
+      "text": "Sales over time, so a bad week is visible while it is still this week.",
+      "at": 9.55
+    },
+    {
+      "text": "Then the daily item report: exactly what left the shelf, and when.",
+      "at": 17.168182064481172
+    }
+  ],
+  "zooms": [
+    {
+      "at": 8.556060630690673,
+      "dur": 0.9,
+      "from": 1,
+      "to": 1.22,
+      "fromPx": 0.5,
+      "px": 0.5,
+      "fromPy": 0.5,
+      "py": 0.5
+    },
+    {
+      "at": 14.033333333333333,
+      "dur": 0.8,
+      "from": 1.22,
+      "to": 1,
+      "fromPx": 0.5,
+      "px": 0.5,
+      "fromPy": 0.5,
+      "py": 0.5
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "id": "custom-zen-ai",
+  "title": "Zen AI",
+  "route": "/ai-insights",
+  "open": {
+    "title": "41 tools.",
+    "subtitle": "Reads everything. Writes nothing without you.",
+    "ms": 2100
+  },
+  "end": {
+    "title": "Zen AI",
+    "subtitle": "Reads everything. Writes nothing without you.",
+    "cta": "Try Zen AI",
+    "ms": 2600
+  },
+  "steps": [
+    {
+      "caption": "Ask about your own shop in your own words.",
+      "ms": 3400
+    },
+    {
+      "hold": 1900
+    },
+    {
+      "punch": {
+        "to": 1.2
+      },
+      "ms": 900
+    },
+    {
+      "caption": "Forty-one tools read your sales, stock, customers and margins.",
+      "ms": 3400
+    },
+    {
+      "hold": 2700
+    },
+    {
+      "wide": true,
+      "ms": 800
+    },
+    {
+      "caption": "It can propose a change — a reorder, a price — but it cannot make one.",
+      "ms": 3400
+    },
+    {
+      "hold": 2700
+    },
+    {
+      "caption": "You approve it. Then it happens. That boundary never moves.",
+      "ms": 3400
+    },
+    {
+      "hold": 2600
+    }
+  ]
+}

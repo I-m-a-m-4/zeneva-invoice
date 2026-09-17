@@ -1,0 +1,39 @@
+{
+  "flow": "pos",
+  "device": "desktop",
+  "theme": "light",
+  "duration": 102.03333333333333,
+  "clicks": [
+    6.182993303198538,
+    9.457692354717627,
+    12.376851992891597,
+    20.332380796679406,
+    41.15833333333333,
+    82.70227274779778,
+    87.24938275965596
+  ],
+  "keys": [],
+  "narration": [
+    {
+      "text": "Tap to add. Stock and totals update instantly.",
+      "at": 2.9999911808184603
+    },
+    {
+      "text": "Attach a customer, or keep the queue moving without one.",
+      "at": 39.201190384959254
+    },
+    {
+      "text": "Cash, card, transfer or invoice — all in one step.",
+      "at": 80.18387092639308
+    },
+    {
+      "text": "Every line, every total — checked before anything is saved.",
+      "at": 94.57526892471134
+    },
+    {
+      "text": "One tap finalises it: receipt printed, stock deducted, books balanced.",
+      "at": 96.66666666666667
+    }
+  ],
+  "zooms": []
+}
