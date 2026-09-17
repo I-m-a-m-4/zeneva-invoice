@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server';
 
-// We'll use standard fetch to call OpenAI directly to avoid dependency issues
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+// We'll use standard fetch to call Groq directly (OpenAI compatible endpoint)
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 export async function POST(req: Request) {
   try {
     const payload = await req.json();
     const threadContent = payload.text || payload.content || JSON.stringify(payload);
 
-    const openAiKey = process.env.OPENAI_API_KEY;
-    if (!openAiKey) {
-      return NextResponse.json({ error: 'OpenAI API key missing' }, { status: 500 });
+    const groqKey = process.env.GROQ_API_KEY;
+    if (!groqKey) {
+      return NextResponse.json({ error: 'Groq API key missing' }, { status: 500 });
     }
 
     const systemPrompt = `You are an AI assistant that parses unstructured conversation threads (e.g. from Slack/Email) and extracts invoice data.
@@ -22,14 +22,14 @@ Extract the following fields into JSON:
 
 If a value is not explicitly mentioned, use your best judgment or leave as null.`;
 
-    const response = await fetch(OPENAI_API_URL, {
+    const response = await fetch(GROQ_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${openAiKey}`
+        'Authorization': `Bearer ${groqKey}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'llama3-8b-8192',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Please extract invoice details from this thread:\n\n${threadContent}` }
@@ -40,17 +40,11 @@ If a value is not explicitly mentioned, use your best judgment or leave as null.
 
     if (!response.ok) {
       const errorText = await response.text();
-      return NextResponse.json({ error: 'OpenAI API error', details: errorText }, { status: response.status });
+      return NextResponse.json({ error: 'Groq API error', details: errorText }, { status: response.status });
     }
 
     const aiData = await response.json();
     const invoiceData = JSON.parse(aiData.choices[0].message.content);
-
-    // Save to Firestore (Assuming draft_invoices collection)
-    // For now we will return it so the UI can preview it, or save via a client/admin SDK
-    // Let's assume we have a REST way or the client saves it if this is just an extractor
-    
-    // We'll return it so Zapier can see it, and ideally we'd save to Firestore here if adminDb is set up.
     
     return NextResponse.json({
       success: true,

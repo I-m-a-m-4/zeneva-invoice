@@ -130,6 +130,7 @@ export default function DashboardPage() {
                        <TableHead>Date</TableHead>
                        <TableHead>Amount</TableHead>
                        <TableHead>Status</TableHead>
+                       <TableHead className="text-right">Actions</TableHead>
                      </TableRow>
                    </TableHeader>
                    <TableBody>
@@ -148,6 +149,31 @@ export default function DashboardPage() {
                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Paid</Badge>
                              ) : (
                                <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">Unpaid</Badge>
+                             )}
+                           </TableCell>
+                           <TableCell className="text-right">
+                             {!isPaid && (
+                               <Button variant="outline" size="sm" onClick={async () => {
+                                 try {
+                                   const res = await fetch('/api/invoices/send', {
+                                     method: 'POST',
+                                     headers: { 'Content-Type': 'application/json' },
+                                     body: JSON.stringify({
+                                       invoiceId: invoice.id,
+                                       email: invoice.customer?.email,
+                                       name: invoice.customer?.name,
+                                       amount: invoice.total,
+                                       currency: currencySymbol
+                                     })
+                                   });
+                                   if (!res.ok) throw new Error('Failed to send');
+                                   alert('Invoice sent successfully!');
+                                 } catch (e) {
+                                   alert('Error sending invoice email');
+                                 }
+                               }}>
+                                 Send to Client
+                               </Button>
                              )}
                            </TableCell>
                          </TableRow>

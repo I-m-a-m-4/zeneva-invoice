@@ -76,69 +76,40 @@ const faqItems = [
     {
         qKey: "landing.faq1q",
         aKey: "landing.faq1a",
-        question: "Who is Zeneva built for?",
-        answer: "Zeneva is designed for serious retail businesses — mini-marts, pharmacies, boutiques, supermarkets, and online stores managing real inventory, real volume, and real money."
+        question: "Who is Zeneva Invoice built for?",
+        answer: "Zeneva Invoice is designed for freelancers, agencies, consultants, and cross-border businesses that want to eliminate manual data entry and collect global payments instantly."
     },
     {
         qKey: "landing.faq2q",
         aKey: "landing.faq2a",
-        question: "What makes Zeneva different from other inventory tools?",
-        answer: "Most tools report the past. Zeneva predicts the future. Zen AI analyzes demand patterns and recommends exact stock decisions to maximize profit."
+        question: "How does the Zero-Data Entry work?",
+        answer: "Simply connect Zeneva to your Slack or Email. Our Groq AI analyzes your project threads and automatically drafts structured invoices for your approval. You never have to manually type a line item again."
     },
     {
         qKey: "landing.faq3q",
         aKey: "landing.faq3a",
-        question: "Does Zeneva work without internet?",
-        answer: "Yes. POS works fully offline. All transactions are queued and synced automatically once connectivity returns — no sales are ever lost."
+        question: "Can I receive payments globally?",
+        answer: "Yes! Your clients can pay your invoices using their local credit cards from anywhere in the world, and the funds are settled seamlessly in your local currency."
     },
     {
         qKey: "landing.faq4q",
         aKey: "landing.faq4a",
-        question: "How accurate are Zen AI predictions?",
-        answer: "Zen AI improves continuously using your historical sales, time-based demand, and customer behavior. Accuracy increases as your data grows."
+        question: "Is Zeneva secure?",
+        answer: "Absolutely. We partner with Stripe and Flutterwave to process payments securely. Your client's payment data never touches our servers."
     },
     {
         qKey: "landing.faq5q",
         aKey: "landing.faq5a",
-        question: "Can I manage multiple business locations?",
-        answer: "Yes. Zeneva’s Enterprise Plus plan allows you to sync stock levels, track staff movements, and view unified analytics across multiple storefronts or warehouses from one dashboard."
-    },
-    {
-        qKey: "landing.faq6q",
-        aKey: "landing.faq6a",
-        question: "Does Zeneva support international payments?",
-        answer: "Yes! Zeneva supports international payments via Paystack. You can accept USD and other global currencies from customers anywhere in the world on our Pro and Enterprise plans."
-    },
-    {
-        qKey: "landing.faq7q",
-        aKey: "landing.faq7a",
-        question: "Can Zeneva replace my existing POS or inventory system?",
-        answer: "Yes. Zeneva is a full operating system — POS, inventory, storefront, CRM, and analytics in one unified platform."
-    },
-    {
-        qKey: "landing.faq8q",
-        aKey: "landing.faq8a",
-        question: "Is my data secure?",
-        answer: "Yes. All data is encrypted, isolated per business, and protected using enterprise-grade cloud infrastructure."
-    },
-    {
-        qKey: "landing.faq9q",
-        aKey: "landing.faq9a",
-        question: "How long does setup take?",
-        answer: "Most businesses are live within hours — products can be imported, staff invited, and selling started the same day."
+        question: "Does it automatically send reminders?",
+        answer: "Yes. Zeneva's autonomous AI can be configured to politey chase overdue invoices on your behalf until they are paid."
     }
 ];
 
-// `name` is kept for the image `alt` (SEO); `nameKey`/`descKey` are displayed.
 const businessTypes = [
-    { name: 'Fashion & Clothing', nameKey: 'landing.biz1t', descKey: 'landing.biz1d', imageId: 'boutique-store', description: 'Manage your unique collection with style and ease.', link: '/use-cases' },
-    { name: 'Jewellery Store', nameKey: 'landing.biz2t', descKey: 'landing.biz2d', imageId: 'jewelry-store', description: 'Track every precious item from display to sale.', link: '/use-cases' },
-    { name: 'Furniture Store', nameKey: 'landing.biz3t', descKey: 'landing.biz3d', imageId: 'furniture-store', description: 'From sofas to side tables, keep your large inventory in order.', link: '/use-cases' },
-    { name: 'Electronic Shop', nameKey: 'landing.biz4t', descKey: 'landing.biz4d', imageId: 'electronics-store', description: 'Handle serial numbers and complex inventory with ease.', link: '/use-cases' },
-    { name: 'Cafe Shop', nameKey: 'landing.biz5t', descKey: 'landing.biz5d', imageId: 'cafe-shop', description: 'Serve up loyalty and track your beans with precision.', link: '/use-cases' },
-    { name: 'Book Store', nameKey: 'landing.biz6t', descKey: 'landing.biz6d', imageId: 'book-store', description: 'Organize your titles, authors, and editions seamlessly.', link: '/use-cases' },
-    { name: 'Skin Care', nameKey: 'landing.biz7t', descKey: 'landing.biz7d', imageId: 'skin-care', description: 'Manage batches, expiry dates, and product variations.', link: '/use-cases' },
-    { name: 'Restaurant', nameKey: 'landing.biz8t', descKey: 'landing.biz8d', imageId: 'restaurant', description: 'Track ingredients, manage menus, and speed up orders.', link: '/use-cases' },
+    { name: 'Freelancers', nameKey: 'landing.biz1t', descKey: 'landing.biz1d', imageId: 'boutique-store', description: 'Bill your clients instantly without leaving your workflow.', link: '/use-cases' },
+    { name: 'Creative Agencies', nameKey: 'landing.biz2t', descKey: 'landing.biz2d', imageId: 'jewelry-store', description: 'Automate milestone billing and collect large global payments.', link: '/use-cases' },
+    { name: 'Software Developers', nameKey: 'landing.biz3t', descKey: 'landing.biz3d', imageId: 'furniture-store', description: 'Integrate billing directly into your GitHub issues and Slack threads.', link: '/use-cases' },
+    { name: 'Consultants', nameKey: 'landing.biz4t', descKey: 'landing.biz4d', imageId: 'electronics-store', description: 'Turn your hourly logs into professional invoices automatically.', link: '/use-cases' }
 ];
 
 export default function Home() {
@@ -234,19 +205,19 @@ export default function Home() {
                             {/* Left Column: Copy & Form */}
                             <div className="max-w-xl z-10 mx-auto lg:mx-0 text-center lg:text-start">
 
-                                <p className="uppercase text-xs font-semibold tracking-tight font-dm-sans mb-6 text-slate-900"><T k="landing.heroEyebrow" /></p>
+                                <p className="uppercase text-xs font-semibold tracking-tight font-dm-sans mb-6 text-slate-900">Zeneva Invoice</p>
                                 <h1 className="leading-[0.95] lg:text-6xl xl:text-7xl text-4xl md:text-5xl font-medium text-foreground tracking-tighter font-display mb-8">
-                                    <T k="landing.heroLine1" /><br />
-                                    <T k="landing.heroLine2" /> <span className="text-muted-foreground/80 relative inline-block"><T k="landing.heroLine2Accent" />
+                                    The Autonomous<br />
+                                    Billing <span className="text-muted-foreground/80 relative inline-block">Platform
                                         <svg className="absolute w-full h-3 -bottom-1 start-0 text-primary -z-10" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" opacity="0.4"></path></svg>
                                     </span>
                                 </h1>
 
                                 <p className="leading-relaxed text-lg tracking-tight font-dm-sans max-w-lg mb-4 text-slate-900 font-medium">
-                                    <T k="landing.heroLead" />
+                                    Zero-data entry invoicing. Automatically draft bills from your emails and collect global payments instantly.
                                 </p>
                                 <p className="leading-relaxed text-sm tracking-tight font-dm-sans max-w-lg mb-10 text-slate-600 hidden md:block">
-                                    <T k="landing.heroSub" />
+                                    Built for modern freelancers and cross-border agencies. Get paid globally, settle locally.
                                 </p>
 
                                 <HeroInputForm />
@@ -327,33 +298,33 @@ export default function Home() {
                     <section className="bg-black">
                         <div className="max-w-7xl mr-auto ml-auto pt-12 pr-6 pb-12 pl-6">
                             <p className="uppercase text-xs font-medium tracking-tight font-dm-sans text-center mb-10 text-stone-300">
-                                <T k="landing.socialTitle" />
+                                Trusted by global digital workers
                             </p>
 
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 border-t border-s border-stone-700">
                                 <div className="flex flex-col gap-2 hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer opacity-60 h-28 border-e border-b pt-6 pr-6 pb-6 pl-6 grayscale items-center justify-center border-stone-700">
                                     <ShoppingCart className="w-8 h-8 text-stone-400" />
-                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center"><T k="landing.segOnline" /></span>
+                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">E-Commerce</span>
                                 </div>
                                 <div className="flex flex-col gap-2 hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer opacity-60 h-28 border-e border-b pt-6 pr-6 pb-6 pl-6 grayscale items-center justify-center border-stone-700">
                                     <Shirt className="w-8 h-8 text-stone-400" />
-                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center"><T k="landing.segFashion" /></span>
+                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">Designers</span>
                                 </div>
                                 <div className="flex flex-col gap-2 hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer opacity-60 h-28 border-e border-b pt-6 pr-6 pb-6 pl-6 grayscale items-center justify-center border-stone-700">
                                     <Coffee className="w-8 h-8 text-stone-400" />
-                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center"><T k="landing.segCoffee" /></span>
+                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">Consultants</span>
                                 </div>
                                 <div className="flex flex-col gap-2 hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer opacity-60 h-28 border-e border-b pt-6 pr-6 pb-6 pl-6 grayscale items-center justify-center border-stone-700">
                                     <Sparkles className="w-8 h-8 text-stone-400" />
-                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center"><T k="landing.segSkincare" /></span>
+                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">Agencies</span>
                                 </div>
                                 <div className="flex flex-col gap-2 hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer opacity-60 h-28 border-e border-b pt-6 pr-6 pb-6 pl-6 grayscale items-center justify-center border-stone-700">
                                     <BookOpen className="w-8 h-8 text-stone-400" />
-                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center"><T k="landing.segBooks" /></span>
+                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">Writers</span>
                                 </div>
                                 <div className="flex flex-col gap-2 hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer opacity-60 h-28 border-e border-b pt-6 pr-6 pb-6 pl-6 grayscale items-center justify-center border-stone-700">
                                     <Smartphone className="w-8 h-8 text-stone-400" />
-                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center"><T k="landing.segElectronics" /></span>
+                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">Developers</span>
                                 </div>
                             </div>
                         </div>
@@ -364,189 +335,75 @@ export default function Home() {
                         <div className="max-w-7xl mx-auto relative z-10">
                             <div className="text-center max-w-2xl mx-auto mb-16">
                                 <h2 className="text-4xl font-light text-slate-900 tracking-tight font-bricolage mb-4">
-                                    <T k="landing.featuresHeading" />
+                                    Everything you need to bill globally
                                 </h2>
                                 <p className="text-lg text-slate-600 tracking-tight font-dm-sans mb-6">
-                                    <T k="landing.featuresSub" />
+                                    Zeneva Invoice automates your entire accounts receivable process from drafting to collection.
                                 </p>
                                 <Button asChild variant="outline" size="sm">
-                                    <Link href="/use-cases"><T k="landing.exploreUseCases" /></Link>
+                                    <Link href="/use-cases">Explore Use Cases</Link>
                                 </Button>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                                 {[
                                     {
-                                        icon: ShoppingCart,
-                                        titleKey: "landing.f1t",
-                                        descKey: "landing.f1d",
-                                        bgColor: "bg-blue-100",
-                                        iconColor: "text-blue-600",
-                                        hoverBg: "bg-[#EFF6FF]" // Light Blue
+                                        icon: Bot,
+                                        title: "AI Invoice Drafting",
+                                        desc: "Forward client emails to Zeneva and our Groq AI will autonomously draft line items, prices, and due dates.",
+                                        bgColor: "bg-purple-100",
+                                        iconColor: "text-purple-600",
+                                        hoverBg: "bg-[#FAFAF9]"
                                     },
                                     {
                                         icon: Globe,
-                                        titleKey: "landing.f2t",
-                                        descKey: "landing.f2d",
+                                        title: "Global Payments",
+                                        desc: "Accept credit cards from clients anywhere in the world using our deeply integrated Flutterwave checkout.",
                                         bgColor: "bg-green-100",
                                         iconColor: "text-green-600",
-                                        hoverBg: "bg-[#FFF1F2]" // Light Pink
+                                        hoverBg: "bg-[#FFF1F2]"
                                     },
                                     {
-                                        icon: Bot,
-                                        titleKey: "landing.f3t",
-                                        descKey: "landing.f3d",
-                                        bgColor: "bg-purple-100",
-                                        iconColor: "text-purple-600",
-                                        hoverBg: "bg-[#FAFAF9]" // Light Stone/White
-                                    },
-                                    {
-                                        icon: Users,
-                                        titleKey: "landing.f4t",
-                                        descKey: "landing.f4d",
-                                        bgColor: "bg-pink-100",
-                                        iconColor: "text-pink-600",
-                                        hoverBg: "bg-[#FFFBEB]" // Light Cream/Yellow
-                                    },
-                                    {
-                                        icon: BarChart2,
-                                        titleKey: "landing.f5t",
-                                        descKey: "landing.f5d",
-                                        bgColor: "bg-sky-100",
-                                        iconColor: "text-sky-600",
-                                        hoverBg: "bg-[#EFF6FF]" // Light Blue
-                                    },
-                                    {
-                                        icon: UserCog,
-                                        titleKey: "landing.f6t",
-                                        descKey: "landing.f6d",
-                                        bgColor: "bg-yellow-100",
-                                        iconColor: "text-yellow-600",
-                                        hoverBg: "bg-[#FFF1F2]" // Light Pink
-                                    },
-                                    {
-                                        icon: WifiOff,
-                                        titleKey: "landing.f7t",
-                                        descKey: "landing.f7d",
-                                        bgColor: "bg-gray-200",
-                                        iconColor: "text-gray-700",
-                                        hoverBg: "bg-[#FFFBEB]" // Light Cream/Yellow
-                                    },
-                                    {
-                                        icon: Download,
-                                        titleKey: "landing.f8t",
-                                        descKey: "landing.f8d",
-                                        bgColor: "bg-teal-100",
-                                        iconColor: "text-teal-600",
-                                        hoverBg: "bg-[#EFF6FF]" // Light Blue
+                                        icon: ShoppingCart,
+                                        title: "Multi-Currency Checkout",
+                                        desc: "Bill clients in USD, EUR, or GBP while settling payouts in your local bank account automatically.",
+                                        bgColor: "bg-blue-100",
+                                        iconColor: "text-blue-600",
+                                        hoverBg: "bg-[#EFF6FF]"
                                     },
                                     {
                                         icon: Clock,
-                                        titleKey: "landing.f9t",
-                                        descKey: "landing.f9d",
+                                        title: "Autonomous Reminders",
+                                        desc: "Never chase a client again. Zeneva follows up on unpaid invoices politely and persistently.",
                                         bgColor: "bg-rose-100",
                                         iconColor: "text-rose-600",
-                                        hoverBg: "bg-[#FFF1F2]" // Light Rose
+                                        hoverBg: "bg-[#FFF1F2]"
                                     },
                                     {
-                                        icon: InfinityIcon,
-                                        titleKey: "landing.f10t",
-                                        descKey: "landing.f10d",
-                                        bgColor: "bg-cyan-100",
-                                        iconColor: "text-cyan-600",
-                                        hoverBg: "bg-[#ECFEFF]" // Light Cyan
+                                        icon: Database,
+                                        title: "Secure Cloud Storage",
+                                        desc: "All invoices, receipts, and payment histories are safely stored in Firebase for easy tax reporting.",
+                                        bgColor: "bg-sky-100",
+                                        iconColor: "text-sky-600",
+                                        hoverBg: "bg-[#EFF6FF]"
                                     },
                                     {
-                                        icon: FileText,
-                                        titleKey: "landing.f11t",
-                                        descKey: "landing.f11d",
-                                        bgColor: "bg-fuchsia-100",
-                                        iconColor: "text-fuchsia-600",
-                                        hoverBg: "bg-[#FDF4FF]" // Light Fuchsia
-                                    },
-                                    {
-                                        icon: ShieldCheck,
-                                        titleKey: "landing.f12t",
-                                        descKey: "landing.f12d",
-                                        bgColor: "bg-red-100",
-                                        iconColor: "text-red-600",
-                                        hoverBg: "bg-[#FAFAF9]" // Light Stone/White
-                                    },
-                                    {
-                                        icon: Package,
-                                        titleKey: "landing.f13t",
-                                        descKey: "landing.f13d",
-                                        bgColor: "bg-orange-100",
-                                        iconColor: "text-orange-600",
-                                        hoverBg: "bg-[#FFF7ED]" // Light Orange
-                                    },
-                                    {
-                                        icon: ScanBarcode,
-                                        titleKey: "landing.f14t",
-                                        descKey: "landing.f14d",
-                                        bgColor: "bg-indigo-100",
-                                        iconColor: "text-indigo-600",
-                                        hoverBg: "bg-[#EEF2FF]" // Light Indigo
-                                    },
-                                    {
-                                        icon: Printer,
-                                        titleKey: "landing.f15t",
-                                        descKey: "landing.f15d",
-                                        bgColor: "bg-amber-100",
-                                        iconColor: "text-amber-600",
-                                        hoverBg: "bg-[#FFFBEB]", // Light Amber
-                                        badgeKey: "landing.badgeHighlyShared"
-                                    },
-                                    {
-                                        icon: Tag,
-                                        titleKey: "landing.f16t",
-                                        descKey: "landing.f16d",
-                                        bgColor: "bg-lime-100",
-                                        iconColor: "text-lime-600",
-                                        hoverBg: "bg-[#F7FEE7]" // Light Lime
-                                    },
-                                    {
-                                        icon: Wallet,
-                                        titleKey: "landing.f17t",
-                                        descKey: "landing.f17d",
-                                        bgColor: "bg-emerald-100",
-                                        iconColor: "text-emerald-600",
-                                        hoverBg: "bg-[#ECFDF5]" // Light Emerald
-                                    },
-                                    {
-                                        icon: PieChart,
-                                        titleKey: "landing.f18t",
-                                        descKey: "landing.f18d",
-                                        bgColor: "bg-violet-100",
-                                        iconColor: "text-violet-600",
-                                        hoverBg: "bg-[#F5F3FF]" // Light Violet
-                                    },
-                                    {
-                                        icon: Search,
-                                        titleKey: "landing.f19t",
-                                        descKey: "landing.f19d",
-                                        bgColor: "bg-amber-100",
-                                        iconColor: "text-amber-600",
-                                        hoverBg: "bg-[#FFFBEB]", // Light Amber
-                                        badgeKey: "landing.badgeNew"
+                                        icon: UserCog,
+                                        title: "Client Portal",
+                                        desc: "Clients get a beautiful, branded portal to view their bills, download PDFs, and pay instantly.",
+                                        bgColor: "bg-yellow-100",
+                                        iconColor: "text-yellow-600",
+                                        hoverBg: "bg-[#FFF1F2]"
                                     }
                                 ].map((feature, index) => (
                                     <div key={index} className="group relative p-8 bg-white border-2 border-dashed border-slate-200 rounded-lg overflow-hidden transition-all duration-300 isolate cursor-pointer shadow-sm">
-                                        {/* Slide-in Background Animation */}
                                         <div className={`absolute inset-0 w-0 group-hover:w-full transition-all duration-500 ease-out ${feature.hoverBg} -z-10`}></div>
-
-                                        {feature.badgeKey && (
-                                            <span className="absolute top-4 end-10 bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full border border-primary/20 z-20">
-                                                <T k={feature.badgeKey} />
-                                            </span>
-                                        )}
 
                                         <div className={`w-12 h-12 ${feature.bgColor} ${feature.iconColor} rounded-xl flex items-center justify-center mb-6 relative z-10 transition-colors duration-300 group-hover:bg-white/80`}>
                                             <feature.icon width="24" height="24" />
                                         </div>
-                                        <h3 className="text-xl font-semibold text-slate-900 mb-2 relative z-10"><T k={feature.titleKey} /></h3>
-                                        <p className="text-slate-600 text-sm leading-relaxed relative z-10 group-hover:text-slate-700 transition-colors"><T k={feature.descKey} /></p>
+                                        <h3 className="text-xl font-semibold text-slate-900 mb-2 relative z-10">{feature.title}</h3>
+                                        <p className="text-slate-600 text-sm leading-relaxed relative z-10 group-hover:text-slate-700 transition-colors">{feature.desc}</p>
 
-                                        {/* Always visible corner accents */}
                                         <div className="absolute top-4 end-4 h-3 w-3 border-t-2 border-e-2 border-slate-300 z-10"></div>
                                         <div className="absolute bottom-4 start-4 h-3 w-3 border-b-2 border-s-2 border-slate-300 z-10"></div>
                                     </div>
