@@ -176,6 +176,8 @@ export const useFirebaseApp = (): FirebaseApp => {
 type MemoFirebase <T> = T & {__memo?: boolean};
 
 export function useMemoFirebase<T>(factory: () => T, deps: DependencyList): T | (MemoFirebase<T>) {
+  // The dependency list is forwarded from the caller, so it cannot be verified here.
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- caller-supplied factory and deps
   const memoized = useMemo(factory, deps);
   
   if(typeof memoized !== 'object' || memoized === null) return memoized;

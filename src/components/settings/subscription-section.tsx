@@ -174,7 +174,7 @@ const PaystackSubscriptionButton = ({
         } finally {
             setProcessingPlan(null);
         }
-    }, [firestore, userProfile, businessInstance, plan, cycle, finalAmount, toast, setProcessingPlan]);
+    }, [firestore, userProfile, businessInstance, plan, cycle, finalAmount, currency, toast, setProcessingPlan]);
     
     const handleSubscribe = useCallback(() => {
         if (isImpersonating) {
@@ -268,7 +268,7 @@ const PaystackSubscriptionButton = ({
                 setProcessingPlan(null);
             },
         });
-    }, [initializePayment, userProfile, businessInstance, plan, finalAmount, isProcessing, setProcessingPlan, handleSuccessfulPayment, toast, isImpersonating]);
+    }, [initializePayment, userProfile, businessInstance, plan, finalAmount, isProcessing, setProcessingPlan, handleSuccessfulPayment, toast, isImpersonating, firestore, currency, cycle]);
 
     const buttonText = isCurrentPlan ? 'Renew Subscription' : `Subscribe to ${plan.name}`;
 

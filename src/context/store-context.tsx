@@ -119,7 +119,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const isLoading = businessLoading || isLoadingProducts;
 
-  const addToCart = (product: Product) => {
+  const addToCart = useCallback((product: Product) => {
     setCart(prevCart => {
         const existingItem = prevCart.find(item => item.product.id === product.id);
         if (existingItem) {
@@ -135,13 +135,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }
         return [...prevCart, { product, quantity: 1 }];
     });
-  };
+  }, [toast]);
 
-  const removeFromCart = (productId: string) => {
+  const removeFromCart = useCallback((productId: string) => {
     setCart(prev => prev.filter(item => item.product.id !== productId));
-  };
+  }, []);
   
-  const updateQuantity = (productId: string, quantity: number) => {
+  const updateQuantity = useCallback((productId: string, quantity: number) => {
     const itemInCart = cart.find(item => item.product.id === productId);
     if (!itemInCart) return;
 
@@ -155,10 +155,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     } else {
         setCart(prev => prev.map(item => item.product.id === productId ? { ...item, quantity } : item));
     }
-  };
+  }, [cart, removeFromCart, toast]);
 
-  const clearCart = () => setCart([]);
-  const onOrderPlaced = () => clearCart();
+  const clearCart = useCallback(() => setCart([]), []);
+  const onOrderPlaced = useCallback(() => clearCart(), [clearCart]);
 
   const subtotal = useMemo(() => cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0), [cart]);
 
@@ -174,7 +174,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     onOrderPlaced,
     searchProducts,
     subtotal
-  }), [business, products, isLoading, cart, searchProducts, subtotal]);
+  }), [business, products, isLoading, cart, addToCart, removeFromCart, updateQuantity, clearCart, onOrderPlaced, searchProducts, subtotal]);
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }

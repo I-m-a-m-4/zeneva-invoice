@@ -1,0 +1,284 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function currentUserPath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function hasProfile() {
+      return signedIn() && exists(currentUserPath());
+    }
+
+    function profile() {
+      return get(currentUserPath()).data;
+    }
+
+    function isActiveMember(businessId) {
+      return hasProfile()
+        && profile().get('businessId', null) == businessId
+        && profile().get('status', 'active') == 'active';
+    }
+
+    function currentRole() {
+      return profile().get('role', '');
+    }
+
+    function permissionOverride(permission) {
+      return profile().get('permissions', {}).get(permission, null);
+    }
+
+    function roleAllows(permission) {
+      return (currentRole() == 'manager' && permission in [
+        'record_sales',
+        'manage_inventory',
+        'view_customers',
+        'manage_online_orders',
+        'apply_discounts',
+        'override_prices'
+      ]) ||
+      (currentRole() == 'vendor_operator' && permission in [
+        'record_sales',
+        'view_customers'
+      ]);
+    }
+
+    function isBusinessOwner(businessId) {
+      return isActiveMember(businessId)
+        && exists(/databases/$(database)/documents/businessInstances/$(businessId))
+        && get(/databases/$(database)/documents/businessInstances/$(businessId)).data.get('ownerId', null) == request.auth.uid;
+    }
+
+    function isBusinessAdmin(businessId) {
+      return isActiveMember(businessId)
+        && (isBusinessOwner(businessId) || currentRole() == 'admin');
+    }
+
+    function can(permission, businessId) {
+      return isActiveMember(businessId)
+        && (isBusinessOwner(businessId)
+          || currentRole() == 'admin'
+          || permissionOverride(permission) == true
+          || (permissionOverride(permission) == null && roleAllows(permission)));
+    }
+
+    function canReadReceipts(businessId) {
+      return can('record_sales', businessId) || can('view_reports', businessId);
+    }
+
+    function canUpdateStats(businessId) {
+      return can('record_sales', businessId)
+        || can('manage_inventory', businessId)
+        || can('view_customers', businessId);
+    }
+
+    function branchBelongsToBusiness(branchId, businessId) {
+      return branchId == null || (
+        exists(/databases/$(database)/documents/branches/$(branchId))
+        && get(/databases/$(database)/documents/branches/$(branchId)).data.get('businessId', null) == businessId
+      );
+    }
+
+    function validTenantCreate() {
+      return isActiveMember(request.resource.data.businessId)
+        && branchBelongsToBusiness(request.resource.data.get('branchId', null), request.resource.data.businessId);
+    }
+
+    function validTenantUpdate() {
+      return isActiveMember(resource.data.businessId)
+        && request.resource.data.businessId == resource.data.businessId
+        && branchBelongsToBusiness(request.resource.data.get('branchId', null), resource.data.businessId);
+    }
+
+    function canCreateOwnerBusiness(businessId) {
+      return signedIn()
+        && request.resource.data.keys().hasOnly(['name', 'createdAt', 'ownerId', 'plan', 'status', 'settings'])
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.plan == 'starter'
+        && request.resource.data.status == 'active'
+        && existsAfter(currentUserPath())
+        && getAfter(currentUserPath()).data.get('businessId', null) == businessId
+        && getAfter(currentUserPath()).data.get('role', null) == 'admin';
+    }
+
+    function isNewOwnerProfile(userId) {
+      return request.auth.uid == userId
+        && request.resource.data.get('role', null) == 'admin'
+        && request.resource.data.get('status', null) == 'active'
+        && existsAfter(/databases/$(database)/documents/businessInstances/$(request.resource.data.businessId))
+        && getAfter(/databases/$(database)/documents/businessInstances/$(request.resource.data.businessId)).data.get('ownerId', null) == request.auth.uid;
+    }
+
+    function isInvitedProfile(userId) {
+      return request.auth.uid == userId
+        && request.resource.data.get('invitationCode', null) != null
+        && exists(/databases/$(database)/documents/invitations/$(request.resource.data.invitationCode))
+        && get(/databases/$(database)/documents/invitations/$(request.resource.data.invitationCode)).data.get('email', null) == request.auth.token.email
+        && get(/databases/$(database)/documents/invitations/$(request.resource.data.invitationCode)).data.get('businessId', null) == request.resource.data.businessId
+        && get(/databases/$(database)/documents/invitations/$(request.resource.data.invitationCode)).data.get('role', null) == request.resource.data.role;
+    }
+
+    function canUpdateOwnProfile(userId) {
+      return request.auth.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'name', 'phone', 'onboardingStep', 'surveyCompleted', 'lastSeen',
+          'platformsUsed', 'totalUsageSeconds', 'pagesVisited', 'pageViews',
+          'featureUsage', 'pageDwell', 'pagePerf', 'lastPage', 'appVersion',
+          'deviceType', 'country', 'ip', 'language', 'marketingOptOut',
+          'marketingOptOutAt'
+        ]);
+    }
+
+    function canManageTenantUser(userId) {
+      return request.auth.uid != userId
+        && isBusinessAdmin(resource.data.businessId)
+        && request.resource.data.businessId == resource.data.businessId
+        && request.resource.data.get('role', null) in ['admin', 'manager', 'vendor_operator'];
+    }
+
+    function isTenantAdminOfUser(userId) {
+      return exists(/databases/$(database)/documents/users/$(userId))
+        && isBusinessAdmin(get(/databases/$(database)/documents/users/$(userId)).data.get('businessId', null));
+    }
+
+    match /businessInstances/{businessId} {
+      allow get: if isActiveMember(businessId);
+      allow list: if false;
+      allow create: if canCreateOwnerBusiness(businessId);
+      allow update: if isBusinessAdmin(businessId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'address', 'settings', 'updatedAt']);
+      allow delete: if false;
+
+      match /stats/{statId} {
+        allow read: if canReadReceipts(businessId) || can('view_reports', businessId);
+        allow create, update: if canUpdateStats(businessId);
+        allow delete: if false;
+      }
+
+      match /onlineOrders/{orderId} {
+        allow read, create, update, delete: if can('manage_online_orders', businessId);
+      }
+
+      match /purchaseOrders/{orderId} {
+        allow read, create, update, delete: if can('manage_inventory', businessId);
+      }
+
+      match /auditLogs/{logId} {
+        allow read: if can('view_audit_logs', businessId);
+        allow create: if isActiveMember(businessId);
+        allow update, delete: if false;
+      }
+    }
+
+    match /users/{userId} {
+      allow get: if signedIn() && (request.auth.uid == userId || isActiveMember(resource.data.businessId));
+      allow list: if isActiveMember(resource.data.businessId);
+      allow create: if isNewOwnerProfile(userId) || isInvitedProfile(userId);
+      allow update: if canUpdateOwnProfile(userId) || canManageTenantUser(userId);
+      allow delete: if false;
+
+      match /fcmTokens/{tokenId} {
+        allow read, write: if signedIn() && request.auth.uid == userId;
+      }
+
+      match /notifications/{notificationId} {
+        allow read, update, delete: if signedIn() && request.auth.uid == userId;
+        allow create: if signedIn()
+          && (request.auth.uid == userId || isTenantAdminOfUser(userId));
+      }
+
+      match /sessions/{sessionId} {
+        allow read, write: if signedIn() && request.auth.uid == userId;
+      }
+
+      match /journey/{journeyId} {
+        allow read, write: if signedIn() && request.auth.uid == userId;
+      }
+
+      match /receipts/{receiptId} {
+        allow read: if signedIn() && request.auth.uid == userId;
+        allow write: if false;
+      }
+    }
+
+    match /invitations/{invitationCode} {
+      allow get: if signedIn()
+        && (resource.data.get('email', null) == request.auth.token.email
+          || isBusinessAdmin(resource.data.businessId));
+      allow list: if isBusinessAdmin(resource.data.businessId)
+        || (signedIn() && resource.data.get('email', null) == request.auth.token.email);
+      allow create: if isBusinessAdmin(request.resource.data.businessId)
+        && request.resource.data.get('role', null) in ['manager', 'vendor_operator'];
+      allow update: if false;
+      allow delete: if isBusinessAdmin(resource.data.businessId)
+        || (signedIn()
+          && resource.data.get('email', null) == request.auth.token.email
+          && existsAfter(/databases/$(database)/documents/users/$(request.auth.uid))
+          && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('invitationCode', null) == invitationCode);
+    }
+
+    match /products/{productId} {
+      allow read: if isActiveMember(resource.data.businessId);
+      allow create: if validTenantCreate() && can('manage_inventory', request.resource.data.businessId);
+      allow update: if validTenantUpdate() && can('manage_inventory', resource.data.businessId);
+      allow delete: if isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId);
+    }
+
+    match /customers/{customerId} {
+      allow read: if isActiveMember(resource.data.businessId) && can('view_customers', resource.data.businessId);
+      allow create: if validTenantCreate() && can('view_customers', request.resource.data.businessId);
+      allow update: if validTenantUpdate() && can('view_customers', resource.data.businessId);
+      allow delete: if isActiveMember(resource.data.businessId) && can('view_customers', resource.data.businessId);
+    }
+
+    match /receipts/{receiptId} {
+      allow read: if isActiveMember(resource.data.businessId) && canReadReceipts(resource.data.businessId);
+      allow create: if validTenantCreate() && can('record_sales', request.resource.data.businessId);
+      allow update: if validTenantUpdate() && can('record_sales', resource.data.businessId);
+      allow delete: if isActiveMember(resource.data.businessId) && can('record_sales', resource.data.businessId);
+    }
+
+    match /branches/{branchId} {
+      allow read: if isActiveMember(resource.data.businessId);
+      allow create: if validTenantCreate() && isBusinessAdmin(request.resource.data.businessId);
+      allow update: if validTenantUpdate() && isBusinessAdmin(resource.data.businessId);
+      allow delete: if isActiveMember(resource.data.businessId) && isBusinessAdmin(resource.data.businessId);
+    }
+
+    match /inventory_transactions/{transactionId} {
+      allow read: if isActiveMember(resource.data.businessId)
+        && (can('manage_inventory', resource.data.businessId) || can('view_reports', resource.data.businessId));
+      allow create: if validTenantCreate()
+        && (can('manage_inventory', request.resource.data.businessId) || can('record_sales', request.resource.data.businessId));
+      allow update, delete: if false;
+    }
+
+    match /purchases/{purchaseId} {
+      allow read: if isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId);
+      allow create: if validTenantCreate() && can('manage_inventory', request.resource.data.businessId);
+      allow update: if validTenantUpdate() && can('manage_inventory', resource.data.businessId);
+      allow delete: if isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId);
+    }
+
+    match /expenses/{expenseId} {
+      allow read: if isActiveMember(resource.data.businessId) && can('view_reports', resource.data.businessId);
+      allow create: if validTenantCreate() && isBusinessAdmin(request.resource.data.businessId);
+      allow update: if validTenantUpdate() && isBusinessAdmin(resource.data.businessId);
+      allow delete: if isActiveMember(resource.data.businessId) && isBusinessAdmin(resource.data.businessId);
+    }
+
+    match /suppliers/{supplierId} {
+      allow read: if isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId);
+      allow create: if validTenantCreate() && can('manage_inventory', request.resource.data.businessId);
+      allow update: if validTenantUpdate() && can('manage_inventory', resource.data.businessId);
+      allow delete: if isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId);
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

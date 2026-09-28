@@ -25,6 +25,7 @@ export default function GlobalError({
         <title>Something went wrong - Zeneva</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font -- this boundary replaces the whole document, so the shared fonts from globals.css are not available */}
         <link
           href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
           rel="stylesheet"

@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/hooks/use-toast";
 import { doc, updateDoc, serverTimestamp, deleteDoc, collection, onSnapshot, query, orderBy, Timestamp, addDoc } from "firebase/firestore";
-import { Briefcase, Percent, Loader2, RefreshCw, Trash2, Globe, Landmark, Upload, Building, CreditCard, Banknote, ShieldQuestion, Palette, Truck, Package, Plus, MapPin, Award, Bell, Monitor, Smartphone, Tablet, Shield, ShieldCheck, LogOut, Star, Download, Info, Gauge, ShoppingCart } from 'lucide-react';
+import { Briefcase, Percent, Loader2, RefreshCw, Trash2, Globe, Landmark, Upload, Building, CreditCard, Banknote, ShieldQuestion, Palette, Paintbrush, Truck, Package, Plus, MapPin, Award, Bell, Monitor, Smartphone, Tablet, Shield, ShieldCheck, LogOut, Star, Download, Info, Gauge, ShoppingCart } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
     Select,
@@ -265,8 +265,8 @@ function SettingsPageContent() {
             setPaymentAccountName(business.settings?.paymentAccountName || '');
             setPaymentInstructions(business.settings?.paymentInstructions || '');
 
-            setLoyaltyEnabled(business.settings.loyaltyProgramEnabled || false);
-            setPointsPerUnit(String(business.settings.pointsPerUnit || 1));
+            setLoyaltyEnabled(business.settings?.loyaltyProgramEnabled || false);
+            setPointsPerUnit(String(business.settings?.pointsPerUnit || 1));
             setRatingEnabled(business.settings?.ratingEnabled === true);
 
             setIndustry(business.settings?.industry || '');
@@ -807,7 +807,7 @@ function SettingsPageContent() {
         } catch {
             toast({ variant: 'destructive', title: t('settings.toastSaveFailed'), description: t('settings.toastLanguageFailedBody') });
         }
-    }, [business?.id, isTauri, mutateBusiness, addToQueue, firestore, toast]);
+    }, [business?.id, isTauri, mutateBusiness, addToQueue, firestore, toast, t]);
 
     const handleSendTestNotification = async () => {
         if (!currentUserProfile?.id) return;
@@ -1146,6 +1146,7 @@ function SettingsPageContent() {
                                         searchPlaceholder={t('settings.searchCurrency')}
                                         renderSelected={(opt) => (
                                             <div className="flex items-center gap-2">
+                                                {/* eslint-disable-next-line @next/next/no-img-element -- flagcdn.com is a runtime-selected flag that is not in images.remotePatterns */}
                                                 <img
                                                     src={`https://flagcdn.com/16x12/${CURRENCY_COUNTRY_CODES[opt.value] || 'un'}.png`}
                                                     alt=""
@@ -1156,6 +1157,7 @@ function SettingsPageContent() {
                                         )}
                                         renderItem={(opt) => (
                                             <div className="flex items-center gap-2 w-full">
+                                                {/* eslint-disable-next-line @next/next/no-img-element -- flagcdn.com is a runtime-selected flag that is not in images.remotePatterns */}
                                                 <img
                                                     src={`https://flagcdn.com/16x12/${CURRENCY_COUNTRY_CODES[opt.value] || 'un'}.png`}
                                                     alt=""
@@ -1839,14 +1841,13 @@ function SettingsPageContent() {
 
 
 export default function SettingsPage() {
-    const { isLoading: isPosLoading, business } = usePOS();
     const [mounted, setMounted] = React.useState(false);
 
     React.useEffect(() => {
         setMounted(true);
     }, []);
 
-    if (!mounted || (isPosLoading && !business)) {
+    if (!mounted) {
         return <SettingsPageSkeleton />;
     }
     return <SettingsPageContent />;

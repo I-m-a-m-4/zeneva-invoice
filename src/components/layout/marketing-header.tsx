@@ -95,6 +95,7 @@ export default function MarketingHeader() {
             {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center justify-center" prefetch={false} onClick={() => setIsMobileMenuOpen(false)}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- logo URL is configured at runtime and may be an external or data: URL */}
               <img src={AppConfig.logoUrl} alt="Zeneva Logo" className="h-16 w-auto" />
             </Link>
           </div>

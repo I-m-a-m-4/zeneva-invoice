@@ -287,6 +287,7 @@ export default function CareersPage() {
                   transition={{ duration: 1.5, ease: "easeInOut" }}
                   className="absolute inset-0 w-full h-full"
                 >
+                  {/* eslint-disable-next-line @next/next/no-img-element -- runtime image URL that next/image cannot optimize without a remote allowlist */}
                   <img 
                     src={hqImages[currentHqImage]} 
                     alt={`Zeneva HQ ${currentHqImage + 1}`} 
@@ -354,7 +355,7 @@ export default function CareersPage() {
             </div>
 
             <div className="mt-16 text-center">
-              <p className="text-slate-500 font-dm-sans mb-4">Don't see a role that fits? We're always looking for geniuses.</p>
+              <p className="text-slate-500 font-dm-sans mb-4">Don&apos;t see a role that fits? We&apos;re always looking for geniuses.</p>
               <a href="mailto:careers@zeneva.space" className="text-emerald-600 font-bold flex items-center justify-center gap-2 hover:underline">
                 careers@zeneva.space <ArrowRight className="w-5 h-5" />
               </a>
@@ -373,7 +374,7 @@ export default function CareersPage() {
             <DialogHeader className="relative z-10 text-left">
               <DialogTitle className="text-xl font-bold font-dm-sans text-white tracking-tight">Apply for {selectedJob?.title}</DialogTitle>
               <DialogDescription className="text-white/60 text-xs font-medium font-dm-sans mt-1">
-                Tell us why you're the perfect fit for the Zeneva team.
+                Tell us why you&apos;re the perfect fit for the Zeneva team.
               </DialogDescription>
             </DialogHeader>
           </div>
@@ -423,7 +424,7 @@ export default function CareersPage() {
                 </>
               )}
             </Button>
-            <p className="text-center text-xs text-slate-400 font-medium">By submitting, you agree to Zeneva's recruitment policy.</p>
+            <p className="text-center text-xs text-slate-400 font-medium">By submitting, you agree to Zeneva&apos;s recruitment policy.</p>
           </form>
         </DialogContent>
       </Dialog>

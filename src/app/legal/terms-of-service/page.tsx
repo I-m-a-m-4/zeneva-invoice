@@ -129,7 +129,7 @@ export default function TermsOfServicePage() {
             <div id="acceptance" className="scroll-mt-32">
               <h2>Acceptance of Terms</h2>
               <p>
-                By accessing or using the Zeneva software-as-a-service platform (the "Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not use the Service. These Terms apply to all users of the Service, including administrators, managers, and operators ("Users").
+                By accessing or using the Zeneva software-as-a-service platform (the &quot;Service&quot;), you agree to be bound by these Terms of Service (&quot;Terms&quot;). If you do not agree to these Terms, you may not use the Service. These Terms apply to all users of the Service, including administrators, managers, and operators (&quot;Users&quot;).
               </p>
 
               <div className="not-prose my-8 p-5 rounded-2xl border bg-slate-50/50 dark:bg-slate-900/40 border-slate-200/60 dark:border-slate-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-sm backdrop-blur-sm shadow-sm">
@@ -177,17 +177,17 @@ export default function TermsOfServicePage() {
                 The Service is offered under various subscription plans.
               </p>
               <ul>
-                <li><strong>Free Starter Plan:</strong> The 'Starter' tier is free of charge and does not expire. No trial period applies and no payment details are required to use it. If a paid subscription ('Pro' or 'Business') is not renewed, the business instance reverts to the free 'Starter' tier — access to your existing data, including products, sales history and receipts, is retained, and only paid-tier features become unavailable until the subscription is renewed.</li>
+                <li><strong>Free Starter Plan:</strong> The &apos;Starter&apos; tier is free of charge and does not expire. No trial period applies and no payment details are required to use it. If a paid subscription (&apos;Pro&apos; or &apos;Business&apos;) is not renewed, the business instance reverts to the free &apos;Starter&apos; tier — access to your existing data, including products, sales history and receipts, is retained, and only paid-tier features become unavailable until the subscription is renewed.</li>
                 <li><strong>Billing:</strong> Fees for paid plans are billed on a subscription basis (e.g., monthly, annually). You will be billed in advance on a recurring, periodic basis.</li>
                 <li><strong>Payment:</strong> We use a third-party payment processor (Paystack) to handle payments. By subscribing, you agree to their terms and conditions.</li>
-                <li><strong>Cancellation:</strong> You may cancel your subscription at any time through your account's billing page. The cancellation will take effect at the end of the current billing cycle.</li>
+                <li><strong>Cancellation:</strong> You may cancel your subscription at any time through your account&apos;s billing page. The cancellation will take effect at the end of the current billing cycle.</li>
               </ul>
             </div>
 
             <div id="conduct" className="scroll-mt-28 mt-16 pt-8 border-t border-slate-100 dark:border-slate-800/50">
               <h2>User Conduct and Responsibilities</h2>
               <p>
-                You are solely responsible for all data, information, and content that you upload, post, or otherwise transmit via the Service ("Your Content"). You agree not to use the Service to:
+                You are solely responsible for all data, information, and content that you upload, post, or otherwise transmit via the Service (&quot;Your Content&quot;). You agree not to use the Service to:
               </p>
               <ul>
                 <li>Upload or transmit any content that is unlawful, harmful, or infringes on the rights of others.</li>
@@ -209,14 +209,14 @@ export default function TermsOfServicePage() {
             <div id="termination" className="scroll-mt-28 mt-16 pt-8 border-t border-slate-100 dark:border-slate-800/50">
               <h2>Termination</h2>
               <p>
-                We may terminate or suspend your account and bar access to the Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms. If you wish to terminate your account, you may do so from the "Danger Zone" section in your settings page.
+                We may terminate or suspend your account and bar access to the Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms. If you wish to terminate your account, you may do so from the &quot;Danger Zone&quot; section in your settings page.
               </p>
             </div>
 
             <div id="disclaimer" className="scroll-mt-28 mt-16 pt-8 border-t border-slate-100 dark:border-slate-800/50">
               <h2>Disclaimer of Warranties</h2>
               <p>
-                The Service is provided on an "AS IS" and "AS AVAILABLE" basis. Your use of the Service is at your sole risk. We expressly disclaim all warranties of any kind, whether express or implied, including, but not limited to, the implied warranties of merchantability, fitness for a particular purpose, and non-infringement.
+                The Service is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis. Your use of the Service is at your sole risk. We expressly disclaim all warranties of any kind, whether express or implied, including, but not limited to, the implied warranties of merchantability, fitness for a particular purpose, and non-infringement.
               </p>
             </div>
 
@@ -237,7 +237,7 @@ export default function TermsOfServicePage() {
             <div id="changes" className="scroll-mt-28 mt-16 pt-8 border-t border-slate-100 dark:border-slate-800/50">
               <h2>Changes to Terms</h2>
               <p>
-                We reserve the right, at our sole discretion, to modify or replace these Terms at any time. We will provide at least 30 days' notice prior to any new terms taking effect. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.
+                We reserve the right, at our sole discretion, to modify or replace these Terms at any time. We will provide at least 30 days&apos; notice prior to any new terms taking effect. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.
               </p>
             </div>
 

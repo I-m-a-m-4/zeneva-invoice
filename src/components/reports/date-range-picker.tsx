@@ -46,7 +46,7 @@ export function DateRangePicker({ className, date, onDateChange }: DateRangePick
         );
 
         return basePresets;
-    }, [business]);
+    }, [business, t]);
 
     const getDisplayString = () => {
         if (!date?.from) return "Pick a date range";

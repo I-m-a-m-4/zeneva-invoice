@@ -725,7 +725,7 @@ function UserManagementDashboard({ businessId, currentUserId, inviterName }: { b
                         <AlertDialogDescription>
                             {userToUpdate?.action === 'deactivate'
                                 ? <>This will mark <strong>{userToUpdate?.user?.name}</strong> as inactive, and they will not be able to log in. Their data will be preserved.</>
-                                : <>This will reactivate <strong>{userToUpdate?.user?.name}</strong>'s account, allowing them to log in again.</>
+                                : <>This will reactivate <strong>{userToUpdate?.user?.name}</strong>&apos;s account, allowing them to log in again.</>
                             }
                             <span className="mt-4 text-amber-600 font-medium flex items-center gap-1.5 text-xs">
                                 <Globe className="h-3.5 w-3.5" />

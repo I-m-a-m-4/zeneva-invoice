@@ -79,6 +79,7 @@ export default function TerminalPage() {
         {/* HERO SECTION - FURTHER INCREASED HEIGHT */}
         <header className="relative pt-24 overflow-hidden bg-slate-900 min-h-[800px] lg:min-h-[900px] flex items-center">
           <div className="absolute inset-0 z-0">
+            {/* eslint-disable-next-line @next/next/no-img-element -- plain <img> keeps the existing CSS sizing for this static asset */}
             <img 
               src="/images/herobg.png" 
               alt="Cashier Background" 
@@ -128,6 +129,7 @@ export default function TerminalPage() {
                 </p>
               </div>
               <div className="flex justify-end pt-4 -mr-10 -mb-10">
+                {/* eslint-disable-next-line @next/next/no-img-element -- plain <img> keeps the existing CSS sizing for this static asset */}
                 <img 
                   src="/images/sally-sm.png" 
                   alt="WhatsApp Notification on Phone" 
@@ -165,6 +167,7 @@ export default function TerminalPage() {
             
             <div className="relative max-w-4xl mx-auto py-8 flex justify-center">
               <div className="relative w-full max-w-2xl aspect-video rounded-2xl border-2 border-slate-200/80 bg-white p-2 overflow-hidden shadow-xl">
+                {/* eslint-disable-next-line @next/next/no-img-element -- plain <img> keeps the existing CSS sizing for this static asset */}
                 <img src="/images/kimberly.png" alt="Zeneva Account Desk Stand" className="w-full h-full object-cover rounded-xl" />
               </div>
             </div>
@@ -200,6 +203,7 @@ export default function TerminalPage() {
             </div>
             <div className="lg:col-span-6 flex justify-center">
               <div className="relative w-full max-w-lg aspect-[4/3.2] bg-[#FDF2F4] rounded-[2.5rem] p-6 flex justify-center items-center overflow-hidden shadow-sm">
+                {/* eslint-disable-next-line @next/next/no-img-element -- plain <img> keeps the existing CSS sizing for this static asset */}
                 <img 
                   src="/images/lefttrf.png" 
                   alt="Theft Verification Illustration" 
@@ -228,6 +232,7 @@ export default function TerminalPage() {
             </div>
             <div className="lg:col-span-6 lg:order-1 flex justify-center">
               <div className="relative w-full max-w-lg aspect-[4/4.5] bg-[#EEF4FC] rounded-[2.5rem] p-6 flex justify-center items-end overflow-hidden shadow-sm">
+                {/* eslint-disable-next-line @next/next/no-img-element -- plain <img> keeps the existing CSS sizing for this static asset */}
                 <img 
                   src="/images/bottom.png" 
                   alt="Revenue Flow Illustration" 
@@ -325,6 +330,7 @@ export default function TerminalPage() {
                 </div>
                 <div className="lg:col-span-5 flex justify-center">
                   <div className="relative w-full max-w-sm aspect-[3.8/5] rounded-[2rem] overflow-hidden shadow-md">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- plain <img> keeps the existing CSS sizing for this static asset */}
                     <img src="/images/howitworks.png" alt="Smiling Retailer" className="w-full h-full object-cover" />
                   </div>
                 </div>
@@ -358,7 +364,7 @@ export default function TerminalPage() {
                     </div>
                   </div>
                   <p className="text-slate-600 leading-relaxed text-sm font-light">
-                    "I’ve created many bank accounts because of payment confirmation issues which I’ve been able to stop now because of Zeneva Terminal. What I love the most is that all my staff and even me, get bank alerts at the same time. This saves me so much stress."
+                    &quot;I’ve created many bank accounts because of payment confirmation issues which I’ve been able to stop now because of Zeneva Terminal. What I love the most is that all my staff and even me, get bank alerts at the same time. This saves me so much stress.&quot;
                   </p>
                 </div>
                 <div className="pt-6 flex items-center gap-2 text-xs text-primary hover:text-primary/90 font-medium">
@@ -384,7 +390,7 @@ export default function TerminalPage() {
                     </div>
                   </div>
                   <p className="text-slate-600 leading-relaxed text-sm font-light">
-                    "The fact that I don’t need to be present to close transactions is what I love the most about Zeneva Terminal. Thank you so much Zeneva for this solution. It is really helpful for my business."
+                    &quot;The fact that I don’t need to be present to close transactions is what I love the most about Zeneva Terminal. Thank you so much Zeneva for this solution. It is really helpful for my business.&quot;
                   </p>
                 </div>
                 <div className="pt-6 flex items-center gap-2 text-xs text-primary hover:text-primary/90 font-medium">
@@ -410,7 +416,7 @@ export default function TerminalPage() {
                     </div>
                   </div>
                   <p className="text-slate-600 leading-relaxed text-sm font-light">
-                    "I have always envisaged my business running without reliance on me & now I’m able to achieve that with Zeneva Terminal. I love that my staff can carry on without reaching out to me, I love that the alert is received instantly, I love that we get it in our account within 24 hours."
+                    &quot;I have always envisaged my business running without reliance on me & now I’m able to achieve that with Zeneva Terminal. I love that my staff can carry on without reaching out to me, I love that the alert is received instantly, I love that we get it in our account within 24 hours.&quot;
                   </p>
                 </div>
                 <div className="pt-6 flex items-center gap-2 text-xs text-primary hover:text-primary/90 font-medium">

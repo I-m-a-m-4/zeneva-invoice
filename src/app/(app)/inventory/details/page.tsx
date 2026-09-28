@@ -929,10 +929,10 @@ function EditProductContent() {
                                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                                                             <div>
                                                                 <FormLabel className="text-base font-semibold">
-                                                                    {product ? "+ Add / Restock Stock" : t('inventory.stock')}
+                                                                    {product ? `+ ${t('inventory.restockTitle')}` : t('inventory.stock')}
                                                                 </FormLabel>
                                                                 <p className="text-xs text-muted-foreground">
-                                                                    {product ? "Enter the quantity of new stock purchased/added" : "Manage initial stock level for this item"}
+                                                                    {product ? t('inventory.restockSubtitle') : t('inventory.initialStockSubtitle')}
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -941,17 +941,17 @@ function EditProductContent() {
                                                         {product && (
                                                             <div className="flex items-center justify-between px-4 py-3 bg-muted/60 border border-border/40 rounded-xl mb-4">
                                                                 <div className="text-center">
-                                                                    <p className="text-[11px] text-muted-foreground mb-0.5 uppercase tracking-wider font-semibold">Current Stock</p>
+                                                                    <p className="text-[11px] text-muted-foreground mb-0.5 uppercase tracking-wider font-semibold">{t('inventory.stockCurrentLabel')}</p>
                                                                     <p className="text-lg font-bold">{currentStock}</p>
                                                                 </div>
                                                                 <div className="text-lg font-light text-muted-foreground">+</div>
                                                                 <div className="text-center">
-                                                                    <p className="text-[11px] text-primary mb-0.5 uppercase tracking-wider font-semibold">Adding</p>
+                                                                    <p className="text-[11px] text-primary mb-0.5 uppercase tracking-wider font-semibold">{t('inventory.stockAddingLabel')}</p>
                                                                     <p className="text-lg font-bold text-primary">{addedAmount > 0 ? `+${addedAmount}` : addedAmount}</p>
                                                                 </div>
                                                                 <div className="text-lg font-light text-muted-foreground">=</div>
                                                                 <div className="text-center">
-                                                                    <p className="text-[11px] text-emerald-600 dark:text-emerald-400 mb-0.5 uppercase tracking-wider font-semibold">New Total</p>
+                                                                    <p className="text-[11px] text-emerald-600 dark:text-emerald-400 mb-0.5 uppercase tracking-wider font-semibold">{t('inventory.stockNewTotalLabel')}</p>
                                                                     <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{newTotal}</p>
                                                                 </div>
                                                             </div>
@@ -961,7 +961,7 @@ function EditProductContent() {
                                                             {product ? (
                                                                 <Input 
                                                                     type="number" 
-                                                                    placeholder="e.g. 9 to add 9 more units" 
+                                                                    placeholder={t('inventory.restockPlaceholder')} 
                                                                     value={quantityToAddInput} 
                                                                     disabled={!canManageProduct} 
                                                                     onChange={(e) => {
@@ -988,10 +988,10 @@ function EditProductContent() {
                                                         <FormDescription className="text-xs mt-1.5">
                                                             {product ? (
                                                                 <span>
-                                                                    Enter quantity being added (e.g. typing <strong>9</strong> adds 9 to current <strong>{currentStock}</strong> = <strong>{newTotal}</strong> total). Use negative numbers to subtract stock.
+                                                                    {t('inventory.restockExplain', { current: currentStock, newTotal })}
                                                                 </span>
                                                             ) : (
-                                                                "Enter initial stock quantity."
+                                                                t('inventory.initialStockHint')
                                                             )}
                                                         </FormDescription>
                                                         <FormMessage />
@@ -1007,14 +1007,14 @@ function EditProductContent() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="flex items-center gap-1.5">
-                                                        Reorder Point
+                                                        {t('inventory.reorderPoint')}
                                                         <TooltipProvider>
                                                             <Tooltip delayDuration={300}>
                                                                 <TooltipTrigger asChild>
                                                                     <Info className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors cursor-help" />
                                                                 </TooltipTrigger>
                                                                 <TooltipContent className="max-w-[250px]">
-                                                                    <p>We'll alert you when stock falls to or below this level.</p>
+                                                                    <p>{t('inventory.reorderPointTooltip')}</p>
                                                                 </TooltipContent>
                                                             </Tooltip>
                                                         </TooltipProvider>
@@ -1023,7 +1023,7 @@ function EditProductContent() {
                                                         <Input type="number" placeholder="5" {...field} value={field.value ?? ''} disabled={!canManageProduct} />
                                                     </FormControl>
                                                     <FormDescription className="text-xs">
-                                                        Minimum threshold for low stock alert
+                                                        {t('inventory.reorderPointHint')}
                                                     </FormDescription>
                                                     <FormMessage />
                                                 </FormItem>
@@ -1077,14 +1077,14 @@ function EditProductContent() {
                                 <CardHeader>
                                     <CardTitle className="text-base flex items-center justify-between">
                                         <span className="flex items-center gap-2">
-                                            📱 Electronics IMEI & Serial Numbers
+                                            📱 {t('inventory.serialTitle')}
                                         </span>
                                         <Badge variant="secondary" className="text-xs">
                                             {industryConfig.label}
                                         </Badge>
                                     </CardTitle>
                                     <CardDescription className="text-xs">
-                                        Track unique serial numbers or IMEIs for electronics, appliances, and high-value devices.
+                                        {t('inventory.serialHint')}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
@@ -1093,7 +1093,7 @@ function EditProductContent() {
                                         name="serialNumbersInput"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="text-xs font-semibold">IMEI / Serial Numbers (One per line or comma-separated)</FormLabel>
+                                                <FormLabel className="text-xs font-semibold">{t('inventory.serialInputLabel')}</FormLabel>
                                                 <FormControl>
                                                     <Textarea
                                                         placeholder="e.g. 354890123456789&#10;354890123456790"
@@ -1103,7 +1103,7 @@ function EditProductContent() {
                                                     />
                                                 </FormControl>
                                                 <FormDescription className="text-[11px] text-muted-foreground">
-                                                    Cashiers scan or select from these exact IMEIs during POS checkout, which prints on warranty receipts.
+                                                    {t('inventory.serialPosHintEdit')}
                                                 </FormDescription>
                                                 <FormMessage />
                                             </FormItem>
@@ -1335,19 +1335,19 @@ function EditProductContent() {
                                 <div className="space-y-1">
                                     <CardTitle className="text-base flex items-center gap-2">
                                         <HistoryIcon className="h-4 w-4 text-primary" />
-                                        {salesPeriod === '30d' ? '30-Day Sales Volume Trend' : salesPeriod === '90d' ? '90-Day Sales Volume Trend' : salesPeriod === '6m' ? '6-Month Sales Volume Trend' : salesPeriod === '1y' ? '1-Year Sales Volume Trend' : 'All-Time Sales Volume Trend'}
+                                        {salesPeriod === '30d' ? t('inventory.trendTitle30d') : salesPeriod === '90d' ? t('inventory.trendTitle90d') : salesPeriod === '6m' ? t('inventory.salesTrend') : salesPeriod === '1y' ? t('inventory.trendTitle1y') : t('inventory.trendTitleAll')}
                                     </CardTitle>
                                     <CardDescription className="text-xs">
-                                        {salesPeriod === '30d' ? 'Track daily units sold over the last 30 days' : salesPeriod === '90d' ? 'Track weekly units sold over the last 90 days' : salesPeriod === '6m' ? 'Track units sold month-by-month over the last 6 months' : salesPeriod === '1y' ? 'Track units sold month-by-month over the last 12 months' : 'Track historical units sold over time'}
+                                        {salesPeriod === '30d' ? t('inventory.trendHint30d') : salesPeriod === '90d' ? t('inventory.trendHint90d') : salesPeriod === '6m' ? t('inventory.salesTrendHint') : salesPeriod === '1y' ? t('inventory.trendHint1y') : t('inventory.trendHintAll')}
                                     </CardDescription>
                                 </div>
                                 <div className="flex items-center gap-1 bg-background/80 p-1 rounded-lg border text-xs self-start sm:self-auto">
                                     {[
-                                        { id: '30d', label: '30 Days' },
-                                        { id: '90d', label: '90 Days' },
-                                        { id: '6m', label: '6 Months' },
-                                        { id: '1y', label: '1 Year' },
-                                        { id: 'all', label: 'All Time' },
+                                        { id: '30d', label: t('inventory.period30d') },
+                                        { id: '90d', label: t('inventory.period90d') },
+                                        { id: '6m', label: t('inventory.period6m') },
+                                        { id: '1y', label: t('inventory.period1y') },
+                                        { id: 'all', label: t('inventory.periodAllTime') },
                                     ].map((p) => (
                                         <button
                                             key={p.id}
@@ -1370,7 +1370,7 @@ function EditProductContent() {
                             <div className="h-[200px] w-full">
                                 {salesData.every(d => d.sold === 0) ? (
                                     <div className="h-full flex flex-col items-center justify-center text-muted-foreground text-sm">
-                                        <p>No sales data available yet.</p>
+                                        <p>{t('inventory.noSalesData')}</p>
                                     </div>
                                 ) : (
                                     <ResponsiveContainer width="100%" height="100%">
@@ -1381,7 +1381,7 @@ function EditProductContent() {
                                                 cursor={{ stroke: '#2563eb', strokeWidth: 1, strokeDasharray: '4 4' }}
                                                 contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                                             />
-                                            <Line type="monotone" dataKey="sold" name="Quantity Sold" stroke="#2563eb" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: 'white' }} activeDot={{ r: 6, stroke: '#2563eb', strokeWidth: 2, fill: '#2563eb' }} />
+                                            <Line type="monotone" dataKey="sold" name={t('inventory.chartQuantitySold')} stroke="#2563eb" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: 'white' }} activeDot={{ r: 6, stroke: '#2563eb', strokeWidth: 2, fill: '#2563eb' }} />
                                         </LineChart>
                                     </ResponsiveContainer>
                                 )}
@@ -1409,17 +1409,17 @@ function EditProductContent() {
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="outline" size="sm" className="w-[150px] h-8 text-[11px] justify-between bg-background font-normal">
                                             <span>
-                                                {logFilter === 'all' ? 'All Transactions' : logFilter === 'in' ? 'Stock In (Restocks)' : logFilter === 'out' ? 'Stock Out (Sales)' : logFilter === 'return' ? 'Returns (Voided)' : 'Adjustments'}
+                                                {logFilter === 'all' ? t('inventory.logFilterAllTransactions') : logFilter === 'in' ? t('inventory.logFilterStockIn') : logFilter === 'out' ? t('inventory.logFilterStockOut') : logFilter === 'return' ? t('inventory.logFilterReturns') : t('inventory.logFilterAdjustment')}
                                             </span>
                                             <ChevronDown className="h-3.5 w-3.5 opacity-50 ml-1" />
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-[150px]">
-                                        <DropdownMenuItem onClick={() => setLogFilter('all')}>All Transactions</DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => setLogFilter('in')}>Stock In (Restocks)</DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => setLogFilter('out')}>Stock Out (Sales)</DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => setLogFilter('return')}>Returns (Voided)</DropdownMenuItem>
-                                        {categoryType === 'product' && <DropdownMenuItem onClick={() => setLogFilter('adjustment')}>{t('inventory.logFilterAdjustments')}</DropdownMenuItem>}
+                                        <DropdownMenuItem onClick={() => setLogFilter('all')}>{t('inventory.logFilterAllTransactions')}</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setLogFilter('in')}>{t('inventory.logFilterStockIn')}</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setLogFilter('out')}>{t('inventory.logFilterStockOut')}</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setLogFilter('return')}>{t('inventory.logFilterReturns')}</DropdownMenuItem>
+                                        {categoryType === 'product' && <DropdownMenuItem onClick={() => setLogFilter('adjustment')}>{t('inventory.logFilterAdjustment')}</DropdownMenuItem>}
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
@@ -1430,7 +1430,7 @@ function EditProductContent() {
                                     <TableRow>
                                         <TableHead className="text-[10px] uppercase font-bold py-2 px-4">{t('inventory.colAction')}</TableHead>
                                         <TableHead className="text-[10px] uppercase font-bold py-2">{t('inventory.colChange')}</TableHead>
-                                        <TableHead className="text-[10px] uppercase font-bold py-2">Balance</TableHead>
+                                        <TableHead className="text-[10px] uppercase font-bold py-2">{t('inventory.colBalance')}</TableHead>
                                         <TableHead className="text-[10px] uppercase font-bold py-2">{t('inventory.colUser')}</TableHead>
                                         <TableHead className="text-[10px] uppercase font-bold py-2 text-right px-4">{t('common.date')}</TableHead>
                                     </TableRow>
@@ -1458,7 +1458,7 @@ function EditProductContent() {
                                                         <div className="flex flex-col">
                                                             <div className="flex items-center gap-2">
                                                                 <span className="text-xs font-medium capitalize">
-                                                                    {tx.type === 'in' ? 'Stock In' : tx.type === 'out' ? 'Stock Out' : tx.type === 'return' ? 'Return' : 'Adjustment'}
+                                                                    {tx.type === 'in' ? t('inventory.logTypeStockIn') : tx.type === 'out' ? t('inventory.logTypeStockOut') : tx.type === 'return' ? t('inventory.logTypeReturn') : t('inventory.logTypeAdjustment')}
                                                                 </span>
                                                             </div>
                                                             {tx.notes && (

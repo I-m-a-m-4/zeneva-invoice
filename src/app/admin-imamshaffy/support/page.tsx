@@ -786,7 +786,7 @@ function ChatDetail({ thread, adminUser, onBack }: { thread: SupportThread, admi
                                              <DropdownMenuContent align="end" className="w-[180px]">
                                                  {thread.userEmail && (
                                                      <DropdownMenuItem onClick={() => handleSendSpecificMessageToEmail(msg.text || '📷 Sent an image', msg.mediaUrl)}>
-                                                         📧 Send to User's Gmail
+                                                         📧 Send to User&apos;s Gmail
                                                      </DropdownMenuItem>
                                                  )}
                                                  {isAdmin && msg.text && (
@@ -813,6 +813,7 @@ function ChatDetail({ thread, adminUser, onBack }: { thread: SupportThread, admi
                                             className="mb-2 rounded-lg overflow-hidden border max-w-sm cursor-pointer group/img"
                                             onClick={() => setActiveLightboxUrl(msg.mediaUrl)}
                                         >
+                                            {/* eslint-disable-next-line @next/next/no-img-element -- chat attachment URL supplied at runtime (may be a blob: or CDN URL) */}
                                             <img src={msg.mediaUrl} alt="Attached File" className="w-full h-auto object-cover max-h-60 group-hover/img:scale-105 transition-transform duration-300" />
                                         </div>
                                     )}
@@ -931,6 +932,7 @@ function ChatDetail({ thread, adminUser, onBack }: { thread: SupportThread, admi
                 {/* Image attachment preview zone */}
                 {attachedImage && (
                     <div className="flex items-center gap-2 bg-white dark:bg-slate-800 p-2 rounded-lg border max-w-xs animate-fade-in relative">
+                        {/* eslint-disable-next-line @next/next/no-img-element -- runtime image URL that next/image cannot optimize without a remote allowlist */}
                         <img src={attachedImage} alt="Attachment Preview" className="h-14 w-14 object-cover rounded-md border" />
                         <div className="flex-1 min-w-0">
                             <p className="text-xs font-semibold truncate">Image Attached</p>
@@ -1039,7 +1041,7 @@ function ChatDetail({ thread, adminUser, onBack }: { thread: SupportThread, admi
                                 <Sparkles className="h-4 w-4 text-orange-500" /> Email Template Live Visualization
                             </DialogTitle>
                             <DialogDescription className="text-xs text-slate-400">
-                                Exact HTML representation delivered to recipient's inbox via Resend.
+                                Exact HTML representation delivered to recipient&apos;s inbox via Resend.
                             </DialogDescription>
                         </div>
                     </DialogHeader>
@@ -1092,6 +1094,7 @@ function ChatDetail({ thread, adminUser, onBack }: { thread: SupportThread, admi
 
                                         {attachedImage && (
                                             <div className="mt-3 border border-stone-200 rounded-2xl overflow-hidden bg-stone-50 p-2 text-center">
+                                                {/* eslint-disable-next-line @next/next/no-img-element -- runtime image URL that next/image cannot optimize without a remote allowlist */}
                                                 <img src={attachedImage} alt="Attachment Preview" className="max-h-64 w-full object-contain rounded-xl inline-block" />
                                             </div>
                                         )}
@@ -1113,8 +1116,11 @@ function ChatDetail({ thread, adminUser, onBack }: { thread: SupportThread, admi
                             {/* Minimal Footer (Login & Signup Page Style) */}
                             <div className="p-6 bg-white border-t border-stone-100 text-center space-y-3">
                                 <div className="flex justify-center items-center gap-4">
+                                    {/* eslint-disable-next-line @next/next/no-img-element -- third-party icon CDN that is not in images.remotePatterns */}
                                     <img src="https://cdn-icons-png.flaticon.com/512/5969/5969020.png" className="h-4 w-4 opacity-50 hover:opacity-100 cursor-pointer" alt="X" />
+                                    {/* eslint-disable-next-line @next/next/no-img-element -- third-party icon CDN that is not in images.remotePatterns */}
                                     <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" className="h-4 w-4 opacity-50 hover:opacity-100 cursor-pointer" alt="Instagram" />
+                                    {/* eslint-disable-next-line @next/next/no-img-element -- third-party icon CDN that is not in images.remotePatterns */}
                                     <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" className="h-4 w-4 opacity-50 hover:opacity-100 cursor-pointer" alt="LinkedIn" />
                                 </div>
                                 <div className="text-[11px] text-stone-400 font-medium">
@@ -1153,6 +1159,7 @@ function ChatDetail({ thread, adminUser, onBack }: { thread: SupportThread, admi
 
                     {/* Deep expanded high-res image display */}
                     <div className="relative max-w-[95vw] max-h-[92vh] flex items-center justify-center overflow-auto p-2" onClick={(e) => e.stopPropagation()}>
+                        {/* eslint-disable-next-line @next/next/no-img-element -- runtime image URL that next/image cannot optimize without a remote allowlist */}
                         <img 
                             src={activeLightboxUrl} 
                             alt="Expanded View" 

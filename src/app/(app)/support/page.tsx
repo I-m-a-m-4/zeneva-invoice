@@ -52,7 +52,7 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
     tags: ["offline", "sync", "internet", "data"],
     answer: (
         <div className="space-y-4">
-            <p className="text-sm">Zeneva's core philosophy is that **your business should never wait for the internet.**</p>
+            <p className="text-sm">Zeneva&apos;s core philosophy is that **your business should never wait for the internet.**</p>
             <div className="relative p-5 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent border border-primary/10">
                 <div className="space-y-4">
                     <div className="flex gap-3">
@@ -77,12 +77,12 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
   {
       question: "What happens if I make a sale while the internet is completely out?",
       tags: ["pos", "offline", "sale", "offline-sync"],
-      answer: <p className="text-sm">Nothing changes for your customer. You scan items, accept cash/local payments, and print the receipt exactly as usual. The status bar will show "Offline". Once internet returns, the app will silently upload the receipt in the background.</p>
+      answer: <p className="text-sm">Nothing changes for your customer. You scan items, accept cash/local payments, and print the receipt exactly as usual. The status bar will show &quot;Offline&quot;. Once internet returns, the app will silently upload the receipt in the background.</p>
   },
   {
       question: "How do I know if my data has finished syncing to the cloud?",
       tags: ["sync", "status", "cloud", "indicator"],
-      answer: <p className="text-sm">Look at the **Connection Badge** in the top-right corner. A rotating loader or a "Syncing..." label indicates data is moving. A green "Online" or "Synced" checkmark means your cloud dashboard is up to date.</p>
+      answer: <p className="text-sm">Look at the **Connection Badge** in the top-right corner. A rotating loader or a &quot;Syncing...&quot; label indicates data is moving. A green &quot;Online&quot; or &quot;Synced&quot; checkmark means your cloud dashboard is up to date.</p>
   },
   {
       question: "Can I manage my inventory while offline?",
@@ -103,7 +103,7 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
       <div className="space-y-4">
         <p className="text-sm">Zeneva is optimized for **Zero-Latency Scanning**. Simply connect your USB or Bluetooth scanner. In the POS interface, just scan, and the item is instantly added to the cart.</p>
         <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-xs leading-relaxed border border-blue-100 dark:border-blue-800">
-            <strong>Pro Tip:</strong> Ensure your scanner is set to "Keyboard Mode" with a Carriage Return (Enter) suffix enabled.
+            <strong>Pro Tip:</strong> Ensure your scanner is set to &quot;Keyboard Mode&quot; with a Carriage Return (Enter) suffix enabled.
         </div>
       </div>
     )
@@ -111,37 +111,37 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
   {
       question: "How do I perform a split payment (Cash + Card)?",
       tags: ["payment", "split", "pos", "checkout"],
-      answer: <p className="text-sm">In the Checkout dialog, enter the amount being paid in the first method (e.g., Cash). Clicking the "+" next to the payment field allows you to add a second method for the remaining balance.</p>
+      answer: <p className="text-sm">In the Checkout dialog, enter the amount being paid in the first method (e.g., Cash). Clicking the &quot;+&quot; next to the payment field allows you to add a second method for the remaining balance.</p>
   },
   {
       question: "Can I save a cart and recall it later (On-Hold Orders)?",
       tags: ["pos", "hold", "save-cart", "orders"],
-      answer: <p className="text-sm">Yes. If a customer forgets their wallet, click the "Hold" button. You can serve the next customer, and then recall the held order when the first customer returns.</p>
+      answer: <p className="text-sm">Yes. If a customer forgets their wallet, click the &quot;Hold&quot; button. You can serve the next customer, and then recall the held order when the first customer returns.</p>
   },
   {
       question: "How do I issue a refund for a returned item?",
       tags: ["refund", "return", "pos", "receipt"],
-      answer: <p className="text-sm">Go to **Sales History**, find the receipt, and click "Process Refund". You can choose to refund the entire receipt or select specific items that were returned.</p>
+      answer: <p className="text-sm">Go to **Sales History**, find the receipt, and click &quot;Process Refund&quot;. You can choose to refund the entire receipt or select specific items that were returned.</p>
   },
   {
       question: "Can I reprint a receipt from yesterday?",
       tags: ["receipt", "reprint", "history"],
-      answer: <p className="text-sm">Yes. Navigate to the **Sales History** tab, locate the transaction by date, receipt number, or customer name, and click the "Print Receipt" icon.</p>
+      answer: <p className="text-sm">Yes. Navigate to the **Sales History** tab, locate the transaction by date, receipt number, or customer name, and click the &quot;Print Receipt&quot; icon.</p>
   },
   {
       question: "How do I sell an item with variable weight (e.g., meat, vegetables)?",
       tags: ["weight", "variable", "scale", "products"],
-      answer: <p className="text-sm">When adding the product to your inventory, set its unit to 'kg' or 'lbs'. When adding it to the cart in the POS, you will be prompted to enter the exact weight, and Zeneva will calculate the price automatically.</p>
+      answer: <p className="text-sm">When adding the product to your inventory, set its unit to &apos;kg&apos; or &apos;lbs&apos;. When adding it to the cart in the POS, you will be prompted to enter the exact weight, and Zeneva will calculate the price automatically.</p>
   },
   {
       question: "Does Zeneva support thermal printers and cash drawers?",
       tags: ["printer", "thermal", "cash-drawer", "hardware"],
-      answer: <p className="text-sm">Yes. Zeneva communicates directly with your operating system's print spooler. Any ESC/POS thermal printer (58mm or 80mm) installed on your OS will work perfectly. Cash drawers connected via the printer's RJ11 port will kick open automatically on cash sales.</p>
+      answer: <p className="text-sm">Yes. Zeneva communicates directly with your operating system&apos;s print spooler. Any ESC/POS thermal printer (58mm or 80mm) installed on your OS will work perfectly. Cash drawers connected via the printer&apos;s RJ11 port will kick open automatically on cash sales.</p>
   },
   {
       question: "How do I apply a discount to the entire order?",
       tags: ["discount", "pos", "checkout", "cart"],
-      answer: <p className="text-sm">In the POS interface, click the "Discount" button below the subtotal. You can apply either a percentage (%) discount or a fixed amount discount to the entire cart.</p>
+      answer: <p className="text-sm">In the POS interface, click the &quot;Discount&quot; button below the subtotal. You can apply either a percentage (%) discount or a fixed amount discount to the entire cart.</p>
   },
 
   // --- CATEGORY: INSTALLATION & DESKTOP (4) ---
@@ -153,7 +153,7 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
   {
       question: "How do I update the desktop application to the latest version?",
       tags: ["update", "version", "download", "auto-update"],
-      answer: <p className="text-sm">Zeneva checks for updates every time it launches. If a new version (e.g., v0.5.8) is available, you will see a "New Version Available" button in the Top Title Bar. Simply click it to download and relaunch with the latest features.</p>
+      answer: <p className="text-sm">Zeneva checks for updates every time it launches. If a new version (e.g., v0.5.8) is available, you will see a &quot;New Version Available&quot; button in the Top Title Bar. Simply click it to download and relaunch with the latest features.</p>
   },
   {
       question: "Can I run Zeneva on multiple computers at the same time?",
@@ -163,7 +163,7 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
   {
       question: "How to fix 'Database Initialization Error' on startup?",
       tags: ["error", "database", "sqlite", "fix"],
-      answer: <p className="text-sm">This usually happens if the application is prevented from writing to its data folder. Try running Zeneva as an Administrator, or ensure that your Antivirus isn't blocking the `zeneva.db` file in your AppData directory.</p>
+      answer: <p className="text-sm">This usually happens if the application is prevented from writing to its data folder. Try running Zeneva as an Administrator, or ensure that your Antivirus isn&apos;t blocking the `zeneva.db` file in your AppData directory.</p>
   },
   {
       question: "What thermal printers and hardware are supported?",
@@ -173,12 +173,12 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
   {
       question: "How do I handle returns and partial refunds?",
       tags: ["refund", "return", "sales", "transaction"],
-      answer: <p className="text-sm">Inside the 'Receipts' module, select the transaction and click **"Initiate Return"**. You can choose to return specific items (Partial) or the entire order (Full). Stock levels will be auto-corrected.</p>
+      answer: <p className="text-sm">Inside the &apos;Receipts&apos; module, select the transaction and click **&quot;Initiate Return&quot;**. You can choose to return specific items (Partial) or the entire order (Full). Stock levels will be auto-corrected.</p>
   },
   {
       question: "Can I apply discounts to a whole order or just single items?",
       tags: ["discount", "pos", "coupon", "price"],
-      answer: <p className="text-sm">Both! You can click on an individual item in the cart to set a specific discount, or use the **"Group Discount"** button at the bottom to apply a percentage or fixed-amount deduction to the entire total.</p>
+      answer: <p className="text-sm">Both! You can click on an individual item in the cart to set a specific discount, or use the **&quot;Group Discount&quot;** button at the bottom to apply a percentage or fixed-amount deduction to the entire total.</p>
   },
   {
       question: "How does the POS handle taxes and inclusive/exclusive pricing?",
@@ -191,13 +191,13 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
       question: "How do I add variation products (e.g., Colors/Sizes)?",
       tags: ["inventory", "product", "variation"],
       answer: (
-          <p className="text-sm">When adding a product, enable the **"Variations"** switch. You can then add multiple types (e.g., Red, Blue, L, XL) and set individual stock levels and even different prices for each variation while keeping them under a single product entry.</p>
+          <p className="text-sm">When adding a product, enable the **&quot;Variations&quot;** switch. You can then add multiple types (e.g., Red, Blue, L, XL) and set individual stock levels and even different prices for each variation while keeping them under a single product entry.</p>
       )
   },
   {
       question: "What is the difference between a Product and a Service?",
       tags: ["inventory", "service", "stock"],
-      answer: <p className="text-sm">Products are physical items with stock levels that decrement when sold. Services (like "Installation" or "Consulting") have no stock limit and don't require inventory tracking, making them always available for sale.</p>
+      answer: <p className="text-sm">Products are physical items with stock levels that decrement when sold. Services (like &quot;Installation&quot; or &quot;Consulting&quot;) have no stock limit and don&apos;t require inventory tracking, making them always available for sale.</p>
   },
   {
       question: "How do I bulk import my products from an Excel or CSV file?",
@@ -207,7 +207,7 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
   {
     question: "Setting up Low Stock & Expiry Date alerts",
     tags: ["alerts", "inventory", "stock", "expiry"],
-    answer: <p className="text-sm">Under each product's settings, you can define a **Minimum Stock Level**. Zeneva will proactively alert you when stock falls below this. You can also enable **Expiry Date tracking** for perishable goods.</p>
+    answer: <p className="text-sm">Under each product&apos;s settings, you can define a **Minimum Stock Level**. Zeneva will proactively alert you when stock falls below this. You can also enable **Expiry Date tracking** for perishable goods.</p>
   },
   {
       question: "Can I track the 'Cost Price' to calculate profit margins?",
@@ -217,12 +217,12 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
   {
       question: "How do I perform a stock adjustment or audit (Visual Count)?",
       tags: ["audit", "stock-take", "adjustment", "inventory"],
-      answer: <p className="text-sm">Use the **Visual Count** feature in the Inventory module. You can scan or select items and enter their actual shelf count. Zeneva will log the difference as a 'Stock Adjustment' in your audit trails.</p>
+      answer: <p className="text-sm">Use the **Visual Count** feature in the Inventory module. You can scan or select items and enter their actual shelf count. Zeneva will log the difference as a &apos;Stock Adjustment&apos; in your audit trails.</p>
   },
   {
       question: "Does Zeneva support composite products (Bundles/Kits)?",
       tags: ["bundle", "kit", "composite", "inventory"],
-      answer: <p className="text-sm">Yes. You can create a 'Bundle' product that is linked to multiple other items. When the bundle is sold, the stock levels for all its components are automatically decremented.</p>
+      answer: <p className="text-sm">Yes. You can create a &apos;Bundle&apos; product that is linked to multiple other items. When the bundle is sold, the stock levels for all its components are automatically decremented.</p>
   },
   {
       question: "How to export inventory reports for accounting?",
@@ -253,17 +253,17 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
   {
       question: "Can I generate AI insights while I am offline?",
       tags: ["ai", "offline", "intelligence"],
-      answer: <p className="text-sm">Yes. Zeneva's core intelligence module is deterministic and runs locally on your computer. It analyzes your SQLite data to provide "Customer Intelligence" and "Sales Forecasts" even without internet.</p>
+      answer: <p className="text-sm">Yes. Zeneva&apos;s core intelligence module is deterministic and runs locally on your computer. It analyzes your SQLite data to provide &quot;Customer Intelligence&quot; and &quot;Sales Forecasts&quot; even without internet.</p>
   },
   {
       question: "How do I use 'Report Builder' for custom analysis?",
       tags: ["reports", "custom", "ai", "builder"],
-      answer: <p className="text-sm">The Report Builder allows you to combine different data points (e.g., Sales by Staff vs. Category). Zen AI can then interpret this data to show you a text-based "Strategic Summary" of your performance.</p>
+      answer: <p className="text-sm">The Report Builder allows you to combine different data points (e.g., Sales by Staff vs. Category). Zen AI can then interpret this data to show you a text-based &quot;Strategic Summary&quot; of your performance.</p>
   },
   {
       question: "Does the AI learn from my specific business habits?",
       tags: ["ai", "learning", "data"],
-      answer: <p className="text-sm">Zen AI respects your privacy. It analyzes your data locally on your device to build a model of your business's "Sales Velocity". This data is never used to train global models that your competitors could see.</p>
+      answer: <p className="text-sm">Zen AI respects your privacy. It analyzes your data locally on your device to build a model of your business&apos;s &quot;Sales Velocity&quot;. This data is never used to train global models that your competitors could see.</p>
   },
 
   // --- CATEGORY: CUSTOMERS & CRM (5) ---
@@ -275,22 +275,22 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
   {
       question: "How do I track 'Store Credit' for my frequent buyers?",
       tags: ["credit", "customer", "debt", "crm"],
-      answer: <p className="text-sm">In the Customer profile, you can view their 'Wallet'. If a customer overpays or has a refund returned to store credit, it is tracked here and can be selected as a payment method in the POS.</p>
+      answer: <p className="text-sm">In the Customer profile, you can view their &apos;Wallet&apos;. If a customer overpays or has a refund returned to store credit, it is tracked here and can be selected as a payment method in the POS.</p>
   },
   {
       question: "Can I capture customer phone numbers and emails at checkout?",
       tags: ["crm", "customer", "data-collection"],
-      answer: <p className="text-sm">Yes. At checkout, you can quickly search for an existing customer or click "+" to add a new one. This allows you to track their purchase history and generate AI segments for them.</p>
+      answer: <p className="text-sm">Yes. At checkout, you can quickly search for an existing customer or click &quot;+&quot; to add a new one. This allows you to track their purchase history and generate AI segments for them.</p>
   },
   {
       question: "What are 'Customer Segments' and how do I use them?",
       tags: ["marketing", "segments", "vip", "churn"],
-      answer: <p className="text-sm">Zen AI automatically categorizes your buyers into groups like **"VIP Patrons"** (High spend), **"At-Risk"** (Haven't visited recently), and **"Occasional Buyers"**. This helps you know who to send special offers to.</p>
+      answer: <p className="text-sm">Zen AI automatically categorizes your buyers into groups like **&quot;VIP Patrons&quot;** (High spend), **&quot;At-Risk&quot;** (Haven&apos;t visited recently), and **&quot;Occasional Buyers&quot;**. This helps you know who to send special offers to.</p>
   },
   {
       question: "Can I manage customer debts (Buy Now Pay Later)?",
       tags: ["debt", "credit", "sales", "unpaid"],
-      answer: <p className="text-sm">Yes. Zeneva allows you to record an order as 'Unpaid'. It will track the outstanding balance on the customer's profile, and you can record payments against that debt later to balance the books.</p>
+      answer: <p className="text-sm">Yes. Zeneva allows you to record an order as &apos;Unpaid&apos;. It will track the outstanding balance on the customer&apos;s profile, and you can record payments against that debt later to balance the books.</p>
   },
 
   // --- CATEGORY: SECURITY & MULTI-STORE (5) ---
@@ -321,7 +321,7 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
   {
       question: "Can I manage multiple shops under one account?",
       tags: ["multi-store", "outlet", "enterprise"],
-      answer: <p className="text-sm">Absolutely. Zeneva is an **Enterprise-Ready architecture**. You can create multiple 'Outlets' and monitor stock transfers, individual shop profits, and total company performance from one master dashboard.</p>
+      answer: <p className="text-sm">Absolutely. Zeneva is an **Enterprise-Ready architecture**. You can create multiple &apos;Outlets&apos; and monitor stock transfers, individual shop profits, and total company performance from one master dashboard.</p>
   },
   {
       question: "How do I enable Two-Factor Authentication (2FA)?",
@@ -333,12 +333,12 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
   {
       question: "How do I upgrade or cancel my Zeneva subscription?",
       tags: ["billing", "subscription", "upgrade", "cancel"],
-      answer: <p className="text-sm">You can manage your plan under **Settings {'->'} Subscription**. To upgrade, select your preferred plan and follow the secure checkout. To cancel, click 'Downgrade to Starter' or contact support if you wish to close your business instance entirely.</p>
+      answer: <p className="text-sm">You can manage your plan under **Settings {'->'} Subscription**. To upgrade, select your preferred plan and follow the secure checkout. To cancel, click &apos;Downgrade to Starter&apos; or contact support if you wish to close your business instance entirely.</p>
   },
   {
       question: "Will I lose my data if my subscription expires?",
       tags: ["billing", "data", "expiry", "safety"],
-      answer: <p className="text-sm">No. We never delete your business data without your explicit request. If your subscription expires, your account will move to 'Read-Only' mode until a payment is made, allowing you to still view and export your past records.</p>
+      answer: <p className="text-sm">No. We never delete your business data without your explicit request. If your subscription expires, your account will move to &apos;Read-Only&apos; mode until a payment is made, allowing you to still view and export your past records.</p>
   },
   {
       question: "Can I get a custom plan for a large enterprise with 50+ stores?",
@@ -353,7 +353,7 @@ const faqItems: { question: string; answer: React.ReactNode; id?: string; tags: 
   {
       question: "Does Zeneva offer a free trial for the Pro features?",
       tags: ["trial", "pricing", "pro", "free"],
-      answer: <p className="text-sm">We don't run a trial — we do something better. Our **Starter plan is free forever** (up to 50 products), so there's no countdown and nothing gets taken away. When you need more products, more staff accounts or Zen AI, you can upgrade to Pro or Business at any time, and drop back to Starter whenever you like without losing any of your data.</p>
+      answer: <p className="text-sm">We don&apos;t run a trial — we do something better. Our **Starter plan is free forever** (up to 50 products), so there&apos;s no countdown and nothing gets taken away. When you need more products, more staff accounts or Zen AI, you can upgrade to Pro or Business at any time, and drop back to Starter whenever you like without losing any of your data.</p>
   }
 ];
 
@@ -679,7 +679,7 @@ function UserSupportChat({ userProfile }: { userProfile: UserProfile }) {
             }
             setIsLoading(false);
         }
-    }, [threads, isLoadingThreads]);
+    }, [threads, isLoadingThreads, firestore]);
     
     // Bounded to the most recent SUPPORT_MESSAGE_LIMIT messages. Fetched
     // descending and reversed for display below: the thread renders oldest to
@@ -1247,6 +1247,7 @@ function UserSupportChat({ userProfile }: { userProfile: UserProfile }) {
                                               className="mb-2 rounded-lg overflow-hidden border max-w-sm relative group/img cursor-pointer" 
                                               onClick={() => setActiveLightboxUrl(msg.mediaUrl)}
                                           >
+                                              {/* eslint-disable-next-line @next/next/no-img-element -- chat attachment URL supplied at runtime (may be a blob: or CDN URL) */}
                                               <img src={msg.mediaUrl} alt={t('support.attachedFile')} className="w-full h-auto object-cover max-h-60 group-hover/img:scale-105 transition-transform duration-300" />
                                               {msg.isUploading && (
                                                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[1px]">
@@ -1421,6 +1422,7 @@ function UserSupportChat({ userProfile }: { userProfile: UserProfile }) {
 
                     {/* Image Container */}
                     <div className="flex-1 flex items-center justify-center p-6 overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element -- runtime image URL that next/image cannot optimize without a remote allowlist */}
                         <img 
                             src={previewUrl} 
                             alt={t('support.preview')}
@@ -1483,6 +1485,7 @@ function UserSupportChat({ userProfile }: { userProfile: UserProfile }) {
 
                     {/* Deep expanded high-res image display */}
                     <div className="relative max-w-[95vw] max-h-[92vh] flex items-center justify-center overflow-auto p-2" onClick={(e) => e.stopPropagation()}>
+                        {/* eslint-disable-next-line @next/next/no-img-element -- runtime image URL that next/image cannot optimize without a remote allowlist */}
                         <img 
                             src={activeLightboxUrl} 
                             alt={t('support.expandedView')}

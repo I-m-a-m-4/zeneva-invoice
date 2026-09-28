@@ -125,6 +125,7 @@ export function useCollection<T = any>(
         console.warn('useCollection: listener teardown threw, ignoring.', err);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- 'data' is only read to gate the initial spinner; listing it would tear down and re-create the Firestore listener on every snapshot.
   }, [memoizedTargetRefOrQuery]);
 
   if (memoizedTargetRefOrQuery && !memoizedTargetRefOrQuery.__memo) {

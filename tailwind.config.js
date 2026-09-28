@@ -52,7 +52,12 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ["'Bricolage Grotesque'", 'sans-serif'],
+        sans: ["var(--font-jakarta)", "'Plus Jakarta Sans'", '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        display: ["'Clash Display'", "'Nexa'", "var(--font-jakarta)", "'Plus Jakarta Sans'", 'sans-serif'],
+        clash: ["'Clash Display'", "'Nexa'", 'sans-serif'],
+        nexa: ["'Nexa'", "'Clash Display'", 'sans-serif'],
+        body: ["var(--font-jakarta)", "'Plus Jakarta Sans'", 'sans-serif'],
+        jakarta: ["var(--font-jakarta)", "'Plus Jakarta Sans'", 'sans-serif'],
         serif: ["'Instrument Serif'", 'serif'],
         mono: ["'Source Code Pro'", 'monospace'],
       },

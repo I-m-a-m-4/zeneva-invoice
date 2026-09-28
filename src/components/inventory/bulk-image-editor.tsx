@@ -287,7 +287,7 @@ export function BulkImageEditor({
             <div>
               <p className="font-semibold text-base">Ready to fetch images</p>
               <p className="text-sm text-muted-foreground mt-1">
-                We'll search for product images for each of your {cappedProducts.length} products using their names.
+                We&apos;ll search for product images for each of your {cappedProducts.length} products using their names.
               </p>
             </div>
             <Button onClick={fetchAll} size="lg" className="gap-2 px-8">

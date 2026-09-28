@@ -397,7 +397,7 @@ function UserDetailContent() {
                                 <h3 className="mb-1 text-sm font-semibold">Permissions</h3>
                                 <p className="mb-3 text-xs text-muted-foreground">
                                     Only overrides are stored. Anything not listed falls back to the default for this
-                                    user's role.
+                                    user&apos;s role.
                                 </p>
                                 {permissions.length ? (
                                     <div className="flex flex-wrap gap-1.5">
@@ -449,7 +449,7 @@ function UserDetailContent() {
                                 <>This marks <strong>{user.name}</strong> inactive so they cannot log in again. Their data is preserved. Any session they already have open stays valid until it expires — revoke sessions to end those now.</>
                             )}
                             {confirm === 'activate' && (
-                                <>This reactivates <strong>{user.name}</strong>'s account and lets them log in again.</>
+                                <>This reactivates <strong>{user.name}</strong>&apos;s account and lets them log in again.</>
                             )}
                             {confirm === 'revoke' && (
                                 <>This signs <strong>{user.name}</strong> out of every device immediately. They can sign back in unless the account is also deactivated.</>

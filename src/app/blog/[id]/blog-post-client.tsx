@@ -225,7 +225,7 @@ export default function BlogPostClient({ initialPostData }: { initialPostData?: 
     };
 
     fetchPost();
-  }, [firestore, id, router]);
+  }, [firestore, id, router, initialPostData]);
 
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href);

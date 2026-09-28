@@ -70,6 +70,7 @@ export default function CinemaHeader({ threshold = 50 }: { threshold?: number })
           {/* Logo */}
           <Link href="/" className="flex items-center group">
             <div className="transition-all duration-300">
+                {/* eslint-disable-next-line @next/next/no-img-element -- logo URL is configured at runtime and may be an external or data: URL */}
                 <img 
                     src={AppConfig.logoUrl} 
                     alt="Zeneva Logo" 
@@ -123,6 +124,7 @@ export default function CinemaHeader({ threshold = 50 }: { threshold?: number })
             >
                 {/* Header of Drawer */}
                 <div className="p-6 flex items-center justify-between border-b border-dashed border-slate-200">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- logo URL is configured at runtime and may be an external or data: URL */}
                     <img 
                         src={AppConfig.logoUrl} 
                         alt="Zeneva Logo" 

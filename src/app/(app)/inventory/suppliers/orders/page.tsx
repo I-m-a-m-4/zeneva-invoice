@@ -253,7 +253,7 @@ export default function PurchaseOrdersPage() {
   });
 
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 max-w-7xl mx-auto">
+    <div className="flex-1 space-y-6 p-4 md:p-8 w-full">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -325,7 +325,7 @@ export default function PurchaseOrdersPage() {
                     Supplier: <span className="text-foreground">{order.supplierName}</span> · {order.items?.length || 0} line item(s)
                   </p>
                   {order.notes && (
-                    <p className="text-xs text-muted-foreground italic">"{order.notes}"</p>
+                    <p className="text-xs text-muted-foreground italic">&quot;{order.notes}&quot;</p>
                   )}
                 </div>
 

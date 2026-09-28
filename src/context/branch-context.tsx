@@ -27,6 +27,13 @@ export function BranchProvider({ children }: { children: ReactNode }) {
   const [isLoadingBranches, setIsLoadingBranches] = useState(true);
   const [impersonationTrigger, setImpersonationTrigger] = useState(0);
   const lastLoadedUserIdRef = React.useRef<string | null>(null);
+  // The branches read below must not re-run every time the user switches branch
+  // (it re-issues the whole query), so the current selection is mirrored into a
+  // ref for the validation step instead of being closed over as a dependency.
+  const activeBranchIdRef = React.useRef(activeBranchId);
+  useEffect(() => {
+    activeBranchIdRef.current = activeBranchId;
+  }, [activeBranchId]);
   // Branches gate every other screen, and the effect below only re-runs when the
   // user changes. If the load dies because Firestore had not connected yet, it
   // would never be retried and the app would sit empty for the whole session -
@@ -225,8 +232,9 @@ export function BranchProvider({ children }: { children: ReactNode }) {
               localStorage.setItem(`zeneva_cached_branches_${targetUserId}`, JSON.stringify(fetchedBranches));
             }
             
-            if (fetchedBranches.length > 0 && activeBranchId !== 'all') {
-               const isValid = fetchedBranches.find(b => b.id === activeBranchId);
+            const currentSelection = activeBranchIdRef.current;
+            if (fetchedBranches.length > 0 && currentSelection !== 'all') {
+               const isValid = fetchedBranches.find(b => b.id === currentSelection);
                if (!isValid) {
                  setActiveBranchId('all');
                }

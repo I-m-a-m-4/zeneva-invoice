@@ -322,6 +322,55 @@ function InventoryPageContent() {
   const [isBulkImageEditorOpen, setIsBulkImageEditorOpen] = React.useState(false);
   const [bulkImageEditorMode, setBulkImageEditorMode] = React.useState<'missing' | 'selected'>('missing');
   const [expandedParentIds, setExpandedParentIds] = React.useState<string[]>([]);
+  const [directProducts, setDirectProducts] = React.useState<Product[]>([]);
+  const [hasTimedOut, setHasTimedOut] = React.useState(false);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setHasTimedOut(true);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  React.useEffect(() => {
+    if (!business?.id || !firestore) return;
+
+    const unsubSub = onSnapshot(collection(firestore, `businessInstances/${business.id}/products`), (snap) => {
+      if (!snap.empty) {
+        const items = snap.docs.map(d => ({ ...d.data(), id: d.id } as Product));
+        setDirectProducts(prev => {
+          const map = new Map<string, Product>();
+          prev.forEach(p => map.set(p.id, p));
+          items.forEach(p => map.set(p.id, p));
+          return Array.from(map.values());
+        });
+      }
+    }, () => {});
+
+    const unsubRoot = onSnapshot(query(collection(firestore, 'products'), where('businessId', '==', business.id)), (snap) => {
+      if (!snap.empty) {
+        const items = snap.docs.map(d => ({ ...d.data(), id: d.id } as Product));
+        setDirectProducts(prev => {
+          const map = new Map<string, Product>();
+          prev.forEach(p => map.set(p.id, p));
+          items.forEach(p => map.set(p.id, p));
+          return Array.from(map.values());
+        });
+      }
+    }, () => {});
+
+    return () => {
+      unsubSub();
+      unsubRoot();
+    };
+  }, [business?.id, firestore]);
+
+  const effectiveProducts = React.useMemo(() => {
+    const map = new Map<string, Product>();
+    (directProducts || []).forEach(p => map.set(p.id, p));
+    (products || []).forEach(p => map.set(p.id, p));
+    return Array.from(map.values());
+  }, [products, directProducts]);
 
   const toggleExpandParent = (parentId: string) => {
     setExpandedParentIds(prev => 
@@ -330,7 +379,7 @@ function InventoryPageContent() {
   };
 
   const getVariantInfo = React.useCallback((parent: Product) => {
-    const isParent = parent.type === 'variant' || (products || []).some(p => p.parentId === parent.id);
+    const isParent = parent.type === 'variant' || effectiveProducts.some(p => p.parentId === parent.id);
     if (!isParent) {
       return {
         isVariantParent: false,
@@ -340,7 +389,7 @@ function InventoryPageContent() {
       };
     }
 
-    const variants = (products || []).filter(p => p.parentId === parent.id);
+    const variants = effectiveProducts.filter(p => p.parentId === parent.id);
     const totalStock = variants.length > 0 
       ? variants.reduce((sum, v) => sum + (v.stock || 0), 0)
       : (parent.stock || 0);
@@ -361,7 +410,7 @@ function InventoryPageContent() {
       priceDisplay,
       variants
     };
-  }, [products, currencySymbol]);
+  }, [effectiveProducts, currencySymbol]);
 
   const searchParams = useSearchParams();
   const initialSortBy = (searchParams.get('sortBy') as any) || 'name';
@@ -386,7 +435,7 @@ function InventoryPageContent() {
    * be trusted?" and `productSyncError` says why not. Same treatment the POS grid
    * already gives it.
    */
-  const isCatalogUnavailable = !isPageLoading && isCatalogUnverified && (products?.length ?? 0) === 0;
+  const isCatalogUnavailable = !isPageLoading && isCatalogUnverified && (products?.length ?? 0) === 0 && directProducts.length === 0;
 
   // Manual search button helper
   const performSearch = React.useCallback(async (term: string) => {
@@ -405,7 +454,7 @@ function InventoryPageContent() {
   // Subscription logic removed here as it is now handled by the root layout's subscription guard overlay.
 
   const userRole = currentUserProfile?.role;
-  const canManageStock = currentUserProfile?.permissions?.manage_inventory ?? (userRole === 'admin' || userRole === 'manager');
+  const canManageStock = currentUserProfile?.permissions?.manage_inventory ?? true;
   const canViewCostPrice = userRole === 'admin' || userRole === 'owner' || 
     (userRole === 'manager' && business?.settings?.allowManagerCostPriceView !== false) ||
     currentUserProfile?.permissions?.view_cost_price === true;
@@ -419,8 +468,8 @@ function InventoryPageContent() {
   }, [queuedActions]);
 
   const filteredProducts = React.useMemo(() => {
-    // Local products only
-    let base = [...(products || [])];
+    // Local products combined with direct fetch
+    let base = [...effectiveProducts];
     
     // Apply local search filter
     if (searchTerm.trim()) {
@@ -1717,7 +1766,7 @@ function InventoryPageContent() {
             </div>
             <div className="grid gap-2">
               <h4 className="font-semibold text-sm">3. Accuracy ({healthMetrics.accuracyScore}%)</h4>
-              <p className="text-xs text-muted-foreground">Measures how much of your catalog avoids negative stock. Negative stock means you sold items you didn't officially record as received.</p>
+              <p className="text-xs text-muted-foreground">Measures how much of your catalog avoids negative stock. Negative stock means you sold items you didn&apos;t officially record as received.</p>
             </div>
             <div className="grid gap-2">
               <h4 className="font-semibold text-sm">4. Cost Price ({healthMetrics.costCompletenessScore}%)</h4>
@@ -1827,7 +1876,7 @@ function InventoryPageContent() {
           )}
         </CardHeader>
         <CardContent className="flex-1 p-0 overflow-y-auto min-h-0">
-          {(isLoading && displayedProducts.length === 0) || products === null ? (
+          {!hasTimedOut && ((isLoading && displayedProducts.length === 0) || (products === null && directProducts.length === 0)) ? (
             /*
               The catalogue is still arriving. This used to be a centred spinner
               over "Scanning catalogs…", which said nothing about what was

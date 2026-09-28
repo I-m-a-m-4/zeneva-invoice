@@ -1,10 +1,33 @@
 
 import admin from 'firebase-admin';
 
+import fs from 'fs';
+import path from 'path';
+
 // Check for required environment variables
-const projectId = process.env.FIREBASE_PROJECT_ID;
-const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+let projectId = process.env.FIREBASE_PROJECT_ID;
+let clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+let privateKey = process.env.FIREBASE_PRIVATE_KEY;
+
+// Fallback: If any environment variable is missing, check for a service account JSON file in root
+if (!projectId || !clientEmail || !privateKey) {
+    try {
+        const rootDir = process.cwd();
+        const files = fs.readdirSync(rootDir);
+        const serviceAccountFile = files.find(f => 
+            (f.includes('firebase-adminsdk') || f.includes('serviceAccountKey')) && f.endsWith('.json')
+        );
+        if (serviceAccountFile) {
+            const raw = fs.readFileSync(path.join(rootDir, serviceAccountFile), 'utf-8');
+            const parsed = JSON.parse(raw);
+            projectId = projectId || parsed.project_id;
+            clientEmail = clientEmail || parsed.client_email;
+            privateKey = privateKey || parsed.private_key;
+        }
+    } catch (e) {
+        // Fallback file scan failed, proceed to normal env validation below
+    }
+}
 
 if (!admin.apps.length) {
     if (projectId && clientEmail && privateKey) {

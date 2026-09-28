@@ -300,7 +300,7 @@ export default function ReportsDashboard() {
             totalCost
         }
 
-    }, [reportBatchReceipts, receipts, products, customers, stats, activeBranchId]);
+    }, [reportBatchReceipts, reportBatchExpenses, receipts, products, customers, stats, activeBranchId]);
 
     // Surgical Analytics
     const { fetchMonthlyAnalytics } = usePOS();

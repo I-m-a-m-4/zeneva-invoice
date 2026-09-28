@@ -182,7 +182,7 @@ function SignupPageContent() {
         form.setValue('email', emailFromQuery);
       }
     }
-  }, [invitationCode, firestore, router, form, toast, t]);
+  }, [invitationCode, firestore, router, form, toast, t, searchParams]);
 
   // Handle getRedirectResult only for Tauri/WebView clients that used redirect
   useEffect(() => {
@@ -211,13 +211,13 @@ function SignupPageContent() {
             await waitForUserProfile(firestore, user.uid);
             triggerRefresh();
             await new Promise(resolve => setTimeout(resolve, 1500));
-            router.push(invitationCode ? '/sales/pos/select-products' : '/onboarding');
+            router.push(invitationCode ? '/dashboard' : '/onboarding');
           } else {
             const profileData = userDocSnap.data();
             triggerRefresh();
             await new Promise(resolve => setTimeout(resolve, 1500));
             if (profileData.surveyCompleted === false) {
-              router.push(invitationCode ? '/sales/pos/select-products' : '/onboarding');
+              router.push(invitationCode ? '/dashboard' : '/onboarding');
             } else {
               router.push('/dashboard');
             }
@@ -310,13 +310,13 @@ function SignupPageContent() {
 
         // Brief pause so the POS context has time to pick up the new auth state
         await new Promise(resolve => setTimeout(resolve, 1200));
-        router.push(invitationCode ? '/sales/pos/select-products' : '/onboarding');
+        router.push(invitationCode ? '/dashboard' : '/onboarding');
       } else {
         const profileData = userDocSnap.data();
         triggerRefresh();
         await new Promise(resolve => setTimeout(resolve, 1200));
         if (profileData.surveyCompleted === false) {
-          router.push(invitationCode ? '/sales/pos/select-products' : '/onboarding');
+          router.push(invitationCode ? '/dashboard' : '/onboarding');
         } else {
           router.push('/dashboard');
         }
@@ -386,7 +386,7 @@ function SignupPageContent() {
       }).catch(err => console.error('Failed to send welcome email:', err));
 
       await new Promise(resolve => setTimeout(resolve, 1500));
-      router.push(invitationCode ? '/sales/pos/select-products' : '/onboarding');
+      router.push(invitationCode ? '/dashboard' : '/onboarding');
 
     } catch (error: any) {
       let description = t('auth.tryAgainShort');
@@ -417,6 +417,7 @@ function SignupPageContent() {
           <div className="mx-auto grid w-full max-w-[380px] gap-4 sm:gap-6">
             <div className="grid gap-2 text-center">
               <div className="flex items-center justify-center gap-2 mb-4">
+                {/* eslint-disable-next-line @next/next/no-img-element -- logo URL is configured at runtime and may be an external or data: URL */}
                 <img src={AppConfig.logoUrl} alt={t('auth.logoAlt')} className="h-12 sm:h-16 w-auto" />
               </div>
               <h1 className="text-2xl sm:text-3xl font-bold">{t('auth.signupTitle')}</h1>

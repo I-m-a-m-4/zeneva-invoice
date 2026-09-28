@@ -913,6 +913,7 @@ export default function OnboardingPage() {
                               avoidCollisions={false}
                               renderSelected={(opt) => (
                                 <span className="flex items-center gap-2">
+                                  {/* eslint-disable-next-line @next/next/no-img-element -- flagcdn.com is a runtime-selected flag that is not in images.remotePatterns */}
                                   <img
                                     src={`https://flagcdn.com/w40/${localeDefinitionFor(opt.value).flag}.png`}
                                     alt=""
@@ -923,6 +924,7 @@ export default function OnboardingPage() {
                               )}
                               renderItem={(opt) => (
                                 <span className="flex items-center gap-2">
+                                  {/* eslint-disable-next-line @next/next/no-img-element -- flagcdn.com is a runtime-selected flag that is not in images.remotePatterns */}
                                   <img
                                     src={`https://flagcdn.com/w40/${localeDefinitionFor(opt.value).flag}.png`}
                                     alt=""
@@ -964,12 +966,14 @@ export default function OnboardingPage() {
                                 avoidCollisions={false}
                                 renderSelected={(opt) => (
                                   <span className="flex items-center gap-2">
+                                    {/* eslint-disable-next-line @next/next/no-img-element -- runtime image URL that next/image cannot optimize without a remote allowlist */}
                                     <img src={opt.flag} alt={opt.label} className="w-5 h-3.5 rounded-sm object-cover shrink-0" />
                                     <span>{opt.label}</span>
                                   </span>
                                 )}
                                 renderItem={(opt) => (
                                   <span className="flex items-center gap-2">
+                                    {/* eslint-disable-next-line @next/next/no-img-element -- runtime image URL that next/image cannot optimize without a remote allowlist */}
                                     <img src={opt.flag} alt={opt.label} className="w-5 h-3.5 rounded-sm object-cover shrink-0" />
                                     <span>{opt.label}</span>
                                   </span>

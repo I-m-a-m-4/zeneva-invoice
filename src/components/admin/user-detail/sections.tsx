@@ -29,6 +29,7 @@
 
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
     collection,
     getDocs,
@@ -51,6 +52,7 @@ import {
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useFirestore } from '@/firebase';
 import { withFirestoreRetry } from '@/firebase/retry';
@@ -222,7 +224,7 @@ export function SalesSection({
     return (
         <div className="space-y-4">
             <p className="text-xs text-muted-foreground">
-                Scanned from this business's most recent <strong>{SALES_WINDOW.toLocaleString()}</strong> sales
+                Scanned from this business&apos;s most recent <strong>{SALES_WINDOW.toLocaleString()}</strong> sales
                 {rows.length ? ` (${rows.length.toLocaleString()} found)` : ''} and matched on
                 <code className="mx-1 rounded bg-muted px-1 py-0.5">createdBy</code>.
                 Older sales, and sales recorded before that field existed, are not counted here.
@@ -324,7 +326,7 @@ export function AuditSection({ user, active }: { user: UserProfile; active: bool
     return (
         <div className="space-y-4">
             <p className="text-xs text-muted-foreground">
-                This user's entries from their business's most recent{' '}
+                This user&apos;s entries from their business&apos;s most recent{' '}
                 <strong>{AUDIT_WINDOW.toLocaleString()}</strong> audit events
                 {rows.length ? ` (${rows.length.toLocaleString()} scanned)` : ''}.
             </p>

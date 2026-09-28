@@ -96,6 +96,7 @@ export default function BackupsAdminPage() {
 
   useEffect(() => {
     fetchBackupData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-time fetch only; fetchBackupData is re-created on every render and is not a stable dependency
   }, []);
 
   useEffect(() => {

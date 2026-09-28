@@ -225,7 +225,7 @@ export default function TerminalAlertsPage() {
         const amount = a.amount || parseFloat(a.body.match(/[\d,]+(\.\d+)?/)?.[0]?.replace(/,/g, '') || '0');
         return sum + amount;
       }, 0);
-  }, [alerts]);
+  }, [alerts, date]);
 
   // Filter alerts by search query and date
   const filteredAlerts = React.useMemo(() => {
@@ -291,7 +291,7 @@ export default function TerminalAlertsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
           <Card className="bg-slate-50 border-slate-200">
             <CardHeader className="pb-2 flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-medium text-slate-500">Today's Cash Sales</CardTitle>
+              <CardTitle className="text-sm font-medium text-slate-500">Today&apos;s Cash Sales</CardTitle>
               <Banknote className="h-4 w-4 text-slate-400" />
             </CardHeader>
             <CardContent>

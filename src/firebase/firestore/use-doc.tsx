@@ -111,6 +111,7 @@ export function useDoc<T = any>(
         console.warn('useDoc: listener teardown threw, ignoring.', err);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- 'data' is only read to gate the initial spinner; listing it would tear down and re-create the Firestore listener on every snapshot.
   }, [memoizedDocRef]); // Re-run if the memoizedDocRef changes.
 
   return { data, isLoading, error, mutate: setData };

@@ -168,7 +168,7 @@ export default function AdminPromoToastPage() {
             </Badge>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Display a sleek, colorful floating campaign card in the bottom-right corner of merchants' desktop and web screens.
+            Display a sleek, colorful floating campaign card in the bottom-right corner of merchants&apos; desktop and web screens.
           </p>
         </div>
 
@@ -264,7 +264,7 @@ export default function AdminPromoToastPage() {
                     {config.displayMode === 'card' && <CheckCircle2 className="h-4 w-4 text-primary" />}
                   </div>
                   <p className="text-[11px] text-muted-foreground mt-1">
-                    Image banner at top, with badge, headline, message copy, and shiny "Get my OFFER" button.
+                    Image banner at top, with badge, headline, message copy, and shiny &quot;Get my OFFER&quot; button.
                   </p>
                 </div>
               </div>
@@ -607,6 +607,7 @@ export default function AdminPromoToastPage() {
                     {config.displayMode === 'poster' ? (
                       <div className="relative overflow-hidden cursor-pointer">
                         {config.imageUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element -- runtime image URL that next/image cannot optimize without a remote allowlist
                           <img
                             src={config.imageUrl}
                             alt="Promo Poster Preview"
@@ -632,6 +633,7 @@ export default function AdminPromoToastPage() {
                       <div className="relative flex flex-col">
                         {config.imageUrl && (
                           <div className="relative h-32 w-full overflow-hidden bg-muted/30">
+                            {/* eslint-disable-next-line @next/next/no-img-element -- runtime image URL that next/image cannot optimize without a remote allowlist */}
                             <img
                               src={config.imageUrl}
                               alt="Banner Preview"

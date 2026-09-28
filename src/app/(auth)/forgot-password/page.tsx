@@ -57,6 +57,7 @@ export default function ForgotPasswordPage() {
         <div className="mx-auto grid w-full max-w-[350px] gap-6">
           <div className="grid gap-2 text-center">
             <Link href="/" className="flex items-center justify-center gap-2 mb-4">
+              {/* eslint-disable-next-line @next/next/no-img-element -- logo URL is configured at runtime and may be an external or data: URL */}
               <img src={AppConfig.logoUrl} alt={t('auth.logoAlt')} className="h-16 w-auto" />
             </Link>
             <h1 className="text-3xl font-bold">{t('auth.forgotPasswordTitle')}</h1>

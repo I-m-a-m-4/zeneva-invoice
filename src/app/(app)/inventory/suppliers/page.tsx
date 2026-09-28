@@ -190,7 +190,7 @@ export default function SuppliersPage() {
   );
 
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 max-w-7xl mx-auto">
+    <div className="flex-1 space-y-6 p-4 md:p-8 w-full">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -279,7 +279,7 @@ export default function SuppliersPage() {
                 )}
                 {supplier.notes && (
                   <div className="p-2 bg-muted/40 rounded text-[11px] text-muted-foreground italic mt-2">
-                    "{supplier.notes}"
+                    &quot;{supplier.notes}&quot;
                   </div>
                 )}
               </CardContent>

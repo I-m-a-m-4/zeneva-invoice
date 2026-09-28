@@ -316,9 +316,9 @@ export default function NotificationsPage() {
             <div className="h-24 w-24 rounded-full bg-muted flex items-center justify-center mb-6 shadow-inner">
               <Bell className="h-10 w-10 text-muted-foreground/40" />
             </div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">You're all caught up!</h3>
+            <h3 className="text-2xl font-bold text-foreground mb-2">You&apos;re all caught up!</h3>
             <p className="text-muted-foreground max-w-md mx-auto">
-              You don't have any new notifications. When you receive system alerts, inventory warnings, or sales updates, they will appear here.
+              You don&apos;t have any new notifications. When you receive system alerts, inventory warnings, or sales updates, they will appear here.
             </p>
             <Button asChild variant="outline" className="mt-8">
               <Link href="/dashboard">Return to Dashboard</Link>

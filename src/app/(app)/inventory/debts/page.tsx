@@ -78,18 +78,6 @@ export default function DebtsPage() {
         }
     }, [currentUserProfile, isLoading, router]);
 
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center h-[50vh]">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-        );
-    }
-
-    const hasDebtPermission = currentUserProfile?.permissions?.manage_inventory ?? (currentUserProfile?.role === 'admin' || currentUserProfile?.role === 'manager');
-    if (!hasDebtPermission) {
-        return null; // Effect will handle redirect
-    }
     const [searchTerm, setSearchTerm] = React.useState('');
     const [isRefreshing, setIsRefreshing] = React.useState(false);
     const [selectedProductOrders, setSelectedProductOrders] = React.useState<any[] | null>(null);
@@ -124,6 +112,19 @@ export default function DebtsPage() {
     const potentialRevenue = React.useMemo(() => {
         return debtProducts.reduce((acc, p) => acc + (Math.abs(p.stock || 0) * (p.price - (p.costPrice || 0))), 0);
     }, [debtProducts]);
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-[50vh]">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
+
+    const hasDebtPermission = currentUserProfile?.permissions?.manage_inventory ?? (currentUserProfile?.role === 'admin' || currentUserProfile?.role === 'manager');
+    if (!hasDebtPermission) {
+        return null; // Effect will handle redirect
+    }
 
     if (isLoading) {
         return (

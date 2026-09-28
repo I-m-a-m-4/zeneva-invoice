@@ -101,7 +101,7 @@ export default function ContactContent() {
                             Contact Us
                         </h1>
                         <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
-                            Have questions or feedback? We'd love to hear from you. We typically respond within 24 hours. 
+                            Have questions or feedback? We&apos;d love to hear from you. We typically respond within 24 hours. 
                             You can also learn more <Link href="/about/our-mission" className="text-primary font-bold hover:underline">about our mission</Link>.
                         </p>
                     </div>

@@ -508,7 +508,7 @@ export default function AdminNotificationsPage() {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription className="break-words">
-                            This action cannot be undone. This will permanently delete the notification titled "<strong>{notificationToDelete?.title}</strong>".
+                            This action cannot be undone. This will permanently delete the notification titled &quot;<strong>{notificationToDelete?.title}</strong>&quot;.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

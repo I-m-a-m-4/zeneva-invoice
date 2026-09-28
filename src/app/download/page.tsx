@@ -64,6 +64,17 @@ import { useI18n } from '@/context/i18n-context';
 
 
 
+const androidMockups = [
+  { src: "/zeneva_android_dashboard_mockup.png", label: "Dashboard" },
+  { src: "/zeneva_android_inventory_mockup.png", label: "Inventory" },
+  { src: "/zeneva_android_pos_mockup.png", label: "Checkout" },
+  { src: "/zeneva_android_report_mockup.png", label: "Analytics" },
+  { src: "/zeneva_android_storefront_mockup.png", label: "Storefront" },
+  { src: "/zeneva_android_toubleshoot_mockup.png", label: "Support" }
+];
+
+const phrases = ["Enter your work email", "Start free, stay free", "Unlock Zen AI insights", "Join 30+ smart retailers"];
+
 export default function DownloadPage() {
   const { t } = useI18n();
   const [version, setVersion] = useState(AppConfig.version || "2.9.2");
@@ -80,14 +91,6 @@ export default function DownloadPage() {
   }, []);
 
   const [mounted, setMounted] = useState(false);
-  const androidMockups = [
-    { src: "/zeneva_android_dashboard_mockup.png", label: "Dashboard" },
-    { src: "/zeneva_android_inventory_mockup.png", label: "Inventory" },
-    { src: "/zeneva_android_pos_mockup.png", label: "Checkout" },
-    { src: "/zeneva_android_report_mockup.png", label: "Analytics" },
-    { src: "/zeneva_android_storefront_mockup.png", label: "Storefront" },
-    { src: "/zeneva_android_toubleshoot_mockup.png", label: "Support" }
-  ];
   const [activeMockup, setActiveMockup] = useState(0);
 
   useEffect(() => {
@@ -102,7 +105,6 @@ export default function DownloadPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [charIndex, setCharIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const phrases = ["Enter your work email", "Start free, stay free", "Unlock Zen AI insights", "Join 30+ smart retailers"];
 
   useEffect(() => {
     setMounted(true);
@@ -568,7 +570,7 @@ export default function DownloadPage() {
                                 <div className="space-y-4">
                                     <h2 className="text-2xl md:text-6xl font-medium tracking-tight text-slate-950 font-display">Zeneva Android</h2>
                                     <p className="text-slate-500 font-medium text-sm md:text-lg leading-relaxed max-w-2xl">
-                                        Tactical mobile kit. Direct APK installation for smartphones and portable POS terminals. Zeneva on Android isn't just a companion app—it's the full engine in your pocket.
+                                        Tactical mobile kit. Direct APK installation for smartphones and portable POS terminals. Zeneva on Android isn&apos;t just a companion app—it&apos;s the full engine in your pocket.
                                     </p>
                                 </div>
                                 <div className="flex flex-wrap items-center gap-4">
@@ -688,7 +690,7 @@ export default function DownloadPage() {
                                 <span className="text-slate-400">Retail Reality.</span>
                             </h2>
                             <p className="text-slate-600 font-medium text-lg leading-relaxed max-w-xl">
-                                Retail isn't just software. It's hardware. Zeneva talks directly to your printers and scanners without mid-layer drivers that break during updates.
+                                Retail isn&apos;t just software. It&apos;s hardware. Zeneva talks directly to your printers and scanners without mid-layer drivers that break during updates.
                             </p>
                             <div className="space-y-6 pt-4">
                                 {[
@@ -800,6 +802,7 @@ export default function DownloadPage() {
                         </a>
 
                         {/* Direct Windows Download */}
+                        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- API route streaming the installer; client-side routing must not intercept it */}
                         <a
                             href="/api/download/windows"
                             className="group flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 px-8 py-5 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] min-w-[260px]"

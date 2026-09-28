@@ -55,7 +55,9 @@ import {
   Laptop,
   Smartphone,
   Globe,
+  RefreshCw,
 } from 'lucide-react';
+import { adminApiFetch } from '@/lib/admin-api';
 import { useUser, useFirestore, useDoc, useMemoFirebase, useCollection } from '@/firebase';
 import { collection, doc, query, where, deleteDoc, runTransaction } from 'firebase/firestore';
 import type { UserProfile, Invitation, BusinessInstance } from '@/types';
@@ -95,6 +97,7 @@ import {
   type UserSegment,
 } from '@/components/admin/user-detail/user-segments';
 import { useDeferredMobileRender } from '@/hooks/use-deferred-render';
+import { cn } from '@/lib/utils';
 
 function useCurrentUserProfile() {
   const { user } = useUser();
@@ -247,16 +250,44 @@ export default function UsersPage() {
   const canManageUsers = currentUser?.id === 'jzQgCHzaObeUbeYklTLtQQh03G53' ||
                          currentUser?.email === 'belloimam431@gmail.com';
 
+  const [apiUsers, setApiUsers] = React.useState<UserProfile[] | null>(null);
+  const [isApiLoading, setIsApiLoading] = React.useState(true);
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
+
+  const fetchUsers = React.useCallback(async (isManual = false) => {
+    if (!canManageUsers) return;
+    if (isManual) setIsRefreshing(true);
+    try {
+      const data = await adminApiFetch<UserProfile[]>('/api/admin/users');
+      if (Array.isArray(data)) {
+        setApiUsers(data);
+      }
+    } catch (err) {
+      console.error('Failed to load users from admin API:', err);
+    } finally {
+      setIsApiLoading(false);
+      if (isManual) setIsRefreshing(false);
+    }
+  }, [canManageUsers]);
+
+  React.useEffect(() => {
+    fetchUsers();
+    // 30-second live polling for active users presence and lastSeen
+    const interval = setInterval(() => fetchUsers(false), 30000);
+    return () => clearInterval(interval);
+  }, [fetchUsers]);
+
   const usersQuery = useMemoFirebase(() => {
     if (!firestore || !canManageUsers) return null;
     return query(collection(firestore, 'users'));
   }, [canManageUsers, firestore]);
-  // `useCollection` is a live onSnapshot listener, so status writes below reflect
-  // themselves — there is no refetch to call.
-  const { data: users, isLoading: areUsersLoading } = useCollection<UserProfile>(usersQuery);
+  const { data: clientUsers, isLoading: isClientUsersLoading } = useCollection<UserProfile>(usersQuery);
 
-  // One read for every business, joined in memory below. A per-user lookup would
-  // be one read per row, which is exactly what this page must not do.
+  // Prefer apiUsers (complete platform list from Admin SDK), fallback to client useCollection
+  const users = apiUsers ?? clientUsers;
+  const areUsersLoading = apiUsers ? false : (isApiLoading && isClientUsersLoading);
+
+  // One read for every business, joined in memory below.
   const businessesQuery = useMemoFirebase(() => {
     if (!firestore || !canManageUsers) return null;
     return query(collection(firestore, 'businessInstances'));
@@ -458,6 +489,17 @@ export default function UsersPage() {
                 </CardDescription>
               </div>
               <div className="flex shrink-0 items-center gap-2">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="h-9 gap-1.5" 
+                  onClick={() => fetchUsers(true)} 
+                  disabled={isRefreshing}
+                  title="Refresh active users and presence"
+                >
+                  <RefreshCw className={cn("h-3.5 w-3.5", isRefreshing && "animate-spin text-primary")} />
+                  <span className="hidden whitespace-nowrap sm:inline">{isRefreshing ? 'Refreshing...' : 'Live Presence'}</span>
+                </Button>
                 <Button size="sm" variant="outline" className="h-9 gap-1.5" onClick={handleExport} disabled={!visibleUsers.length}>
                   <Download className="h-3.5 w-3.5" />
                   <span className="hidden whitespace-nowrap sm:inline">Export CSV</span>
@@ -661,7 +703,7 @@ export default function UsersPage() {
                             {formatDuration(user.totalUsageSeconds ?? 0)}
                           </TableCell>
                           <TableCell className="hidden sm:table-cell">
-                            <UserPresence lastSeen={user.lastSeen} />
+                            <UserPresence lastSeen={user.lastSeen} status={user.status} />
                           </TableCell>
                           <TableCell className="hidden lg:table-cell">
                             <Badge variant="outline" className={`whitespace-nowrap text-[10px] ${SEGMENT_BADGE_CLASS[segment]}`}>
@@ -860,7 +902,7 @@ export default function UsersPage() {
             <AlertDialogDescription>
               {userToUpdate?.action === 'deactivate'
                 ? <>This will mark <strong>{userToUpdate?.user.name}</strong> as inactive, and they will not be able to log in. Their data will be preserved.</>
-                : <>This will reactivate <strong>{userToUpdate?.user.name}</strong>'s account, allowing them to log in again.</>
+                : <>This will reactivate <strong>{userToUpdate?.user.name}</strong>&apos;s account, allowing them to log in again.</>
               }
             </AlertDialogDescription>
           </AlertDialogHeader>

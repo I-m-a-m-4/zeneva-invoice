@@ -361,7 +361,7 @@ function ProductPicker({ result, onPick }: { result: any; onPick?: (p: any) => v
     return (
       <div className="flex items-start gap-2 text-xs text-muted-foreground border border-dashed border-border rounded-lg px-3 py-3">
         <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-px" />
-        <span>No product resembling <strong className="text-foreground">"{result.query}"</strong> is in your inventory.</span>
+        <span>No product resembling <strong className="text-foreground">&quot;{result.query}&quot;</strong> is in your inventory.</span>
       </div>
     );
   }
@@ -370,7 +370,7 @@ function ProductPicker({ result, onPick }: { result: any; onPick?: (p: any) => v
       <div className="flex items-center gap-1.5 mb-2.5">
         <Sparkles className="w-3.5 h-3.5 text-primary" />
         <span className="text-xs font-semibold text-foreground">
-          Which one did you mean by "{result.query}"?
+          Which one did you mean by &quot;{result.query}&quot;?
         </span>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">

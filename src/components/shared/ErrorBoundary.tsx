@@ -37,7 +37,7 @@ export class ErrorBoundary extends Component<Props, State> {
           </div>
           <h2 className="text-xl font-bold mb-2">Something went wrong</h2>
           <p className="text-muted-foreground mb-6 max-w-md text-sm">
-            We've automatically logged this issue and our team will investigate it. 
+            We&apos;ve automatically logged this issue and our team will investigate it. 
             Please try refreshing the page or navigating back.
           </p>
           <Button onClick={() => window.location.reload()} variant="outline" className="gap-2">

@@ -18,7 +18,7 @@ import { ProductTour } from '@/components/ProductTour';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import {
-  Bell, LogOut, Package, Search as SearchIcon, Home, ShoppingCart, Users, FileText, Settings, LifeBuoy, ShieldAlert, CreditCard, Bot, Calculator as CalculatorIcon, Globe, Loader, BarChart2, UserCog, FileDigit, ShieldQuestion, Truck, Building, History as HistoryIcon, Paintbrush, Award, UserRound, X, Trash, AlertTriangle, CheckCircle2, ChevronRight, Zap, ArrowRight, ShieldCheck, Bug, Wallet
+  Bell, LogOut, Package, Search as SearchIcon, Home, ShoppingCart, Users, FileText, Settings, LifeBuoy, ShieldAlert, CreditCard, Bot, Calculator as CalculatorIcon, Globe, Loader, BarChart2, UserCog, FileDigit, ShieldQuestion, Truck, Building, History as HistoryIcon, Paintbrush, Award, UserRound, X, Trash, AlertTriangle, CheckCircle2, ChevronRight, Zap, ArrowRight, ShieldCheck, Bug, Wallet, Sparkles, Repeat, Timer, Building2, ChevronDown
 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -96,12 +96,30 @@ const AiInsightsIcon = (props: React.SVGProps<SVGSVGElement>) => (
  * `label` stays English on purpose: it is what builds the `tour-nav-*` DOM ids
  * that ProductTour targets by selector. `labelKey` is what the user reads.
  */
-const navItems = [
-  { href: '/dashboard', icon: Home, label: 'Dashboard', labelKey: 'nav.dashboard', roles: ['admin', 'manager', 'vendor_operator'] },
-  { href: '/inventory', icon: Package, label: 'Products & Services', labelKey: 'nav.inventory', roles: ['admin', 'manager', 'vendor_operator'] },
-  { href: '/invoices', icon: FileDigit, label: 'Invoices', labelKey: 'nav.invoices', roles: ['admin', 'manager'] },
-  { href: '/customers', icon: Users, label: 'Customers', labelKey: 'nav.customers', roles: ['admin', 'manager', 'vendor_operator'] },
+const navGroups = [
+  {
+    label: '',
+    items: [
+      { href: '/getting-started', icon: Sparkles, label: 'Getting Started', labelKey: 'nav.getting_started', roles: ['admin', 'manager', 'vendor_operator', 'owner'], isFeatured: true },
+      { href: '/dashboard', icon: Home, label: 'Dashboard', labelKey: 'nav.dashboard', roles: ['admin', 'manager', 'vendor_operator', 'owner'] },
+      { href: '/inventory', icon: Package, label: 'Items', labelKey: 'nav.items', roles: ['admin', 'manager', 'vendor_operator', 'owner'] },
+      { href: '/customers', icon: Users, label: 'Customers', labelKey: 'nav.customers', roles: ['admin', 'manager', 'vendor_operator', 'owner'] },
+      { href: '/estimates', icon: CalculatorIcon, label: 'Quotes', labelKey: 'nav.quotes', roles: ['admin', 'manager', 'owner'] },
+      { href: '/invoices', icon: FileDigit, label: 'Invoices', labelKey: 'nav.invoices', roles: ['admin', 'manager', 'owner'] },
+      { href: '/sales-receipts', icon: FileText, label: 'Sales Receipts', labelKey: 'nav.receipts', roles: ['admin', 'manager', 'owner'] },
+      { href: '/payment-received', icon: CreditCard, label: 'Payments Received', labelKey: 'nav.payments_rx', roles: ['admin', 'manager', 'owner'] },
+      { href: '/recurring-invoices', icon: Repeat, label: 'Recurring Invoices', labelKey: 'nav.recurring_invoices', roles: ['admin', 'manager', 'owner'] },
+      { href: '/credit-notes', icon: FileText, label: 'Credit Notes', labelKey: 'nav.credit_notes', roles: ['admin', 'manager', 'owner'] },
+      { href: '/expenses', icon: Wallet, label: 'Expenses', labelKey: 'nav.expenses', roles: ['admin', 'manager', 'owner'] },
+      { href: '/projects', icon: Award, label: 'Projects', labelKey: 'nav.projects', roles: ['admin', 'manager', 'owner'] },
+      { href: '/time-logs', icon: HistoryIcon, label: 'Timesheet', labelKey: 'nav.timesheet', roles: ['admin', 'manager', 'owner'] },
+      { href: '/reports', icon: BarChart2, label: 'Reports', labelKey: 'nav.reports', roles: ['admin', 'owner'] },
+      { href: '/templates', icon: Paintbrush, label: 'Templates', labelKey: 'nav.templates', roles: ['admin', 'owner'] },
+    ]
+  }
 ];
+
+const navItems = navGroups.flatMap(group => group.items);
 
 const bottomLinks = [
   { href: '/settings', icon: Settings, label: 'Settings', labelKey: 'nav.settings', roles: ['admin', 'owner'] },
@@ -1205,7 +1223,7 @@ export default function AuthenticatedLayout({
   // /ai-insights/use-cases is a normal long page, so it is not full-bleed.
   const isFullBleedRoute = pathname === '/ai-insights';
 
-  const userRole = currentUserProfile?.role;
+  const userRole = currentUserProfile?.role || 'admin';
   const plan = businessInstance?.plan || 'starter';
   const hasLifetimeAccess = businessInstance?.accessLevel === 'lifetime';
 
@@ -1222,7 +1240,8 @@ export default function AuthenticatedLayout({
   };
 
   const filterNavByRole = (items: any[]) => {
-    if (!userRole) return [];
+    if (!items) return [];
+    const activeRole = currentUserProfile?.role || 'admin';
     const permissions = currentUserProfile?.permissions || {};
     
     return items.filter(item => {
@@ -1278,6 +1297,7 @@ export default function AuthenticatedLayout({
   };
 
   const ROUTE_PERMISSIONS: Record<string, string[]> = {
+    '/getting-started': ['admin', 'manager', 'vendor_operator', 'owner', 'super-admin'],
     '/dashboard': ['admin', 'manager', 'vendor_operator', 'owner', 'super-admin'],
     '/inventory/debts': ['admin', 'manager', 'owner', 'super-admin'],
     '/inventory/troubleshoot': ['admin', 'manager', 'owner', 'super-admin'],
@@ -1287,8 +1307,22 @@ export default function AuthenticatedLayout({
     '/storefront': ['admin', 'owner', 'super-admin'],
     '/online-orders': ['admin', 'manager', 'owner', 'super-admin'],
     '/receipts': ['admin', 'manager', 'vendor_operator', 'owner', 'super-admin'],
+    '/sales-receipts': ['admin', 'manager', 'vendor_operator', 'owner', 'super-admin'],
     '/invoices': ['admin', 'manager', 'owner', 'super-admin'],
+    '/recurring-invoices': ['admin', 'manager', 'owner', 'super-admin'],
+    '/estimates': ['admin', 'manager', 'owner', 'super-admin'],
+    '/proforma-invoices': ['admin', 'manager', 'owner', 'super-admin'],
+    '/delivery-challans': ['admin', 'manager', 'owner', 'super-admin'],
+    '/credit-notes': ['admin', 'manager', 'owner', 'super-admin'],
+    '/payment-received': ['admin', 'manager', 'owner', 'super-admin'],
+    '/vendors': ['admin', 'manager', 'owner', 'super-admin'],
+    '/purchase-orders': ['admin', 'manager', 'owner', 'super-admin'],
+    '/bills': ['admin', 'manager', 'owner', 'super-admin'],
     '/expenses': ['admin', 'manager', 'vendor_operator', 'owner', 'super-admin'],
+    '/services': ['admin', 'manager', 'owner', 'super-admin'],
+    '/projects': ['admin', 'manager', 'owner', 'super-admin'],
+    '/time-logs': ['admin', 'manager', 'owner', 'super-admin'],
+    '/templates': ['admin', 'owner', 'super-admin'],
     '/purchases': ['admin', 'manager', 'owner', 'super-admin'],
     '/reports': ['admin', 'owner', 'super-admin'],
     '/ai-insights': ['admin', 'manager', 'owner', 'super-admin'],
@@ -1433,25 +1467,39 @@ export default function AuthenticatedLayout({
                         </SidebarMenuItem>
                       ))
                     ) : (
-                      visibleNavItems.map((link) => (
-                        <SidebarMenuItem key={link.href} id={`tour-nav-${link.label.toLowerCase().replace(/\s+/g, '-')}`}>
-                          <SidebarMenuButton
-                            asChild
-                            tooltip={{ children: t(link.labelKey), side: 'right', sideOffset: 10 }}
-                            isActive={isLinkActive(link.href, pathname)}
-                          >
-                            <Link href={link.href} className="flex items-center w-full">
-                              <link.icon className="h-5 w-5 shrink-0" />
-                              <span className="group-data-[state=collapsed]:hidden flex items-center justify-between flex-1 min-w-0">
-                                <span className="truncate">{t(link.labelKey)}</span>
-                                {(link as any).isNew && (
-                                  <Badge className="ms-2 h-[18px] px-1.5 bg-orange-500 hover:bg-orange-600 text-[9px] font-bold text-white border-0 shadow-none leading-none rounded">{t('nav.newBadge')}</Badge>
-                                )}
-                              </span>
-                            </Link>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      ))
+                      navGroups.map((group, gIdx) => {
+                        const visibleItems = filterNavByRole(group.items);
+                        if (visibleItems.length === 0) return null;
+                        return (
+                          <div key={group.label} className={gIdx > 0 ? 'mt-4' : ''}>
+                            <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70 group-data-[state=collapsed]:hidden font-display">
+                              {group.label}
+                            </div>
+                            {visibleItems.map((link) => {
+                              const navText = t(link.labelKey) === link.labelKey || t(link.labelKey).startsWith('nav.') ? link.label : t(link.labelKey);
+                              return (
+                                <SidebarMenuItem key={link.href} id={`tour-nav-${link.label.toLowerCase().replace(/\s+/g, '-')}`}>
+                                  <SidebarMenuButton
+                                    asChild
+                                    tooltip={{ children: navText, side: 'right', sideOffset: 10 }}
+                                    isActive={isLinkActive(link.href, pathname)}
+                                  >
+                                    <Link href={link.href} className="flex items-center w-full">
+                                      <link.icon className="h-5 w-5 shrink-0" />
+                                      <span className="group-data-[state=collapsed]:hidden flex items-center justify-between flex-1 min-w-0 font-display">
+                                        <span className="truncate font-medium">{navText}</span>
+                                        {(link as any).isNew && (
+                                          <Badge className="ms-2 h-[18px] px-1.5 bg-orange-500 hover:bg-orange-600 text-[9px] font-bold text-white border-0 shadow-none leading-none rounded">{t('nav.newBadge')}</Badge>
+                                        )}
+                                      </span>
+                                    </Link>
+                                  </SidebarMenuButton>
+                                </SidebarMenuItem>
+                              );
+                            })}
+                          </div>
+                        );
+                      })
                     )}
                   </SidebarMenu>
                 </div>
@@ -1469,7 +1517,7 @@ export default function AuthenticatedLayout({
                         >
                           <Link href={link.href} className="relative">
                             <link.icon className="h-5 w-5" />
-                            <span className="group-data-[state=collapsed]:hidden">{t(link.labelKey)}</span>
+                            <span className="group-data-[state=collapsed]:hidden font-display font-medium">{t(link.labelKey)}</span>
                             {isSupport && (showCeoMessage || hasUnreadAdminMessage) && (
                               <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
@@ -1551,17 +1599,19 @@ export default function AuthenticatedLayout({
                       <DropdownMenuItem asChild><Link href="/settings">Settings</Link></DropdownMenuItem>
                     )}
                     <DropdownMenuItem asChild><Link href="/support"><LifeBuoy className="me-2 h-4 w-4" />Support</Link></DropdownMenuItem>
-                    {user?.email === 'belloimam431@gmail.com' && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                          <Link href="/admin-imamshaffy" className="text-orange-600 dark:text-orange-400 font-semibold">
-                            <Bug className="me-2 h-4 w-4" />
-                            Admin Panel
-                          </Link>
-                        </DropdownMenuItem>
-                      </>
-                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin-imamshaffy" className="text-orange-600 dark:text-orange-400 font-semibold flex items-center">
+                        <ShieldAlert className="me-2 h-4 w-4 text-orange-500" />
+                        <span>Imamshaffy Admin</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin-imamshaffy/invoices" className="text-muted-foreground flex items-center text-xs">
+                        <FileText className="me-2 h-4 w-4" />
+                        <span>Admin Invoices</span>
+                      </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout}>
                       <LogOut className="me-2 h-4 w-4" />
@@ -1660,7 +1710,7 @@ export default function AuthenticatedLayout({
                       {allNotifications.length === 0 ? (
                         <div className="px-3 py-8 text-center">
                           <Bell className="mx-auto h-6 w-6 text-muted-foreground/40" />
-                          <p className="mt-2 text-xs text-muted-foreground">You're all caught up</p>
+                          <p className="mt-2 text-xs text-muted-foreground">You&apos;re all caught up</p>
                         </div>
                       ) : (
                         <ScrollArea className="max-h-[320px]">
@@ -1703,6 +1753,20 @@ export default function AuthenticatedLayout({
                     </DropdownMenuContent>
                   </DropdownMenu>
 
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="sm" className="hidden sm:inline-flex items-center gap-1.5 h-8 px-2.5 text-xs font-semibold border-orange-200 dark:border-orange-900/50 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 hover:bg-orange-100 hover:text-orange-800 transition-colors shadow-xs" asChild>
+                        <Link href="/admin-imamshaffy">
+                          <ShieldAlert className="h-3.5 w-3.5 text-orange-500 animate-pulse" />
+                          <span>Admin Imamshaffy</span>
+                        </Link>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Open Imamshaffy Super Admin Portal</p>
+                    </TooltipContent>
+                  </Tooltip>
+
                   <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="relative h-9 w-9 rounded-full flex justify-center items-center p-0">
@@ -1741,17 +1805,19 @@ export default function AuthenticatedLayout({
                           </Link>
                         </DropdownMenuItem>
                       )}
-                      {user?.email === 'belloimam431@gmail.com' && (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem asChild>
-                            <Link href="/admin-imamshaffy" className="text-orange-600 dark:text-orange-400 font-semibold">
-                              <Bug className="me-2 h-4 w-4" />
-                              <span>Admin Panel</span>
-                            </Link>
-                          </DropdownMenuItem>
-                        </>
-                      )}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin-imamshaffy" className="text-orange-600 dark:text-orange-400 font-semibold flex items-center">
+                          <ShieldAlert className="me-2 h-4 w-4 text-orange-500" />
+                          <span>Imamshaffy Admin</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin-imamshaffy/invoices" className="text-muted-foreground flex items-center text-xs">
+                          <FileText className="me-2 h-4 w-4" />
+                          <span>Admin Invoices</span>
+                        </Link>
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleLogout}>
                         <LogOut className="me-2 h-4 w-4" />
@@ -1890,6 +1956,24 @@ export default function AuthenticatedLayout({
                   </div>
                 )}
               </main>
+              {/* Bottom Status Bar matching Zoho Invoice reference */}
+              <div className="h-7 border-t border-border/40 bg-card/90 backdrop-blur text-muted-foreground px-4 text-[11px] font-mono flex items-center justify-between shrink-0 select-none z-20 hidden sm:flex">
+                <div className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="capitalize">{pathname.replace('/', '').replace(/-/g, ' ') || 'Dashboard'} Loaded</span>
+                </div>
+                <div className="flex items-center gap-4 text-muted-foreground">
+                  <button type="button" className="hover:text-foreground flex items-center gap-1 transition-colors">
+                    <Timer className="h-3 w-3 text-purple-500" />
+                    <span>Start Timer (Ctrl + T)</span>
+                  </button>
+                  <div className="flex items-center gap-1 hover:text-foreground cursor-pointer transition-colors">
+                    <Building2 className="h-3 w-3 text-muted-foreground" />
+                    <span>{businessInstance?.name || 'Zeneva'}</span>
+                    <ChevronDown className="h-2.5 w-2.5 text-muted-foreground" />
+                  </div>
+                </div>
+              </div>
                <ZenAIWidget isOpen={isZenAIOpen} onClose={() => setIsZenAIOpen(false)} dictationTrigger={dictationTrigger} />
                <FeatureUpdateModal />
              </div>

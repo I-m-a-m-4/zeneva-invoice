@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { adminFirestore } from '@/firebase/admin';
+import { adminFirestore, adminAuth } from '@/firebase/admin';
 import { requireSuperAdmin, corsHeaders } from '../_guard';
 
 // Uncached on purpose — see the note on the handler. The build-injected
@@ -27,10 +27,53 @@ export async function GET(req: Request) {
     try {
         const snapshot = await adminFirestore
             .collection('users')
-            .orderBy('name')
             .get();
 
-        const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        let authUsersMap = new Map<string, any>();
+        if (adminAuth) {
+            try {
+                const listUsersResult = await adminAuth.listUsers(1000);
+                listUsersResult.users.forEach((u: any) => {
+                    authUsersMap.set(u.uid, u);
+                });
+            } catch (e) {
+                console.warn('Could not list auth users:', e);
+            }
+        }
+
+        const usersMap = new Map<string, any>();
+        snapshot.docs.forEach(doc => {
+            const data = doc.data();
+            const authRecord = authUsersMap.get(doc.id);
+            usersMap.set(doc.id, {
+                id: doc.id,
+                email: data.email || authRecord?.email || undefined,
+                name: data.name || authRecord?.displayName || undefined,
+                ...data,
+            });
+        });
+
+        // Also add any Firebase Auth users who don't have a Firestore document yet
+        authUsersMap.forEach((authUser, uid) => {
+            if (!usersMap.has(uid)) {
+                usersMap.set(uid, {
+                    id: uid,
+                    email: authUser.email,
+                    name: authUser.displayName,
+                    createdAt: authUser.metadata.creationTime,
+                    status: 'active',
+                });
+            }
+        });
+
+        const users = Array.from(usersMap.values());
+
+        // Sort in memory so documents missing a 'name' field are never dropped by Firestore
+        users.sort((a: any, b: any) => {
+            const nameA = (a.name || a.email || a.phone || '').toLowerCase();
+            const nameB = (b.name || b.email || b.phone || '').toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
 
         // No-cache headers so the browser also doesn't cache this
         return NextResponse.json(users, {

@@ -1,3 +1,18 @@
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap');
+
+@font-face {
+  font-family: 'Clash Display';
+  src: local('Clash Display'), local('ClashDisplay-Variable'), local('ClashDisplay-Medium'), local('ClashDisplay-Semibold'), local('ClashDisplay-Bold'), local('ClashDisplay-Regular');
+  font-weight: 300 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nexa';
+  src: local('Nexa'), local('Nexa-Bold'), local('Nexa-Heavy'), local('Nexa-Regular'), local('Nexa-ExtraBold');
+  font-weight: 300 900;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
@@ -141,7 +156,27 @@
     @apply border-border;
   }
   body {
+    font-family: var(--font-jakarta), 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     @apply bg-background text-foreground;
+  }
+
+  /* Clash Display for Sidebar navigation, short titles, and 1-2 word labels */
+  [data-sidebar="menu-button"],
+  [data-sidebar="group-label"],
+  [data-sidebar="header"],
+  [data-sidebar="footer"],
+  .sidebar-text,
+  .font-clash,
+  .font-display {
+    font-family: 'Clash Display', 'Nexa', var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  /* Plus Jakarta Sans for body copy, paragraphs, descriptions, and longer reading text */
+  p,
+  .font-body,
+  .font-jakarta {
+    font-family: var(--font-jakarta), 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
   
   .focus-glow {

@@ -124,7 +124,7 @@ export default function PrivacyPolicyPage() {
             <div id="intro" className="scroll-mt-32">
               <h2>Introduction</h2>
               <p>
-                Welcome to Zeneva ("we," "us," or "our"). We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our software-as-a-service platform (the "Service"). Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the service.
+                Welcome to Zeneva (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;). We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our software-as-a-service platform (the &quot;Service&quot;). Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the service.
               </p>
 
               <div className="not-prose my-8 p-5 rounded-2xl border bg-slate-50/50 dark:bg-slate-900/40 border-slate-200/60 dark:border-slate-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-sm backdrop-blur-sm shadow-sm">
@@ -176,7 +176,7 @@ export default function PrivacyPolicyPage() {
 
               <h3>D. Device Permissions (Camera)</h3>
               <p>
-                We may request access or permission to certain features from your mobile device, including your device's camera. The camera is used solely to scan barcodes and product QR codes during checkout and inventory actions. Image frames processed by the camera are analyzed locally on your device in real-time and are never uploaded, stored, or shared on our servers.
+                We may request access or permission to certain features from your mobile device, including your device&apos;s camera. The camera is used solely to scan barcodes and product QR codes during checkout and inventory actions. Image frames processed by the camera are analyzed locally on your device in real-time and are never uploaded, stored, or shared on our servers.
               </p>
             </div>
 

@@ -166,6 +166,11 @@ export default function AddProductPage() {
     },
   });
 
+  const watchedPrice = form.watch('price');
+  const watchedCostPrice = form.watch('costPrice');
+  const watchedStock = form.watch('stock');
+  const watchedSku = form.watch('sku');
+
   // Update variant matrix when attributes or base price changes
   React.useEffect(() => {
     const basePrice = form.getValues('price') || 0;
@@ -212,7 +217,7 @@ export default function AddProductPage() {
         };
       });
     });
-  }, [variantAttributes, form.watch('price'), form.watch('costPrice'), form.watch('stock'), form.watch('sku')]);
+  }, [variantAttributes, form, watchedPrice, watchedCostPrice, watchedStock, watchedSku]);
 
   const { fields: uomFields, append: appendUom, remove: removeUom } = useFieldArray({
     control: form.control,
@@ -755,6 +760,7 @@ export default function AddProductPage() {
                                           <div className="relative group">
                                             {v.imageUrl ? (
                                               <div className="relative h-12 w-12 rounded-lg overflow-hidden border border-border">
+                                                {/* eslint-disable-next-line @next/next/no-img-element -- runtime image URL that next/image cannot optimize without a remote allowlist */}
                                                 <img src={v.imageUrl} alt={v.combo} className="h-full w-full object-cover" />
                                                 <button
                                                   type="button"
@@ -904,17 +910,17 @@ export default function AddProductPage() {
                             {typeof field.value !== 'undefined' && field.value !== '' && (
                                 <div className="flex items-center justify-between px-4 py-3 bg-muted rounded-lg mb-4">
                                     <div className="text-center">
-                                        <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Current</p>
+                                        <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">{t('inventory.stockCurrentLabel')}</p>
                                         <p className="text-xl font-bold">0</p>
                                     </div>
                                     <div className="text-xl font-light text-muted-foreground">+</div>
                                     <div className="text-center">
-                                        <p className="text-xs text-primary mb-1 uppercase tracking-wider font-semibold">Adding</p>
+                                        <p className="text-xs text-primary mb-1 uppercase tracking-wider font-semibold">{t('inventory.stockAddingLabel')}</p>
                                         <p className="text-xl font-bold text-primary">{addedAmount > 0 ? `+${addedAmount}` : addedAmount}</p>
                                     </div>
                                     <div className="text-xl font-light text-muted-foreground">=</div>
                                     <div className="text-center">
-                                        <p className="text-xs text-green-600 mb-1 uppercase tracking-wider font-semibold">New Total</p>
+                                        <p className="text-xs text-green-600 mb-1 uppercase tracking-wider font-semibold">{t('inventory.stockNewTotalLabel')}</p>
                                         <p className="text-xl font-bold text-green-600">{newTotal}</p>
                                     </div>
                                 </div>
@@ -934,7 +940,7 @@ export default function AddProductPage() {
                               />
                             </FormControl>
                             <FormDescription className="text-xs">
-                                Enter initial stock quantity.
+                                {t('inventory.initialStockHint')}
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -999,8 +1005,8 @@ export default function AddProductPage() {
 
                   <div className="space-y-2">
                     <FormLabel className="flex items-center justify-between text-xs font-semibold">
-                      <span>Entry Date (Backdate)</span>
-                      <span className="text-[11px] text-muted-foreground font-normal">Optional</span>
+                      <span>{t('inventory.entryDateTitle')}</span>
+                      <span className="text-[11px] text-muted-foreground font-normal">{t('common.optional')}</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -1009,7 +1015,7 @@ export default function AddProductPage() {
                         onChange={(e) => setEntryDateInput(e.target.value)}
                       />
                     </FormControl>
-                    <p className="text-[0.8rem] text-muted-foreground">Pick a past date if recording items brought in on previous days.</p>
+                    <p className="text-[0.8rem] text-muted-foreground">{t('inventory.entryDateHint')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -1020,14 +1026,14 @@ export default function AddProductPage() {
                 <CardHeader>
                   <CardTitle className="text-base flex items-center justify-between">
                     <span className="flex items-center gap-2">
-                      📱 Electronics IMEI & Serial Numbers
+                      📱 {t('inventory.serialTitle')}
                     </span>
                     <Badge variant="secondary" className="text-xs">
                       {industryConfig.label}
                     </Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">
-                    Track unique serial numbers or IMEIs for electronics, appliances, and high-value devices.
+                    {t('inventory.serialHint')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -1036,7 +1042,7 @@ export default function AddProductPage() {
                     name="serialNumbersInput"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xs font-semibold">IMEI / Serial Numbers (One per line or comma-separated)</FormLabel>
+                        <FormLabel className="text-xs font-semibold">{t('inventory.serialInputLabel')}</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="e.g. 354890123456789&#10;354890123456790"
@@ -1045,7 +1051,7 @@ export default function AddProductPage() {
                           />
                         </FormControl>
                         <FormDescription className="text-[11px] text-muted-foreground">
-                          Cashiers will scan or select the exact IMEI at POS checkout, which is printed directly on the receipt.
+                          {t('inventory.serialPosHintAdd')}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -1058,8 +1064,8 @@ export default function AddProductPage() {
             {categoryType === 'product' && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Product Type & Variants</CardTitle>
-                  <CardDescription>Does this item come in multiple sizes, colors, or options?</CardDescription>
+                  <CardTitle>{t('inventory.productTypeVariantsTitle')}</CardTitle>
+                  <CardDescription>{t('inventory.productTypeVariantsHint')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <FormField
@@ -1079,8 +1085,8 @@ export default function AddProductPage() {
                           )}
                         >
                           <RadioGroupItem value="single" id="type-single" className="sr-only" />
-                          <span className="font-semibold text-sm">Single Product</span>
-                          <span className="text-xs text-muted-foreground text-center mt-1">Standard standalone inventory item</span>
+                          <span className="font-semibold text-sm">{t('inventory.singleProductLabel')}</span>
+                          <span className="text-xs text-muted-foreground text-center mt-1">{t('inventory.singleProductHint')}</span>
                         </Label>
 
                         <Label
@@ -1091,8 +1097,8 @@ export default function AddProductPage() {
                           )}
                         >
                           <RadioGroupItem value="variant" id="type-variant" className="sr-only" />
-                          <span className="font-semibold text-sm">Has Variants</span>
-                          <span className="text-xs text-muted-foreground text-center mt-1">Options like Size, Color, Flavor</span>
+                          <span className="font-semibold text-sm">{t('inventory.hasVariantsLabel')}</span>
+                          <span className="text-xs text-muted-foreground text-center mt-1">{t('inventory.hasVariantsHint')}</span>
                         </Label>
                       </RadioGroup>
                     )}
@@ -1101,14 +1107,14 @@ export default function AddProductPage() {
                   {form.watch('type') === 'variant' && (
                     <div className="space-y-4 pt-4 border-t">
                       <div className="flex items-center justify-between">
-                        <Label className="text-sm font-semibold">Variant Options</Label>
+                        <Label className="text-sm font-semibold">{t('inventory.variantOptions')}</Label>
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
                           onClick={() => setVariantAttributes(prev => [...prev, { name: '', values: '' }])}
                         >
-                          <Plus className="h-4 w-4 mr-1" /> Add Option
+                          <Plus className="h-4 w-4 mr-1" /> {t('inventory.addOption')}
                         </Button>
                       </div>
 
@@ -1116,7 +1122,7 @@ export default function AddProductPage() {
                       {industryConfig.variantPresets && industryConfig.variantPresets.length > 0 && (
                         <div className="flex flex-wrap items-center gap-1.5 pt-1 pb-1">
                           <span className="text-[11px] text-muted-foreground font-medium">
-                            {industryConfig.label} Presets:
+                            {t('inventory.presetsLabel', { category: industryConfig.label })}
                           </span>
                           {industryConfig.variantPresets.map((preset, pIdx) => (
                             <button
@@ -1148,7 +1154,7 @@ export default function AddProductPage() {
                       {variantAttributes.map((attr, idx) => (
                         <div key={idx} className="flex gap-2 items-start">
                           <Input
-                            placeholder="Option Name (e.g. Size)"
+                            placeholder={t('inventory.variantOptionNamePlaceholder')}
                             value={attr.name}
                             onChange={(e) => {
                               const updated = [...variantAttributes];
@@ -1158,7 +1164,7 @@ export default function AddProductPage() {
                             className="w-1/3"
                           />
                           <Input
-                            placeholder="Values separated by commas (e.g. S, M, L, XL)"
+                            placeholder={t('inventory.variantOptionValuesPlaceholder')}
                             value={attr.values}
                             onChange={(e) => {
                               const updated = [...variantAttributes];
@@ -1184,7 +1190,7 @@ export default function AddProductPage() {
                       {variantMatrix.length > 0 && (
                         <div className="mt-4 space-y-2">
                           <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                            Generated Variants ({variantMatrix.length})
+                            {t('inventory.generatedVariants', { count: variantMatrix.length })}
                           </Label>
                           <div className="border rounded-md divide-y divide-border overflow-hidden">
                             {variantMatrix.map((item, index) => (
@@ -1204,7 +1210,7 @@ export default function AddProductPage() {
                                   />
                                 </div>
                                 <div className="flex flex-col">
-                                  <span className="text-muted-foreground">Price</span>
+                                  <span className="text-muted-foreground">{t('common.price')}</span>
                                   <Input
                                     type="number"
                                     className="h-7 text-xs"
@@ -1217,7 +1223,7 @@ export default function AddProductPage() {
                                   />
                                 </div>
                                 <div className="flex flex-col">
-                                  <span className="text-muted-foreground">Stock</span>
+                                  <span className="text-muted-foreground">{t('inventory.stock')}</span>
                                   <Input
                                     type="number"
                                     className="h-7 text-xs"

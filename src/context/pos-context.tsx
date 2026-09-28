@@ -1062,7 +1062,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
     // Run reconciliation 5 seconds after load to avoid initial contention
     const timer = setTimeout(reconcileStats, 5000);
     return () => clearTimeout(timer);
-  }, [canFetchSubData, businessId, !!initialStats]);
+  }, [canFetchSubData, businessId, firestore, initialStats, statsDocRef]);
 
   // Optimized: Disabled real-time listener to avoid quadratic listener scaling cost.
   const receiptsQuery = useMemoFirebase(() => null, []);
@@ -1212,7 +1212,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
      * on a shop with a few hundred products.
      */
     return merged.sort((a, b) => safeToDate(b.createdAt).getTime() - safeToDate(a.createdAt).getTime());
-  }, [initialProducts, syncedProducts, queuedActions, isRealOnline, businessId, isProductCatalogPending]);
+  }, [initialProducts, syncedProducts, queuedActions, isProductCatalogPending]);
 
   const products = useMemo(() => {
     if (!allProducts) return null;
@@ -1229,7 +1229,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
     if (currentUserProfile) return currentUserProfile;
     if (offlineProfile && user && offlineProfile.id === user.uid) return offlineProfile;
     return null;
-  }, [currentUserProfile, offlineProfile, user?.uid]);
+  }, [currentUserProfile, offlineProfile, user]);
 
   const business = useMemo(() => {
     // If we successfully fetched the business document while online but it doesn't exist, it was definitively deleted.
@@ -1252,7 +1252,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
       });
     });
     return result;
-  }, [initialBusiness, offlineBusiness, queuedActions]);
+  }, [initialBusiness, offlineBusiness, queuedActions, businessId, isLoadingBusiness, isRealOnline]);
 
   const allReceipts = useMemo(() => {
     const queuedSales = queuedActions.filter(a => a.type === 'complete-sale');
@@ -1850,16 +1850,26 @@ export function POSProvider({ children }: { children: ReactNode }) {
 
     try {
       while (hasMore) {
-        let q = query(
-          collection(firestore, "products"),
-          where("businessId", "==", businessId),
-          orderBy("name", "asc"),
-          limit(Math.min(BATCH_SIZE, cap - allFetched.length))
-        );
+        let snap;
+        try {
+          let q = query(
+            collection(firestore, "products"),
+            where("businessId", "==", businessId),
+            orderBy("name", "asc"),
+            limit(Math.min(BATCH_SIZE, cap - allFetched.length))
+          );
+          if (lastDoc) q = query(q, startAfter(lastDoc));
+          snap = await getDocs(q);
+        } catch (queryErr) {
+          console.warn("Composite query failed, falling back to simple query without orderBy:", queryErr);
+          const fallbackQ = query(
+            collection(firestore, "products"),
+            where("businessId", "==", businessId),
+            limit(Math.min(BATCH_SIZE, cap - allFetched.length))
+          );
+          snap = await getDocs(fallbackQ);
+        }
 
-        if (lastDoc) q = query(q, startAfter(lastDoc));
-
-        const snap = await getDocs(q);
         if (snap.empty) {
           hasMore = false;
         } else {
@@ -1883,6 +1893,24 @@ export function POSProvider({ children }: { children: ReactNode }) {
           lastDoc = snap.docs[snap.docs.length - 1];
           if (snap.docs.length < BATCH_SIZE) hasMore = false;
           if (allFetched.length >= cap) hasMore = false;
+        }
+      }
+
+      if (allFetched.length === 0) {
+        try {
+          const subSnap = await getDocs(collection(firestore, `businessInstances/${businessId}/products`));
+          if (!subSnap.empty) {
+            const subBatch = subSnap.docs.map(d => ({ ...d.data(), id: d.id } as Product));
+            allFetched = [...subBatch];
+            setSyncedProducts(prev => {
+              const map = new Map<string, Product>();
+              prev.forEach(p => map.set(p.id, p));
+              subBatch.forEach(p => map.set(p.id, p));
+              return Array.from(map.values());
+            });
+          }
+        } catch (subErr) {
+          console.warn("Subcollection products check error:", subErr);
         }
       }
 
@@ -2884,7 +2912,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsQueueProcessing(false);
     }
-  }, [isQueueProcessing, queuedActions, firestore, businessId, currentUserProfile, offlineProfile, products, syncedProducts, toast, isRealOnline]);
+  }, [isQueueProcessing, queuedActions, firestore, businessId, currentUserProfile, offlineProfile, toast, isRealOnline, user]);
 
 
   const addToQueue = useCallback((action: any, description: string) => {
@@ -2969,7 +2997,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
     }
     
     return id;
-  }, [businessId, business, toast, processQueue, currentUserProfile, isRealOnline, activeBranchId]);
+  }, [businessId, business, toast, processQueue, currentUserProfile, isRealOnline, activeBranchId, isProfileReady, offlineProfile]);
 
   const addProductWithImage = useCallback(async (productData: any, imageFile: File | null) => {
     let imageUrl = productData.imageUrl || '';
@@ -3083,7 +3111,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
       const combined = [...local, ...nameSnap.docs.map(d => ({ ...d.data() as any, id: d.id } as Customer)), ...emailSnap.docs.map(d => ({ ...d.data() as any, id: d.id } as Customer))];
       return Array.from(new Map(combined.map(item => [item.id, item])).values()).slice(0, 20);
     } catch { return local.slice(0, 20); }
-  }, [businessId, firestore, customers, isFullSyncingCustomers, user, isRealOnline]);
+  }, [businessId, firestore, customers, user, isRealOnline]);
 
   const searchCustomersByField = useCallback(async (field: string, value: string) => {
     if (!value) return [];
@@ -3100,7 +3128,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
       const snap = await getDocs(q);
       return snap.docs.map(d => ({ ...d.data(), id: d.id } as Customer));
     } catch { return []; }
-  }, [businessId, firestore, customers, isRealOnline]);
+  }, [businessId, firestore, customers, isRealOnline, user]);
 
   /**
    * Is this person already on file? Asked of the server, before a create.
@@ -3243,7 +3271,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
       const snap = await getDocs(q);
       return snap.docs.map(doc => ({ ...doc.data(), id: doc.id } as Product));
     } catch { return []; }
-  }, [businessId, firestore, products, isSyncing, isRealOnline]);
+  }, [businessId, firestore, products, isRealOnline, user]);
 
   const searchProductsByField = useCallback(async (field: string, value: string) => {
     if (!value) return [];
@@ -3260,7 +3288,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
       const snap = await getDocs(q);
       return snap.docs.map(d => ({ ...d.data(), id: d.id } as Product));
     } catch { return []; }
-  }, [businessId, firestore, products, isRealOnline]);
+  }, [businessId, firestore, products, isRealOnline, user]);
 
   const findProductBySku = useCallback(async (sku: string) => {
     if (!sku) return null;
@@ -3278,7 +3306,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
       if (snap.empty) return null;
       return { ...snap.docs[0].data(), id: snap.docs[0].id } as Product;
     } catch { return null; }
-  }, [businessId, firestore, products, isRealOnline]);
+  }, [businessId, firestore, products, isRealOnline, user]);
 
   const fetchDetailedAnalytics = useCallback(async (from: Date, to: Date) => {
     if (!getAuth().currentUser || !businessId || !firestore) return { revenue: 0, count: 0, customers: 0 };
@@ -3398,7 +3426,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
     result.customers = uniqueCustomerIds.size;
 
     return result;
-  }, [businessId, firestore, syncedReceipts, receipts, user, queuedActions, isRealOnline, activeBranchId]);
+  }, [businessId, firestore, syncedReceipts, receipts, queuedActions, isRealOnline, activeBranchId]);
 
   const addToCart = useCallback((product: Product, unitName?: string, multiplier?: number, priceOverride?: number, selectedSerialNumber?: string) => {
     const cartItemId = selectedSerialNumber ? `${product.id}-${selectedSerialNumber}` : (unitName ? `${product.id}-${unitName}` : product.id);
@@ -3705,7 +3733,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
         ]).finally(() => setIsCacheHydrated(true));
       }
     }
-  }, [isMounted, businessId, processQueue, isRealOnline, isDesktopApp]);
+  }, [isMounted, businessId, processQueue, isRealOnline, isDesktopApp, user]);
 
 
   useEffect(() => {
@@ -3735,7 +3763,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
       setImpersonatedUserId(null);
       if (typeof window !== 'undefined') sessionStorage.removeItem('zeneva_impersonated_user_id');
     }
-  }, [user, isUserLoading, effectiveUserId, lastUserId, resetPOS, nuclearReset]);
+  }, [user, isUserLoading, effectiveUserId, lastUserId, resetPOS, nuclearReset, impersonatedUserId]);
 
   useEffect(() => {
     const handleOnline = () => processQueue();
@@ -4156,7 +4184,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
       title: "Receipt Voided",
       description: "The sale has been voided and will be removed globally.",
     });
-  }, [addToQueue, toast, isDesktopApp]);
+  }, [addToQueue, toast, isDesktopApp, receipts]);
 
 
 
@@ -4424,7 +4452,7 @@ export function POSProvider({ children }: { children: ReactNode }) {
 
     stats, 
     isSubscriptionActive: resolveSubscriptionActive(business)
-  }), [business, products, receipts, customers, onlineOrders, currentUserProfile, isUserLoading, user, firestore, cart, selectedCustomer, taxRate, discount, paymentMethod, amountReceived, autoPrint, isConfettiActive, triggerRefresh, triggerConfetti, queuedActions, isQueueProcessing, addToQueue, processQueue, mutateBusiness, isSyncing, isFullSyncingCustomers, isFullSyncingProducts, isFullSyncingReceipts, isProductCatalogPending, productSyncError, isCatalogUnverified, retryProductSync, impersonatedUserId, isImpersonating, stats, currencySymbol, currencyCode, subtotal, tax, total, impersonateUser, stopImpersonation, searchCustomers, searchProducts, fetchDetailedAnalytics, fetchMonthlyAnalytics, isProfileReady, isLoadingBusiness, isLoadingProducts, isLoadingCustomers, isMounted, heldSales, voidReceipt, users, auditLogs, isRealOnline]);
+  }), [business, products, receipts, customers, onlineOrders, isUserLoading, user, firestore, cart, selectedCustomer, taxRate, discount, paymentMethod, amountReceived, autoPrint, isConfettiActive, triggerRefresh, triggerConfetti, queuedActions, isQueueProcessing, addToQueue, processQueue, mutateBusiness, isSyncing, isFullSyncingCustomers, isFullSyncingProducts, isFullSyncingReceipts, isProductCatalogPending, productSyncError, isCatalogUnverified, retryProductSync, impersonatedUserId, isImpersonating, stats, currencySymbol, currencyCode, subtotal, tax, total, impersonateUser, stopImpersonation, searchCustomers, searchProducts, fetchDetailedAnalytics, fetchMonthlyAnalytics, isProfileReady, isLoadingBusiness, isMounted, heldSales, voidReceipt, users, auditLogs, isRealOnline, businessId, profile, offlineProfile, resetPOS, allCustomers, addToCart, removeFromCart, updateQuantity, updateCartItemPrice, clearCart, addProductWithImage, holdCurrentSale, resumeHeldSale, deleteHeldSale, findExistingCustomer, searchCustomersByField, searchProductsByField, findProductBySku, fetchReceiptsInRange, hasFullSyncedCustomers, hasFullSyncedReceipts]);
 
   return <POSContext.Provider value={value}>{children}</POSContext.Provider>;
 }

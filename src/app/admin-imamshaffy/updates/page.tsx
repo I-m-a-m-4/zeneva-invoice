@@ -101,7 +101,7 @@ export default function AdminAppUpdates() {
         <CardHeader>
           <CardTitle className="text-base">Force Update Configuration</CardTitle>
           <CardDescription>
-            When enabled, all users on the native desktop and mobile apps will see an "Update required" modal blocking the app.
+            When enabled, all users on the native desktop and mobile apps will see an &quot;Update required&quot; modal blocking the app.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
@@ -189,7 +189,7 @@ export default function AdminAppUpdates() {
                 value={desktopLink}
                 onChange={(e) => setDesktopLink(e.target.value)}
               />
-              <p className="text-xs text-slate-500">The URL opened when the user clicks "Update" on Windows.</p>
+              <p className="text-xs text-slate-500">The URL opened when the user clicks &quot;Update&quot; on Windows.</p>
             </div>
           </div>
 
@@ -215,7 +215,7 @@ export default function AdminAppUpdates() {
                 value={mobileLink}
                 onChange={(e) => setMobileLink(e.target.value)}
               />
-              <p className="text-xs text-slate-500">The URL opened when the user clicks "Update" on mobile.</p>
+              <p className="text-xs text-slate-500">The URL opened when the user clicks &quot;Update&quot; on mobile.</p>
             </div>
           </div>
 

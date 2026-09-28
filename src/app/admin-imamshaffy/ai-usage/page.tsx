@@ -235,6 +235,7 @@ export default function AdminAIUsage() {
     loadData();
     // Re-runs when the range changes: a wider window needs day documents that
     // were never fetched, and they cannot be derived from the ones held.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadData is re-created on every render; listing it would re-issue every read after each render
   }, [firestore, user, rangeDays]);
 
   const loadData = async () => {
@@ -730,7 +731,7 @@ export default function AdminAIUsage() {
       }
     }
     return Array.from(grouped.values());
-  }, [userAiSessions, chatSearchQuery, chatPlanFilter]);
+  }, [userAiSessions, chatSearchQuery, chatPlanFilter, businessRows]);
 
   const activeToday = businessRows.filter((b) => b.todayUsage > 0).length;
   const rangeLabel = RANGES.find((r) => r.days === rangeDays)?.label ?? `${rangeDays} days`;
@@ -1949,7 +1950,7 @@ export default function AdminAIUsage() {
                         <td className="px-6 py-4">
                           <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 max-w-md">
                             <p className="text-xs font-medium text-slate-800 line-clamp-2">
-                              "{session.lastPrompt || session.title || 'Conversation started'}"
+                              &quot;{session.lastPrompt || session.title || 'Conversation started'}&quot;
                             </p>
                           </div>
                         </td>
@@ -2000,11 +2001,11 @@ export default function AdminAIUsage() {
             <div>
               <CardTitle>Top AI Users</CardTitle>
               <CardDescription>
-                Sorted by this month's credit spend, then by lifetime tool calls. "Favourite tool"
+                Sorted by this month&apos;s credit spend, then by lifetime tool calls. &quot;Favourite tool&quot;
                 is what each business reaches for most — the fastest read on what they actually
-                bought Zeneva for. "Cost ceiling" is that tenant's own tokens over {rangeLabel} at
+                bought Zeneva for. &quot;Cost ceiling&quot; is that tenant&apos;s own tokens over {rangeLabel} at
                 list price, so it is the most this one business could have cost — the figure any
-                credit price has to clear. Credits are weighted by tokens, so a tenant's credit
+                credit price has to clear. Credits are weighted by tokens, so a tenant&apos;s credit
                 spend and its call count no longer move together.
               </CardDescription>
             </div>
@@ -2168,8 +2169,8 @@ export default function AdminAIUsage() {
             Every movement <em>into</em> a credit balance, newest first — the three writers are a
             Paystack purchase, a Dodo purchase and a grant from the table above. Spending is not
             here: it is metered per day in the charts, and mixing the two would stop this column
-            summing to "credits ever given to this shop". A purchase row carries what was paid,
-            which is what makes "they say they paid and have no credits" answerable.
+            summing to &quot;credits ever given to this shop&quot;. A purchase row carries what was paid,
+            which is what makes &quot;they say they paid and have no credits&quot; answerable.
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">

@@ -330,7 +330,7 @@ export default function BlogLandingPage() {
                       <Search className="h-10 w-10 text-slate-300" />
                     </div>
                     <h3 className="text-2xl font-bold text-slate-950 mb-2">No intelligence found.</h3>
-                    <p className="text-slate-500 max-w-sm mx-auto font-medium">We couldn't find any articles matching your search criteria. Try a different tactical keyword.</p>
+                    <p className="text-slate-500 max-w-sm mx-auto font-medium">We couldn&apos;t find any articles matching your search criteria. Try a different tactical keyword.</p>
                     <Button onClick={() => setSearchQuery('')} className="mt-8 rounded-xl bg-slate-950 text-white hover:bg-slate-800">
                       Clear Search
                     </Button>

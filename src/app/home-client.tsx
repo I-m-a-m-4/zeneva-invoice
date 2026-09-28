@@ -207,6 +207,24 @@ const features = [
 ];
 
 
+const phrases = ["Enter your work email", "Start free, stay free", "Unlock Zen AI insights", "Join 30+ smart retailers"];
+
+const foodInsights = [
+    "This snack sells most on Wednesdays between 4–7 PM. Prepare 28 units. Producing more wastes cash.",
+    "Fresh bread moves fast on rainy mornings. Bake 15 extra loaves to meet demand.",
+    "Milk expires in 2 days. Mark down by 20% now to clear stock before loss.",
+    "Lunch rush incoming. Pre-pack 50 sandwiches to reduce wait times.",
+    "Vegetable waste is up 10%. Reduce order quantity for next shipment."
+];
+
+const fashionInsights = [
+    "Blue denim sales spike 40% on pay-day weekends. Stock 15 extra units to capture demand.",
+    "Summer dresses are trending. Move to front window display to increase foot traffic.",
+    "Red sneakers are low in stock. Reorder now to avoid missing weekend sales.",
+    "Customer X buys formal wear every 3 months. Send personalized offer now.",
+    "Winter coats are moving slow. Bundle with scarves to clear inventory."
+];
+
 export default function Home() {
     const [email, setEmail] = useState('');
     const { toast } = useToast();
@@ -220,8 +238,6 @@ export default function Home() {
     const [phraseIndex, setPhraseIndex] = useState(0);
     const [isDeleting, setIsDeleting] = useState(false);
     const [charIndex, setCharIndex] = useState(0);
-
-    const phrases = ["Enter your work email", "Start free, stay free", "Unlock Zen AI insights", "Join 30+ smart retailers"];
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -246,23 +262,6 @@ export default function Home() {
     }, [charIndex, isDeleting, phraseIndex]);
 
 
-
-    // Insight Data
-    const foodInsights = [
-        "This snack sells most on Wednesdays between 4–7 PM. Prepare 28 units. Producing more wastes cash.",
-        "Fresh bread moves fast on rainy mornings. Bake 15 extra loaves to meet demand.",
-        "Milk expires in 2 days. Mark down by 20% now to clear stock before loss.",
-        "Lunch rush incoming. Pre-pack 50 sandwiches to reduce wait times.",
-        "Vegetable waste is up 10%. Reduce order quantity for next shipment."
-    ];
-
-    const fashionInsights = [
-        "Blue denim sales spike 40% on pay-day weekends. Stock 15 extra units to capture demand.",
-        "Summer dresses are trending. Move to front window display to increase foot traffic.",
-        "Red sneakers are low in stock. Reorder now to avoid missing weekend sales.",
-        "Customer X buys formal wear every 3 months. Send personalized offer now.",
-        "Winter coats are moving slow. Bundle with scarves to clear inventory."
-    ];
 
     const [foodIndex, setFoodIndex] = useState(0);
     const [fashionIndex, setFashionIndex] = useState(0);
@@ -1049,7 +1048,7 @@ export default function Home() {
                                     Enterprise-Grade Security
                                 </h2>
                                 <p className="text-lg text-slate-300 font-dm-sans">
-                                    Zeneva is built on infrastructure that complies with the world's strictest security standards. Your data is protected by the same systems trusted by top global enterprises.
+                                    Zeneva is built on infrastructure that complies with the world&apos;s strictest security standards. Your data is protected by the same systems trusted by top global enterprises.
                                 </p>
                             </div>
 

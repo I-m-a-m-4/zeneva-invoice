@@ -32,20 +32,6 @@ export default function BranchesSettingsPage() {
     business?.ownerId === currentUserProfile.id
   );
 
-  if (currentUserProfile && !isOwnerOrAdmin) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[65vh] p-6 text-center space-y-4">
-        <div className="p-4 rounded-full bg-destructive/10 text-destructive shadow-sm">
-          <AlertTriangle className="h-8 w-8" />
-        </div>
-        <h2 className="text-xl font-extrabold tracking-tight">Access Restricted</h2>
-        <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
-          Multi-branch management and location settings are strictly restricted to the business owner and administrators.
-        </p>
-      </div>
-    );
-  }
-
   // handleSelectBranch is defined after state hooks below
 
   const [usersList, setUsersList] = useState<any[]>([]);
@@ -139,6 +125,20 @@ export default function BranchesSettingsPage() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [branchToDelete, setBranchToDelete] = useState<{ id: string; name: string } | null>(null);
   const [confirmBranchName, setConfirmBranchName] = useState('');
+
+  if (currentUserProfile && !isOwnerOrAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[65vh] p-6 text-center space-y-4">
+        <div className="p-4 rounded-full bg-destructive/10 text-destructive shadow-sm">
+          <AlertTriangle className="h-8 w-8" />
+        </div>
+        <h2 className="text-xl font-extrabold tracking-tight">Access Restricted</h2>
+        <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
+          Multi-branch management and location settings are strictly restricted to the business owner and administrators.
+        </p>
+      </div>
+    );
+  }
 
   const handleAddNewBranchClick = () => {
     if (isBusinessPlan || (business?.plan === 'pro' && branches.length < 3)) {

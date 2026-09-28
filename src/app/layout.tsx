@@ -228,13 +228,8 @@ export default function RootLayout({
         <meta name="google-site-verification" content="QGYrHkSlC71065ymk6dZc6DFesm14JeSPw-myjzZVso" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
         <link rel="dns-prefetch" href="https://code.iconify.design" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
-        />
+        {/* Google Fonts are fetched by the @import at the top of globals.css; only the preconnects above are needed here. */}
         {/* Dark status bar on Android Chrome and desktop browsers */}
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)" />
