@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
     if (!process.env.RESEND_API_KEY) {
       return NextResponse.json({ error: 'Resend API Key is not configured' }, { status: 500 });
     }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     const { invoiceId, email, name, amount, currency } = await req.json();
 
