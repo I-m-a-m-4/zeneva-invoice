@@ -1,4 +1,3 @@
-import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
 import { adminFirestore } from '@/firebase/admin';
 import { v4 as uuidv4 } from 'uuid';
@@ -43,18 +42,6 @@ export async function sendGmailFollowUp(params: FollowUpParams, retryCount = 0):
   // 2. Inject Tracking Pixel
   const trackingPixel = `<img src="${BASE_URL}/api/track?tid=${trackId}" width="1" height="1" style="display:none;" />`;
   const htmlWithPixel = `${params.body}${trackingPixel}`;
-
-  // 3. Setup OAuth2
-  const OAuth2 = google.auth.OAuth2;
-  const oauth2Client = new OAuth2(
-    GMAIL_CLIENT_ID,
-    GMAIL_CLIENT_SECRET,
-    "https://developers.google.com/oauthplayground"
-  );
-
-  oauth2Client.setCredentials({
-    refresh_token: GMAIL_REFRESH_TOKEN
-  });
 
   try {
     // We create the transporter but let Nodemailer handle the token refresh
