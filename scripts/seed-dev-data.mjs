@@ -46,7 +46,68 @@ async function findUserAndBusiness() {
   if (snap.empty) { console.error('No user found:', TARGET_EMAIL); process.exit(1); }
   const doc = snap.docs[0];
   const userId = doc.id;
-  const businessId = doc.data().businessId;
+  let businessId = doc.data().businessId;
+
+  if (!businessId) {
+    console.log('User has no businessId. Creating business instance for', TARGET_EMAIL);
+    const bizRef = db.collection('businessInstances').doc();
+    businessId = bizRef.id;
+    await bizRef.set({
+      id: businessId,
+      name: 'Zeneva Solutions',
+      ownerId: userId,
+      plan: 'business',
+      status: 'active',
+      accessLevel: 'lifetime',
+      createdAt: Timestamp.now(),
+      trialExpiresAt: Timestamp.fromDate(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)),
+      settings: {
+        currency: 'NGN',
+        primaryColor: '#7c3aed',
+        phone: '08012345678',
+        email: TARGET_EMAIL,
+        defaultTaxRate: 7.5,
+        paymentBankName: 'Zenith Bank',
+        paymentBankAccountId: '1012345678',
+        paymentAccountName: 'Zeneva Solutions',
+        paymentInstructions: 'Please include your invoice number in payment description.'
+      }
+    });
+    await doc.ref.update({
+      businessId,
+      role: 'owner',
+      name: doc.data().name || 'Bello Imam',
+      updatedAt: Timestamp.now()
+    });
+    console.log('Created businessInstance:', businessId, 'and updated user profile.');
+  } else {
+    // Check if businessInstance exists
+    const bizSnap = await db.collection('businessInstances').doc(businessId).get();
+    if (!bizSnap.exists) {
+      await db.collection('businessInstances').doc(businessId).set({
+        id: businessId,
+        name: 'Zeneva Solutions',
+        ownerId: userId,
+        plan: 'business',
+        status: 'active',
+        accessLevel: 'lifetime',
+        createdAt: Timestamp.now(),
+        settings: {
+          currency: 'NGN',
+          primaryColor: '#7c3aed',
+          phone: '08012345678',
+          email: TARGET_EMAIL,
+          defaultTaxRate: 7.5,
+          paymentBankName: 'Zenith Bank',
+          paymentBankAccountId: '1012345678',
+          paymentAccountName: 'Zeneva Solutions',
+          paymentInstructions: 'Please include your invoice number in payment description.'
+        }
+      });
+      console.log('Ensured businessInstance document exists for businessId:', businessId);
+    }
+  }
+
   console.log('Found user:', userId, '| businessId:', businessId);
   return { userId, businessId };
 }
@@ -70,6 +131,18 @@ async function deleteSeedData(businessId) {
     await batch.commit();
     console.log('  Deleted', snap.size, 'from', col);
   }
+
+  // Also delete from businessInstances/{businessId}/expenses
+  const expSubSnap = await db.collection(`businessInstances/${businessId}/expenses`)
+    .where('_seed', '==', SEED_TAG)
+    .get();
+  if (!expSubSnap.empty) {
+    const expBatch = db.batch();
+    expSubSnap.docs.forEach((d) => expBatch.delete(d.ref));
+    await expBatch.commit();
+    console.log('  Deleted', expSubSnap.size, 'from businessInstances expenses');
+  }
+
   console.log('Done.');
 }
 
@@ -186,8 +259,10 @@ async function seed() {
   console.log('\nSeeding invoices...');
   const invoiceIds = [];
   const ib = db.batch();
+  const rbInvoices = db.batch();
   for (let i = 0; i < 20; i++) {
     const ref = db.collection('invoices').doc();
+    const receiptRef = db.collection('receipts').doc(ref.id);
     invoiceIds.push(ref.id);
     const items = [];
     let subtotal = 0;
@@ -203,20 +278,26 @@ async function seed() {
     const ci = ri(0, customerIds.length - 1);
     const createdAt = daysAgo(ri(0, 60));
     const due = new Date(createdAt.toDate()); due.setDate(due.getDate() + 30);
-    ib.set(ref, {
+    const invStatus = rf(['paid', 'unpaid', 'unpaid', 'pending']);
+    const invData = {
       _seed: SEED_TAG, businessId,
-      invoiceNumber: 'INV-' + (2000 + i),
+      receiptNumber: 'INV-' + (2000 + i),
       customer: { id: customerIds[ci], name: customerDefs[ci][0], email: customerDefs[ci][1], phone: customerDefs[ci][2] },
       items, subtotal, tax, discount: 0, total,
-      status: rf(['paid', 'unpaid', 'unpaid', 'pending']),
-      paymentMethod: rf(['Bank Transfer', 'Card', 'Cash']),
+      status: invStatus,
+      paymentMethod: 'Invoice',
+      type: 'invoice',
       createdAt,
-      dueDate: Timestamp.fromDate(due),
-      notes: 'Thank you for your business.',
-    });
+      dueDate: due.toISOString(),
+      notes: 'Thank you for your business. Please remit payment via bank transfer.',
+      createdBy: userId,
+    };
+    ib.set(ref, invData);
+    rbInvoices.set(receiptRef, invData);
   }
   await ib.commit();
-  console.log('  20 invoices');
+  await rbInvoices.commit();
+  console.log('  20 invoices (synced to invoices and receipts)');
 
   // ESTIMATES
   console.log('\nSeeding estimates/quotes...');
@@ -245,22 +326,31 @@ async function seed() {
   // EXPENSES
   console.log('\nSeeding expenses...');
   const exb = db.batch();
+  const exSubBatch = db.batch();
   for (let i = 0; i < 15; i++) {
     const ref = db.collection('expenses').doc();
-    exb.set(ref, {
+    const subRef = db.collection(`businessInstances/${businessId}/expenses`).doc(ref.id);
+    const amount = ri(5000, 200000);
+    const category = rf(['Rent & Utilities','Logistics & Fuel','Staff Salaries','Digital Marketing','Office Maintenance','Packaging Supplies','Software Subscriptions']);
+    const desc = rf(['Monthly office rent','Electricity utility bill','Team salary disbursement','Google & Social Ads campaign','Generator servicing & fuel','Packaging boxes order','Cloud server subscription']);
+    const date = daysAgo(ri(0, 90));
+    const expData = {
       _seed: SEED_TAG, businessId,
-      amount: ri(5000, 200000),
-      category: rf(['rent','utilities','salaries','logistics','marketing','maintenance','packaging','miscellaneous']),
-      paymentMethod: rf(['cash','bank_transfer','pos_card']),
-      description: rf(['Monthly rent payment','Electricity bill','Staff salary','Logistics delivery','Facebook/Instagram ads','Equipment maintenance','Packaging materials','Miscellaneous expense']),
-      date: daysAgo(ri(0, 90)),
+      amount,
+      category,
+      paymentMode: rf(['Cash', 'Bank Transfer', 'Card']),
+      description: desc,
+      date,
       paidBy: 'Bello Imam',
       status: rf(['paid','pending']),
-      createdAt: daysAgo(ri(0, 90)),
-    });
+      createdAt: date,
+    };
+    exb.set(ref, expData);
+    exSubBatch.set(subRef, expData);
   }
   await exb.commit();
-  console.log('  15 expenses');
+  await exSubBatch.commit();
+  console.log('  15 expenses (synced to root and business subcollection)');
 
   // RECURRING INVOICES
   console.log('\nSeeding recurring invoices...');

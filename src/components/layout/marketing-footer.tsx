@@ -62,25 +62,25 @@ export default function MarketingFooter() {
                       <span className="h-1.5 w-1.5 rounded-full animate-pulse bg-emerald-400"></span>
                       {t('footer.badgeGrowth')}
                     </div>
-                    <h4 className="font-semibold tracking-tight text-white">{t('footer.osHeading')}</h4>
-                    <ul className="space-y-2 text-sm text-neutral-300">
+                    <h4 className="font-semibold tracking-tight text-white font-dm-sans">{t('footer.osHeading')}</h4>
+                    <ul className="space-y-2 text-sm text-neutral-300 font-dm-sans">
                       <li className="flex items-start gap-2">
                         <Check className="w-4 h-4 mt-0.5 text-emerald-400" />
-                        <span>{t('footer.bullet1')}</span>
+                        <span className="font-dm-sans">{t('footer.bullet1')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <Check className="w-4 h-4 mt-0.5 text-emerald-400" />
-                        <span>{t('footer.bullet2')}</span>
+                        <span className="font-dm-sans">{t('footer.bullet2')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <Check className="w-4 h-4 mt-0.5 text-emerald-400" />
-                        <span>{t('footer.bullet3')}</span>
+                        <span className="font-dm-sans">{t('footer.bullet3')}</span>
                       </li>
                     </ul>
-                    <div className="flex items-center gap-3 pt-2 text-sm">
-                      <a href="mailto:zenevapos@gmail.com" className="inline-flex items-center gap-2 transition hover:text-primary text-white">zenevapos@gmail.com</a>
+                    <div className="flex items-center gap-3 pt-2 text-sm font-dm-sans">
+                      <a href="mailto:zenevapos@gmail.com" className="inline-flex items-center gap-2 transition hover:text-primary text-white font-dm-sans">zenevapos@gmail.com</a>
                       <span className="text-white/20">•</span>
-                      <a href="https://wa.me/2349064233805" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 transition text-white hover:text-primary">
+                      <a href="https://wa.me/2349064233805" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 transition text-white hover:text-primary font-dm-sans">
                         <Phone className="w-4 h-4" />
                         +234 906 423 3805
                       </a>
@@ -267,9 +267,9 @@ export default function MarketingFooter() {
           </div>
 
           <div className="mt-8 pt-6 border-t flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-white/10">
-            <div className="flex flex-col gap-1">
-              <p className="text-sm text-white/60">{t('footer.rights')}</p>
-              <p className="text-sm text-white/40">Built by Bimex</p>
+            <div className="flex flex-col gap-1 font-dm-sans">
+              <p className="text-sm text-white/60 font-dm-sans">{t('footer.rights')}</p>
+              <p className="text-sm text-white/40 font-dm-sans">Built by BimexPro</p>
             </div>
 
             {/* SEO-Optimized CAC Trust Badge */}

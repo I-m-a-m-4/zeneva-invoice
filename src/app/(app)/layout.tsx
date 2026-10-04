@@ -102,6 +102,11 @@ const navGroups = [
     items: [
       { href: '/getting-started', icon: Sparkles, label: 'Getting Started', labelKey: 'nav.getting_started', roles: ['admin', 'manager', 'vendor_operator', 'owner'], isFeatured: true },
       { href: '/dashboard', icon: Home, label: 'Dashboard', labelKey: 'nav.dashboard', roles: ['admin', 'manager', 'vendor_operator', 'owner'] },
+    ]
+  },
+  {
+    label: 'Sales',
+    items: [
       { href: '/inventory', icon: Package, label: 'Items', labelKey: 'nav.items', roles: ['admin', 'manager', 'vendor_operator', 'owner'] },
       { href: '/customers', icon: Users, label: 'Customers', labelKey: 'nav.customers', roles: ['admin', 'manager', 'vendor_operator', 'owner'] },
       { href: '/estimates', icon: CalculatorIcon, label: 'Quotes', labelKey: 'nav.quotes', roles: ['admin', 'manager', 'owner'] },
@@ -110,9 +115,19 @@ const navGroups = [
       { href: '/payment-received', icon: CreditCard, label: 'Payments Received', labelKey: 'nav.payments_rx', roles: ['admin', 'manager', 'owner'] },
       { href: '/recurring-invoices', icon: Repeat, label: 'Recurring Invoices', labelKey: 'nav.recurring_invoices', roles: ['admin', 'manager', 'owner'] },
       { href: '/credit-notes', icon: FileText, label: 'Credit Notes', labelKey: 'nav.credit_notes', roles: ['admin', 'manager', 'owner'] },
+    ]
+  },
+  {
+    label: 'Time & Expenses',
+    items: [
       { href: '/expenses', icon: Wallet, label: 'Expenses', labelKey: 'nav.expenses', roles: ['admin', 'manager', 'owner'] },
       { href: '/projects', icon: Award, label: 'Projects', labelKey: 'nav.projects', roles: ['admin', 'manager', 'owner'] },
       { href: '/time-logs', icon: HistoryIcon, label: 'Timesheet', labelKey: 'nav.timesheet', roles: ['admin', 'manager', 'owner'] },
+    ]
+  },
+  {
+    label: 'Analytics',
+    items: [
       { href: '/reports', icon: BarChart2, label: 'Reports', labelKey: 'nav.reports', roles: ['admin', 'owner'] },
       { href: '/templates', icon: Paintbrush, label: 'Templates', labelKey: 'nav.templates', roles: ['admin', 'owner'] },
     ]
@@ -394,9 +409,9 @@ export default function AuthenticatedLayout({
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Trigger Zen AI with dictation when Control key is pressed
-      if (e.key === 'Control') {
-        // Prevent default browser hotkey triggers if any
+      // Trigger Zen AI with dictation ONLY when Alt key is pressed (not Control)
+      if (e.key === 'Alt') {
+        e.preventDefault();
         setIsZenAIOpen(true);
         setDictationTrigger(prev => prev + 1);
       }
@@ -1471,10 +1486,12 @@ export default function AuthenticatedLayout({
                         const visibleItems = filterNavByRole(group.items);
                         if (visibleItems.length === 0) return null;
                         return (
-                          <div key={group.label} className={gIdx > 0 ? 'mt-4' : ''}>
-                            <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70 group-data-[state=collapsed]:hidden font-display">
-                              {group.label}
-                            </div>
+                          <div key={group.label || `group-${gIdx}`} className={gIdx > 0 ? 'mt-4 pt-3 border-t border-sidebar-border/30' : ''}>
+                            {group.label ? (
+                              <div className="px-3 pb-1 pt-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 group-data-[state=collapsed]:hidden font-sidebar">
+                                {group.label}
+                              </div>
+                            ) : null}
                             {visibleItems.map((link) => {
                               const navText = t(link.labelKey) === link.labelKey || t(link.labelKey).startsWith('nav.') ? link.label : t(link.labelKey);
                               return (
@@ -1486,7 +1503,7 @@ export default function AuthenticatedLayout({
                                   >
                                     <Link href={link.href} className="flex items-center w-full">
                                       <link.icon className="h-5 w-5 shrink-0" />
-                                      <span className="group-data-[state=collapsed]:hidden flex items-center justify-between flex-1 min-w-0 font-display">
+                                      <span className="group-data-[state=collapsed]:hidden flex items-center justify-between flex-1 min-w-0 font-sidebar">
                                         <span className="truncate font-medium">{navText}</span>
                                         {(link as any).isNew && (
                                           <Badge className="ms-2 h-[18px] px-1.5 bg-orange-500 hover:bg-orange-600 text-[9px] font-bold text-white border-0 shadow-none leading-none rounded">{t('nav.newBadge')}</Badge>
@@ -1517,7 +1534,7 @@ export default function AuthenticatedLayout({
                         >
                           <Link href={link.href} className="relative">
                             <link.icon className="h-5 w-5" />
-                            <span className="group-data-[state=collapsed]:hidden font-display font-medium">{t(link.labelKey)}</span>
+                            <span className="group-data-[state=collapsed]:hidden font-sidebar font-medium">{t(link.labelKey)}</span>
                             {isSupport && (showCeoMessage || hasUnreadAdminMessage) && (
                               <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
@@ -1964,7 +1981,7 @@ export default function AuthenticatedLayout({
                 </div>
                 <div className="flex items-center gap-4 text-muted-foreground">
                   <button type="button" className="hover:text-foreground flex items-center gap-1 transition-colors">
-                    <Timer className="h-3 w-3 text-purple-500" />
+                    <Timer className="h-3 w-3 text-orange-500" />
                     <span>Start Timer (Ctrl + T)</span>
                   </button>
                   <div className="flex items-center gap-1 hover:text-foreground cursor-pointer transition-colors">

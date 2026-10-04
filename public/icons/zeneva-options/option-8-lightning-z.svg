@@ -1,0 +1,22 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad8" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7A18" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="512" height="512" rx="116" fill="url(#bgGrad8)" />
+  
+  <!-- Icon: Instant Lightning 'Z' Invoice (High-Velocity Billing) -->
+  <!-- Invoice Back Frame -->
+  <rect x="144" y="112" width="224" height="288" rx="28" stroke="#FFFFFF" stroke-width="20" />
+  
+  <!-- Inner Bill Lines -->
+  <rect x="180" y="160" width="70" height="14" rx="7" fill="#FFFFFF" opacity="0.9" />
+  <rect x="180" y="196" width="152" height="12" rx="6" fill="#FFFFFF" opacity="0.6" />
+  <rect x="180" y="328" width="152" height="12" rx="6" fill="#FFFFFF" opacity="0.6" />
+  
+  <!-- Electric Z-Bolt / Lightning Cutout Through Center -->
+  <path d="M280 120L190 270H264L230 392L334 242H260L280 120Z" fill="#FFFFFF" filter="drop-shadow(0px 8px 16px rgba(0,0,0,0.15))" />
+</svg>

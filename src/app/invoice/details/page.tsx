@@ -40,10 +40,21 @@ function InvoiceContent() {
 
     const receiptContentRef = useRef<HTMLDivElement>(null);
     const [mounted, setMounted] = React.useState(false);
+    const [isDownloading, setIsDownloading] = React.useState(false);
+    const [activeTemplate, setActiveTemplate] = React.useState<string>(
+        (business?.settings as any)?.invoiceTemplate || 'standard'
+    );
 
     React.useEffect(() => {
         setMounted(true);
     }, []);
+
+    React.useEffect(() => {
+        const defaultTemplate = (business?.settings as any)?.invoiceTemplate;
+        if (defaultTemplate) {
+            setActiveTemplate(defaultTemplate);
+        }
+    }, [business?.settings]);
 
     const isLoading = isInvoiceLoading || (invoice && !business && isBusinessLoading);
 
@@ -66,28 +77,19 @@ function InvoiceContent() {
     };
 
     const handleDownload = async () => {
-        if (receiptContentRef.current) {
-            toast({ title: "Generating PDF...", description: "Please wait while we prepare your document." });
-            
-            // Dynamic imports to prevent SSR/Build errors
-            const html2canvas = (await import('html2canvas')).default;
-            const { jsPDF } = await import('jspdf');
-
-            const canvas = await html2canvas(receiptContentRef.current, {
-                scale: 2,
-                useCORS: true,
-                logging: false,
-                backgroundColor: '#ffffff'
-            });
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF({
-                orientation: 'p',
-                unit: 'px',
-                format: [canvas.width, canvas.height]
-            });
-            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-            pdf.save(`invoice-${invoice.id.substring(0, 8)}.pdf`);
-            toast({ title: "Download Started", description: "Invoice has been generated.", variant: 'success' });
+        if (!receiptContentRef.current || !invoice) return;
+        setIsDownloading(true);
+        toast({ title: "Generating A4 PDF...", description: "Formatting high-resolution executive invoice." });
+        try {
+            const { downloadInvoicePDF } = await import('@/lib/invoice-pdf');
+            const invNumber = invoice.receiptNumber || `INV-${invoice.id.substring(0, 8).toUpperCase()}`;
+            await downloadInvoicePDF(receiptContentRef.current, `Invoice-${invNumber}.pdf`);
+            toast({ title: "Download Complete", description: `Saved Invoice-${invNumber}.pdf`, variant: 'success' });
+        } catch (error) {
+            console.error('PDF error:', error);
+            toast({ variant: 'destructive', title: "Download Failed", description: "Could not render PDF. Please try printing to PDF." });
+        } finally {
+            setIsDownloading(false);
         }
     };
 
@@ -136,8 +138,57 @@ function InvoiceContent() {
                 </div>
             )}
 
-            <div ref={receiptContentRef} className="border rounded-lg bg-card overflow-hidden">
-                <ReceiptDetails receipt={invoice} business={business} currencySymbol={currencySymbol} isInvoice={true} showAdminDetails={!!user && (user.role === 'admin' || user.role === 'manager')} />
+            <div className="w-full max-w-3xl flex flex-wrap items-center justify-between gap-3 no-print bg-card/60 border border-border p-2.5 rounded-lg text-xs">
+                <div className="flex items-center gap-2">
+                    <span className="text-muted-foreground font-semibold text-[11px] uppercase tracking-wider">Style:</span>
+                    <div className="inline-flex rounded-md border border-border bg-muted/40 p-0.5">
+                        {[
+                            { id: 'standard', name: 'Standard' },
+                            { id: 'continental', name: 'Continental' },
+                            { id: 'spreadsheet', name: 'Spreadsheet' },
+                            { id: 'universal', name: 'Universal' },
+                        ].map(t => (
+                            <button
+                                key={t.id}
+                                type="button"
+                                onClick={() => setActiveTemplate(t.id)}
+                                className={`px-2.5 py-1 text-[11px] font-medium rounded transition-all ${
+                                    activeTemplate === t.id
+                                        ? 'bg-background text-foreground shadow-xs font-semibold'
+                                        : 'text-muted-foreground hover:text-foreground'
+                                }`}
+                            >
+                                {t.name}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <Button onClick={handlePrint} variant="outline" size="sm" className="h-8 text-xs">
+                        <Printer className="mr-1.5 h-3.5 w-3.5" /> Print
+                    </Button>
+                    <Button
+                        onClick={handleDownload}
+                        disabled={isDownloading}
+                        size="sm"
+                        className="bg-orange-500 hover:bg-orange-600 text-white font-bold h-8 text-xs shadow-sm"
+                    >
+                        {isDownloading ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Download className="mr-1.5 h-3.5 w-3.5" />}
+                        Download A4 PDF
+                    </Button>
+                </div>
+            </div>
+
+            <div ref={receiptContentRef} className="border border-border/80 rounded-xl bg-card overflow-hidden shadow-sm w-full max-w-3xl">
+                <ReceiptDetails
+                    receipt={invoice}
+                    business={business}
+                    currencySymbol={currencySymbol}
+                    isInvoice={true}
+                    overrideTemplate={activeTemplate}
+                    showAdminDetails={!!user && (user.role === 'admin' || user.role === 'manager')}
+                />
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-3 no-print">
@@ -148,14 +199,12 @@ function InvoiceContent() {
                 )}
                 {user && (
                     <Button asChild variant="outline">
-                        <Link href="/sales/pos/select-products"><PlusCircle className="mr-2 h-4 w-4" /> New Sale</Link>
+                        <Link href="/invoices"><PlusCircle className="mr-2 h-4 w-4" /> All Invoices</Link>
                     </Button>
                 )}
-                <Button onClick={handlePrint} variant="outline">
-                    <Printer className="mr-2 h-4 w-4" /> Print
-                </Button>
-                <Button onClick={handleDownload} variant="default">
-                    <Download className="mr-2 h-4 w-4" /> Download PDF
+                <Button onClick={handleDownload} disabled={isDownloading} variant="default" className="bg-orange-500 hover:bg-orange-600 text-white">
+                    {isDownloading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+                    Download PDF
                 </Button>
                 <Button onClick={handleShare} variant="outline">
                     <Share2 className="mr-2 h-4 w-4" /> Share

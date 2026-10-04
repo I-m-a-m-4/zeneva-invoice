@@ -52,8 +52,8 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
-      <div className="flex items-center justify-center py-12">
+    <div className="w-full min-h-screen lg:h-screen flex lg:grid lg:grid-cols-2 bg-background">
+      <div className="flex flex-col min-h-screen lg:min-h-0 lg:h-full lg:overflow-y-auto items-center justify-center py-12 px-4">
         <div className="mx-auto grid w-full max-w-[350px] gap-6">
           <div className="grid gap-2 text-center">
             <Link href="/" className="flex items-center justify-center gap-2 mb-4">
@@ -123,31 +123,33 @@ export default function ForgotPasswordPage() {
           </div>
         </div>
       </div>
-      <div className="hidden bg-slate-900 lg:block relative overflow-hidden">
-        <Image
-          src="/zeneva-forgot-password-premium.png"
-          alt={t('auth.backgroundAlt')}
-          width="1920"
-          height="1080"
-          className="h-full w-full object-cover opacity-90 transition-transform [transition-duration:20s] hover:scale-110"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
-        <div className="absolute bottom-12 left-12 right-12 p-10 bg-white/5 backdrop-blur-2xl rounded-[3rem] border border-white/10 shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)]">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <h2 className="text-white text-5xl font-medium tracking-tighter font-display">{t('auth.securityFirstTitle')}</h2>
-            <p className="text-white/60 mt-6 text-xl font-dm-sans leading-relaxed max-w-lg">
-              {t('auth.securityFirstBody')}
-            </p>
-            <div className="mt-8 flex items-center gap-3 text-orange-500 text-sm font-bold uppercase tracking-[0.2em] bg-orange-500/10 w-fit px-4 py-2 rounded-full border border-orange-500/20">
-               <ShieldCheck className="h-5 w-5" />
-               {t('auth.tacticalVaultLocked')}
-            </div>
-          </motion.div>
+      <div className="hidden lg:flex flex-col p-3 sm:p-4 lg:p-5 h-full">
+        <div className="relative w-full h-full overflow-hidden rounded-2xl lg:rounded-3xl bg-slate-900 shadow-2xl border border-black/5 dark:border-white/10">
+          <Image
+            src="/zeneva-forgot-password-premium.png"
+            alt={t('auth.backgroundAlt')}
+            width="1920"
+            height="1080"
+            className="h-full w-full object-cover opacity-90 transition-transform [transition-duration:20s] hover:scale-110"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+          <div className="absolute bottom-8 left-8 right-8 lg:bottom-12 lg:left-12 lg:right-12 p-8 lg:p-10 bg-white/5 backdrop-blur-2xl rounded-2xl lg:rounded-[2.5rem] border border-white/10 shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)]">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <h2 className="text-white text-4xl lg:text-5xl font-medium tracking-tighter font-display">{t('auth.securityFirstTitle')}</h2>
+              <p className="text-white/60 mt-4 lg:mt-6 text-lg lg:text-xl font-dm-sans leading-relaxed max-w-lg">
+                {t('auth.securityFirstBody')}
+              </p>
+              <div className="mt-6 lg:mt-8 flex items-center gap-3 text-orange-500 text-sm font-bold uppercase tracking-[0.2em] bg-orange-500/10 w-fit px-4 py-2 rounded-full border border-orange-500/20">
+                 <ShieldCheck className="h-5 w-5" />
+                 {t('auth.tacticalVaultLocked')}
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </div>

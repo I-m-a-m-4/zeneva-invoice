@@ -24,7 +24,7 @@ export function PricingPlans() {
     };
 
     return (
-        <div className="w-full">
+        <div className="w-full font-dm-sans">
             <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-12">
                 {/* Billing Toggle */}
                 <div className="inline-flex items-center p-1 bg-neutral-100/80 border-2 border-dashed border-neutral-200 rounded-xl">

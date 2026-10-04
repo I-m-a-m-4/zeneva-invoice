@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Instrument+Serif:ital@0;1&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
 
+/* Nexa trial font definitions removed: replaced with DM Sans to avoid trial/demo glyph watermarks */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -133,6 +135,26 @@
     padding: 0;
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+    font-family: var(--font-dm-sans), 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Main content normal text: DM Sans font */
+  main,
+  #app-main-content,
+  .font-body {
+    font-family: var(--font-dm-sans), 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Sidebar text: DM Sans font */
+  [data-sidebar="sidebar"],
+  [data-sidebar="sidebar"] *,
+  [data-sidebar="menu-button"],
+  [data-sidebar="group-label"],
+  [data-sidebar="header"],
+  [data-sidebar="footer"],
+  .sidebar-text,
+  .font-sidebar {
+    font-family: var(--font-dm-sans), 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
   }
 
   /* Prevent layout shift from Radix UI Dialogs */

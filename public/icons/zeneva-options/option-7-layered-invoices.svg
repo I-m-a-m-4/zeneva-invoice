@@ -1,0 +1,38 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad7" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7A18" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="512" height="512" rx="116" fill="url(#bgGrad7)" />
+  
+  <!-- Icon: Layered / Stacked Invoice Cards -->
+  <!-- Background Sheet (Tilted Left) -->
+  <g transform="translate(256 256) rotate(-10) translate(-256 -256)" opacity="0.45">
+    <rect x="160" y="112" width="180" height="240" rx="20" fill="#FFFFFF" />
+    <rect x="186" y="146" width="60" height="14" rx="7" fill="url(#bgGrad7)" />
+    <rect x="186" y="180" width="128" height="10" rx="5" fill="url(#bgGrad7)" />
+    <rect x="186" y="206" width="128" height="10" rx="5" fill="url(#bgGrad7)" />
+  </g>
+  
+  <!-- Foreground Primary Sheet (Straight & Prominent) -->
+  <g fill="#FFFFFF">
+    <rect x="176" y="144" width="184" height="246" rx="22" />
+    
+    <!-- Detail cutouts -->
+    <rect x="206" y="178" width="68" height="16" rx="8" fill="url(#bgGrad7)" />
+    <circle cx="328" cy="186" r="10" fill="url(#bgGrad7)" />
+    
+    <rect x="206" y="222" width="124" height="12" rx="6" fill="url(#bgGrad7)" />
+    <rect x="206" y="250" width="124" height="12" rx="6" fill="url(#bgGrad7)" />
+    <rect x="206" y="278" width="80" height="12" rx="6" fill="url(#bgGrad7)" />
+    
+    <!-- Total Balance Pill -->
+    <rect x="206" y="318" width="124" height="38" rx="12" fill="url(#bgGrad7)" />
+  </g>
+  
+  <!-- Mini Checkmark Inside Total Pill -->
+  <path d="M228 337L236 345L252 329" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

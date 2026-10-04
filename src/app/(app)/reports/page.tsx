@@ -24,7 +24,9 @@ import CustomerAnalytics from '@/components/reports/customer-analytics';
 import DailySalesItemsTable from '@/components/reports/daily-sales-items-table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Printer, Image as ImageIcon, BarChart2, CheckCircle } from 'lucide-react';
+import { Printer, Image as ImageIcon, BarChart2, CheckCircle, Folder, Star, Search, ArrowLeft } from 'lucide-react';
+import { REPORTS_CATALOG, findReportById, type ReportItem } from '@/lib/reports-center-catalog';
+import { ReportDetailView } from '@/components/reports/report-detail-view';
 
 import FeatureGate from '@/components/shared/feature-gate';
 import AbcAnalysis from '@/components/reports/abc-analysis';
@@ -313,16 +315,59 @@ export default function ReportsDashboard() {
      */
     const [monthlyStats, setMonthlyStats] = React.useState<{ month: string, sales: number }[] | null>(null);
     const [activeTab, setActiveTab] = React.useState<string>('analytics');
+    const [selectedReportId, setSelectedReportId] = React.useState<string | null>(null);
+    const [viewMode, setViewMode] = React.useState<'center' | 'dashboard'>('center');
+    const [searchQuery, setSearchQuery] = React.useState<string>('');
+    const [favorites, setFavorites] = React.useState<Record<string, boolean>>({});
 
     React.useEffect(() => {
         if (typeof window !== 'undefined') {
             const params = new URLSearchParams(window.location.search);
+            const reportParam = params.get('report');
+            if (reportParam) {
+                setSelectedReportId(reportParam);
+            }
             const tab = params.get('tab');
             if (tab && (tab === 'analytics' || tab === 'daily-sales' || tab === 'profit-loss' || tab === 'business-rating')) {
                 setActiveTab(tab);
+                setViewMode('dashboard');
             }
+            try {
+                const savedFavs = localStorage.getItem('zeneva_favorite_reports');
+                if (savedFavs) setFavorites(JSON.parse(savedFavs));
+            } catch {}
         }
     }, []);
+
+    const toggleFavorite = (e: React.MouseEvent, id: string) => {
+        e.stopPropagation();
+        setFavorites((prev) => {
+            const next = { ...prev, [id]: !prev[id] };
+            try {
+                localStorage.setItem('zeneva_favorite_reports', JSON.stringify(next));
+            } catch {}
+            return next;
+        });
+    };
+
+    const filteredCatalog = React.useMemo(() => {
+        if (!searchQuery.trim()) return REPORTS_CATALOG;
+        const q = searchQuery.toLowerCase();
+        return REPORTS_CATALOG.map((cat) => ({
+            ...cat,
+            reports: cat.reports.filter(
+                (r) =>
+                    r.name.toLowerCase().includes(q) ||
+                    r.description.toLowerCase().includes(q) ||
+                    cat.label.toLowerCase().includes(q)
+            ),
+        })).filter((cat) => cat.reports.length > 0);
+    }, [searchQuery]);
+
+    const activeReport = React.useMemo(() => {
+        if (!selectedReportId) return null;
+        return findReportById(selectedReportId) || null;
+    }, [selectedReportId]);
 
     const dateFromTime = date?.from ? safeToDate(date.from).getTime() : 0;
     const dateToTime = date?.to ? safeToDate(date.to).getTime() : 0;
@@ -623,53 +668,202 @@ export default function ReportsDashboard() {
         toast({ variant: 'success', title: t('reports.exportedTitle'), description: t('reports.exportedBody') });
     }, [deepReceipts, products, users, finalReportData, comparison, currencySymbol, business, date, toast, t]);
 
+    if (activeReport) {
+        return (
+            <ReportDetailView
+                report={activeReport}
+                onBack={() => {
+                    setSelectedReportId(null);
+                    if (typeof window !== 'undefined') {
+                        const url = new URL(window.location.href);
+                        url.searchParams.delete('report');
+                        window.history.pushState({}, '', url.toString());
+                    }
+                }}
+            />
+        );
+    }
+
     return (
         <div ref={dashboardRef} className="flex flex-col gap-6 bg-background p-1">
-            <PageTitle title={t('reports.title')} subtitle={t('reports.subtitle')} />
+            {/* Top Navigation & Mode Switcher */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
+                <div>
+                    <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+                        {viewMode === 'center' ? 'Reports Center' : t('reports.title')}
+                    </h1>
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+                        {viewMode === 'center'
+                            ? 'Access in-depth operational, receivables, tax, and sales performance reports.'
+                            : t('reports.subtitle')}
+                    </p>
+                </div>
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex flex-col flex-grow">
-                <div className="flex flex-wrap items-center justify-between gap-4 no-capture border-b pb-4 mb-6">
-                    <TabsList className="flex flex-col md:grid md:grid-cols-4 w-full md:w-[650px] h-auto gap-1">
-                        <TabsTrigger value="analytics" className="text-sm font-semibold w-full">{t('reports.tabAnalytics')}</TabsTrigger>
-                        <TabsTrigger value="profit-loss" className="text-sm font-semibold w-full">{t('reports.tabProfitLoss')}</TabsTrigger>
-                        <TabsTrigger value="daily-sales" className="text-sm font-semibold w-full">{t('reports.tabDailySales')}</TabsTrigger>
-                        <TabsTrigger value="business-rating" className="text-sm font-semibold w-full">{t('reports.tabBusinessRating')}</TabsTrigger>
-                    </TabsList>
-                    <div className="flex flex-wrap items-center gap-4">
-                        {(activeTab === 'analytics' || activeTab === 'profit-loss') && (
-                            <>
-                                <DateRangePicker date={date} onDateChange={setDate} />
-                                {isFetchingBatch && (
-                                    <div className="flex items-center gap-2 bg-secondary/50 backdrop-blur-sm border rounded-lg py-1.5 px-3 text-xs font-medium text-muted-foreground animate-in fade-in zoom-in-95 duration-200">
-                                        <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-                                        <span>{t('reports.updatingMetrics')}</span>
-                                    </div>
-                                )}
-                            </>
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant={viewMode === 'center' ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setViewMode('center')}
+                        className={cn(
+                            "h-8 text-xs font-semibold gap-1.5",
+                            viewMode === 'center'
+                                ? "bg-purple-600 hover:bg-purple-700 text-white"
+                                : "border-border text-foreground hover:bg-muted"
                         )}
-                        <DropdownMenu modal={false}>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-9">
-                                    <Download className="mr-2 h-4 w-4" />{t('reports.exportReport')}
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={handleExportAnalyticsCsv}>
-                                    <FileText className="h-4 w-4 mr-2" />
-                                    {t('reports.exportCsv')}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={handleDownloadImage}>
-                                    <ImageIcon className="h-4 w-4 mr-2" />
-                                    {t('reports.exportImage')}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => window.print()}>
-                                    <Printer className="h-4 w-4 mr-2" />
-                                    {t('reports.exportPdf')}
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                    >
+                        <Folder className="h-3.5 w-3.5" />
+                        Reports Center
+                    </Button>
+                    <Button
+                        variant={viewMode === 'dashboard' ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setViewMode('dashboard')}
+                        className={cn(
+                            "h-8 text-xs font-semibold gap-1.5",
+                            viewMode === 'dashboard'
+                                ? "bg-purple-600 hover:bg-purple-700 text-white"
+                                : "border-border text-foreground hover:bg-muted"
+                        )}
+                    >
+                        <BarChart2 className="h-3.5 w-3.5" />
+                        Visual Analytics &amp; KPIs
+                    </Button>
+                </div>
+            </div>
+
+            {viewMode === 'center' ? (
+                /* ==================================================== */
+                /* REPORTS CENTER DIRECTORY MATCHING SCREENSHOT 1       */
+                /* ==================================================== */
+                <div className="w-full flex flex-col items-center py-4 px-2 sm:px-4">
+                    {/* Centered Title */}
+                    <div className="text-center mb-6">
+                        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+                            Reports Center
+                        </h2>
+                    </div>
+
+                    {/* Centered Pill Search Input matching Screenshot 1 */}
+                    <div className="relative w-full max-w-xl mb-8">
+                        <Search className="h-4 w-4 text-muted-foreground absolute left-4 top-1/2 -translate-y-1/2" />
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Search reports"
+                            className="w-full pl-10 pr-9 py-2.5 rounded-full border border-border/80 bg-card text-foreground text-xs shadow-xs focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder:text-muted-foreground"
+                        />
+                        {searchQuery && (
+                            <button
+                                onClick={() => setSearchQuery('')}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground text-xs"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Main White Directory Container matching Screenshot 1 */}
+                    <div className="w-full max-w-4xl bg-card text-card-foreground border border-border/80 rounded-2xl shadow-xs p-6 sm:p-10 space-y-9">
+                        {filteredCatalog.map((category) => (
+                            <div key={category.id} className="space-y-3">
+                                {/* Category Header with Folder Icon */}
+                                <div className="flex items-center gap-2 text-xs font-bold text-foreground">
+                                    <Folder className="h-4 w-4 text-muted-foreground fill-muted/30" />
+                                    <span>{category.label}</span>
+                                </div>
+
+                                {/* 2-Column Grid with Dotted/Dashed Underlines */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-1 text-xs">
+                                    {category.reports.map((rep) => (
+                                        <div
+                                            key={rep.id}
+                                            onClick={() => {
+                                                setSelectedReportId(rep.id);
+                                                if (typeof window !== 'undefined') {
+                                                    const url = new URL(window.location.href);
+                                                    url.searchParams.set('report', rep.id);
+                                                    window.history.pushState({}, '', url.toString());
+                                                }
+                                            }}
+                                            className="flex items-center justify-between py-2 border-b border-border/50 hover:bg-muted/30 px-1.5 rounded-xs cursor-pointer group transition-colors select-none"
+                                        >
+                                            <span className="text-blue-600 dark:text-blue-400 group-hover:underline font-medium">
+                                                {rep.name}
+                                            </span>
+                                            <button
+                                                type="button"
+                                                onClick={(e) => toggleFavorite(e, rep.id)}
+                                                className="text-muted-foreground/30 hover:text-amber-500 transition-colors p-1"
+                                                title="Favorite report"
+                                            >
+                                                <Star
+                                                    className={cn(
+                                                        "h-3.5 w-3.5",
+                                                        favorites[rep.id] && "fill-amber-400 text-amber-500"
+                                                    )}
+                                                />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+
+                        {filteredCatalog.length === 0 && (
+                            <div className="text-center py-12 text-muted-foreground text-xs">
+                                No reports found matching &quot;{searchQuery}&quot;.
+                            </div>
+                        )}
                     </div>
                 </div>
+            ) : (
+                /* ==================================================== */
+                /* VISUAL ANALYTICS, CHARTS & KPI TABS                  */
+                /* ==================================================== */
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex flex-col flex-grow">
+                    <div className="flex flex-wrap items-center justify-between gap-4 no-capture border-b pb-4 mb-6">
+                        <TabsList className="flex flex-col md:grid md:grid-cols-4 w-full md:w-[650px] h-auto gap-1">
+                            <TabsTrigger value="analytics" className="text-sm font-semibold w-full">{t('reports.tabAnalytics')}</TabsTrigger>
+                            <TabsTrigger value="profit-loss" className="text-sm font-semibold w-full">{t('reports.tabProfitLoss')}</TabsTrigger>
+                            <TabsTrigger value="daily-sales" className="text-sm font-semibold w-full">{t('reports.tabDailySales')}</TabsTrigger>
+                            <TabsTrigger value="business-rating" className="text-sm font-semibold w-full">{t('reports.tabBusinessRating')}</TabsTrigger>
+                        </TabsList>
+                        <div className="flex flex-wrap items-center gap-4">
+                            {(activeTab === 'analytics' || activeTab === 'profit-loss') && (
+                                <>
+                                    <DateRangePicker date={date} onDateChange={setDate} />
+                                    {isFetchingBatch && (
+                                        <div className="flex items-center gap-2 bg-secondary/50 backdrop-blur-sm border rounded-lg py-1.5 px-3 text-xs font-medium text-muted-foreground animate-in fade-in zoom-in-95 duration-200">
+                                            <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                                            <span>{t('reports.updatingMetrics')}</span>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                            <DropdownMenu modal={false}>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" size="sm" className="h-9">
+                                        <Download className="mr-2 h-4 w-4" />{t('reports.exportReport')}
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={handleExportAnalyticsCsv}>
+                                        <FileText className="h-4 w-4 mr-2" />
+                                        {t('reports.exportCsv')}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={handleDownloadImage}>
+                                        <ImageIcon className="h-4 w-4 mr-2" />
+                                        {t('reports.exportImage')}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => window.print()}>
+                                        <Printer className="h-4 w-4 mr-2" />
+                                        {t('reports.exportPdf')}
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </div>
 
                 {showBlankScreenSpinner ? (
                     <div className="flex h-64 items-center justify-center animate-pulse">
@@ -904,6 +1098,7 @@ export default function ReportsDashboard() {
                     </>
                 )}
             </Tabs>
+            )}
         </div>
     );
 }

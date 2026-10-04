@@ -151,11 +151,11 @@ export default function DashboardPage() {
     1
   );
 
-  // SVG Chart Dimensions
-  const chartWidth = 720;
-  const chartHeight = 220;
+  // SVG Chart Dimensions (Expanded height for clearer financial trends)
+  const chartWidth = 840;
+  const chartHeight = 360;
   const paddingX = 40;
-  const paddingY = 25;
+  const paddingY = 30;
   const usableWidth = chartWidth - paddingX * 2;
   const usableHeight = chartHeight - paddingY * 2;
 
@@ -195,9 +195,9 @@ export default function DashboardPage() {
 
   return (
     <TooltipProvider>
-      <div className="flex-1 w-full bg-background text-foreground min-h-screen p-4 sm:p-6 md:p-8 space-y-6">
+      <div className="flex flex-col flex-1 w-full space-y-6 pb-12">
         {/* Top Greeting Card */}
-        <div className="bg-card text-card-foreground border border-border rounded-xl p-4 sm:p-5 flex items-center justify-between shadow-sm">
+        <div className="bg-card text-card-foreground border border-border/60 rounded-xl p-4 sm:p-5 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-4">
             <div className="h-11 w-11 rounded-lg bg-muted border border-border flex items-center justify-center text-muted-foreground shadow-sm">
               <Building2 className="h-5 w-5 text-primary" />
@@ -249,7 +249,7 @@ export default function DashboardPage() {
             <div className="px-5 py-3 border-b border-border bg-muted/30">
               <span className="text-xs sm:text-sm font-semibold text-muted-foreground">
                 Total Receivables:{' '}
-                <span className="text-foreground font-bold ml-1">
+                <span className="text-foreground font-bold ml-1 font-dm tabular-nums">
                   {formatCurrency(totalReceivables)}
                 </span>
               </span>
@@ -262,7 +262,7 @@ export default function DashboardPage() {
                 <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider block">
                   Current
                 </span>
-                <span className="text-lg sm:text-xl font-bold font-mono text-foreground block">
+                <span className="text-lg sm:text-xl font-bold font-dm tabular-nums text-foreground block">
                   {formatCurrency(currentAmount)}
                 </span>
               </div>
@@ -273,7 +273,7 @@ export default function DashboardPage() {
                   <span className="text-xs font-semibold text-amber-600 dark:text-amber-500 uppercase tracking-wider">
                     Overdue
                   </span>
-                  <span className="text-base sm:text-lg font-bold font-mono text-foreground">
+                  <span className="text-base sm:text-lg font-bold font-dm tabular-nums text-foreground">
                     {formatCurrency(overdueAmount)}
                   </span>
                 </div>
@@ -281,28 +281,28 @@ export default function DashboardPage() {
                 {/* Aging Columns */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-1">
                   <div className="space-y-0.5">
-                    <span className="text-sm font-semibold font-mono text-foreground block">
+                    <span className="text-sm font-semibold font-dm tabular-nums text-foreground block">
                       {formatCurrency(bucket1)}
                     </span>
                     <span className="text-[11px] text-muted-foreground">1-15 days</span>
                   </div>
 
                   <div className="space-y-0.5">
-                    <span className="text-sm font-semibold font-mono text-foreground block">
+                    <span className="text-sm font-semibold font-dm tabular-nums text-foreground block">
                       {formatCurrency(bucket2)}
                     </span>
                     <span className="text-[11px] text-muted-foreground">16-30 days</span>
                   </div>
 
                   <div className="space-y-0.5">
-                    <span className="text-sm font-semibold font-mono text-foreground block">
+                    <span className="text-sm font-semibold font-dm tabular-nums text-foreground block">
                       {formatCurrency(bucket3)}
                     </span>
                     <span className="text-[11px] text-muted-foreground">31-45 days</span>
                   </div>
 
                   <div className="space-y-0.5">
-                    <span className="text-sm font-semibold font-mono text-foreground block">
+                    <span className="text-sm font-semibold font-dm tabular-nums text-foreground block">
                       {formatCurrency(bucket4)}
                     </span>
                     <span className="text-[11px] text-muted-foreground">Above 45 days</span>
@@ -361,8 +361,8 @@ export default function DashboardPage() {
             </DropdownMenu>
           </div>
 
-          <div className="bg-card text-card-foreground border border-border rounded-xl p-4 sm:p-6 shadow-sm">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div className="bg-card text-card-foreground border border-border rounded-xl p-5 sm:p-7 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               {/* Responsive SVG Chart */}
               <div className="lg:col-span-9 w-full overflow-x-auto">
                 <div className="min-w-[620px]">
@@ -483,7 +483,7 @@ export default function DashboardPage() {
                             fontSize="10"
                             fill="currentColor"
                             className={isHovered ? "text-foreground font-bold" : "text-muted-foreground"}
-                            fontFamily="monospace"
+                            fontFamily="var(--font-dm-sans), 'DM Sans', sans-serif"
                           >
                             {item.month}
                           </text>
@@ -495,36 +495,36 @@ export default function DashboardPage() {
               </div>
 
               {/* Legend on the Right */}
-              <div className="lg:col-span-3 space-y-4 lg:border-l border-border lg:pl-6">
+              <div className="lg:col-span-3 space-y-6 lg:border-l border-border lg:pl-8 py-2 flex flex-col justify-center">
                 {/* Total Sales */}
-                <div className="space-y-0.5">
+                <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-[#0284c7]" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#0284c7]" />
                     <span className="text-xs font-semibold text-sky-600 dark:text-sky-400">Total Sales</span>
                   </div>
-                  <p className="text-sm sm:text-base font-bold font-mono text-foreground pl-4">
+                  <p className="text-base sm:text-lg font-bold font-dm tabular-nums text-foreground pl-4">
                     {formatCurrency(totalSales)}
                   </p>
                 </div>
 
                 {/* Total Receipts */}
-                <div className="space-y-0.5">
+                <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-[#10b981]" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#10b981]" />
                     <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Total Receipts</span>
                   </div>
-                  <p className="text-sm sm:text-base font-bold font-mono text-foreground pl-4">
+                  <p className="text-base sm:text-lg font-bold font-dm tabular-nums text-foreground pl-4">
                     {formatCurrency(totalReceipts)}
                   </p>
                 </div>
 
                 {/* Total Expenses */}
-                <div className="space-y-0.5">
+                <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-[#f43f5e]" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#f43f5e]" />
                     <span className="text-xs font-semibold text-rose-600 dark:text-rose-400">Total Expenses</span>
                   </div>
-                  <p className="text-sm sm:text-base font-bold font-mono text-foreground pl-4">
+                  <p className="text-base sm:text-lg font-bold font-dm tabular-nums text-foreground pl-4">
                     {formatCurrency(totalExpenses)}
                   </p>
                 </div>

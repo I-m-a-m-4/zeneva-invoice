@@ -1,0 +1,19 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7A18" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+  </defs>
+  <!-- Background squircle -->
+  <rect width="512" height="512" rx="116" fill="url(#bgGrad1)" />
+  
+  <!-- Icon: Origami Z Invoice (Folded Receipt Monogram) -->
+  <g fill="#FFFFFF">
+    <!-- Top Fold & Bar -->
+    <path d="M128 140C128 126.745 138.745 116 152 116H360C373.255 116 384 126.745 384 140V188C384 194.627 378.627 200 372 200H234L372.485 303.864C379.799 309.35 384 318.067 384 327.185V372C384 385.255 373.255 396 360 396H152C138.745 396 128 385.255 128 372V324C128 317.373 133.373 312 140 312H278L139.515 208.136C132.201 202.65 128 193.933 128 184.815V140Z" />
+    <!-- Invoice Notch Cutout Accents -->
+    <rect x="172" y="152" width="60" height="12" rx="6" fill="url(#bgGrad1)" />
+    <rect x="280" y="348" width="60" height="12" rx="6" fill="url(#bgGrad1)" />
+  </g>
+</svg>

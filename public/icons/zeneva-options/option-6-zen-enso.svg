@@ -1,0 +1,26 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7A18" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="512" height="512" rx="116" fill="url(#bgGrad6)" />
+  
+  <!-- Icon: Modern Zen Enso Circle & Invoicing Crest -->
+  <g fill="#FFFFFF">
+    <!-- Dynamic Zen Enso Ring -->
+    <path d="M256 96C167.634 96 96 167.634 96 256C96 344.366 167.634 416 256 416C317.842 416 371.493 380.957 398.243 329.623C402.138 322.151 398.814 312.923 391.077 309.431C383.341 305.938 374.195 309.531 370.478 317.078C348.641 361.354 305.748 390 256 390C182.04 390 122 329.96 122 256C122 182.04 182.04 122 256 122C318.156 122 370.612 164.298 385.934 222.001C388.193 230.507 396.906 235.632 405.412 233.373C413.918 231.114 419.043 222.401 416.784 213.895C397.669 142.137 332.613 96 256 96Z" />
+    
+    <!-- Centered Floating Modern Invoice Sheet -->
+    <rect x="200" y="160" width="128" height="176" rx="18" fill="#FFFFFF" />
+    
+    <!-- Cutout details inside the invoice -->
+    <rect x="226" y="190" width="50" height="14" rx="7" fill="url(#bgGrad6)" />
+    <rect x="226" y="222" width="76" height="10" rx="5" fill="url(#bgGrad6)" />
+    <rect x="226" y="246" width="76" height="10" rx="5" fill="url(#bgGrad6)" />
+    <rect x="226" y="270" width="48" height="10" rx="5" fill="url(#bgGrad6)" />
+    <rect x="226" y="296" width="76" height="18" rx="7" fill="url(#bgGrad6)" />
+  </g>
+</svg>

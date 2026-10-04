@@ -45,7 +45,8 @@ import {
     Search,
     Tag,
     Wallet,
-    PieChart
+    PieChart,
+    CreditCard
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -133,20 +134,20 @@ export default function Home() {
             {
                 "@type": "SoftwareApplication",
                 "@id": "https://zeneva.space/#software",
-                "name": "Zeneva Retail OS",
+                "name": "Zeneva Invoice",
                 "applicationCategory": "BusinessApplication",
                 "operatingSystem": "Windows, Web",
-                "description": "The borderless retail operating system unifying inventory management, offline-capable POS, sales analytics, and multi-currency (USD/NGN) payments.",
+                "description": "The autonomous invoicing and billing platform with zero-data entry, multi-currency payments, automated reminders, and client management.",
                 "publisher": {
                     "@id": "https://zeneva.space/#organization"
                 },
                 "featureList": [
-                    "Offline-capable Point of Sale (POS)",
-                    "AI-driven Inventory Management and Forecasting",
-                    "Multi-location Store Management",
-                    "Multi-currency Checkout (USD, NGN)",
-                    "Real-time Sales Analytics",
-                    "Customizable Online Storefront"
+                    "Zero-data entry AI invoicing",
+                    "Multi-currency checkout (USD, EUR, GBP, NGN)",
+                    "Automated client payment reminders",
+                    "Recurring billing and retainers",
+                    "Real-time revenue and invoice analytics",
+                    "Custom client payment portal"
                 ],
                 "offers": {
                     "@type": "Offer",
@@ -164,7 +165,7 @@ export default function Home() {
                 "@type": "WebPage",
                 "@id": "https://zeneva.space/#webpage",
                 "url": "https://zeneva.space",
-                "name": "Zeneva | Advanced Retail POS & Inventory Management System",
+                "name": "Zeneva | Autonomous Invoicing & Global Billing Platform",
                 "about": {
                     "@id": "https://zeneva.space/#software"
                 }
@@ -303,24 +304,24 @@ export default function Home() {
 
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 border-t border-s border-stone-700">
                                 <div className="flex flex-col gap-2 hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer opacity-60 h-28 border-e border-b pt-6 pr-6 pb-6 pl-6 grayscale items-center justify-center border-stone-700">
-                                    <ShoppingCart className="w-8 h-8 text-stone-400" />
-                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">E-Commerce</span>
-                                </div>
-                                <div className="flex flex-col gap-2 hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer opacity-60 h-28 border-e border-b pt-6 pr-6 pb-6 pl-6 grayscale items-center justify-center border-stone-700">
-                                    <Shirt className="w-8 h-8 text-stone-400" />
-                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">Designers</span>
-                                </div>
-                                <div className="flex flex-col gap-2 hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer opacity-60 h-28 border-e border-b pt-6 pr-6 pb-6 pl-6 grayscale items-center justify-center border-stone-700">
-                                    <Coffee className="w-8 h-8 text-stone-400" />
-                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">Consultants</span>
+                                    <FileText className="w-8 h-8 text-stone-400" />
+                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">Freelancers</span>
                                 </div>
                                 <div className="flex flex-col gap-2 hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer opacity-60 h-28 border-e border-b pt-6 pr-6 pb-6 pl-6 grayscale items-center justify-center border-stone-700">
                                     <Sparkles className="w-8 h-8 text-stone-400" />
                                     <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">Agencies</span>
                                 </div>
                                 <div className="flex flex-col gap-2 hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer opacity-60 h-28 border-e border-b pt-6 pr-6 pb-6 pl-6 grayscale items-center justify-center border-stone-700">
+                                    <Coffee className="w-8 h-8 text-stone-400" />
+                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">Consultants</span>
+                                </div>
+                                <div className="flex flex-col gap-2 hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer opacity-60 h-28 border-e border-b pt-6 pr-6 pb-6 pl-6 grayscale items-center justify-center border-stone-700">
+                                    <Globe className="w-8 h-8 text-stone-400" />
+                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">Remote Teams</span>
+                                </div>
+                                <div className="flex flex-col gap-2 hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer opacity-60 h-28 border-e border-b pt-6 pr-6 pb-6 pl-6 grayscale items-center justify-center border-stone-700">
                                     <BookOpen className="w-8 h-8 text-stone-400" />
-                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">Writers</span>
+                                    <span className="tracking-tight font-dm-sans text-sm text-stone-300 text-center">Contractors</span>
                                 </div>
                                 <div className="flex flex-col gap-2 hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer opacity-60 h-28 border-e border-b pt-6 pr-6 pb-6 pl-6 grayscale items-center justify-center border-stone-700">
                                     <Smartphone className="w-8 h-8 text-stone-400" />
@@ -363,7 +364,7 @@ export default function Home() {
                                         hoverBg: "bg-[#FFF1F2]"
                                     },
                                     {
-                                        icon: ShoppingCart,
+                                        icon: CreditCard,
                                         title: "Multi-Currency Checkout",
                                         desc: "Bill clients in USD, EUR, or GBP while settling payouts in your local bank account automatically.",
                                         bgColor: "bg-blue-100",
@@ -489,13 +490,13 @@ export default function Home() {
                                 <div className="flex items-center justify-center gap-6 sm:gap-10 relative z-10">
                                     <div className="group relative cursor-pointer">
                                         <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-neutral-100 border border-neutral-200 shadow-lg group-hover:scale-110 group-hover:border-primary/50 group-hover:shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)] transition-all duration-300">
-                                            <Monitor className="text-neutral-600 group-hover:text-primary transition-colors h-6 w-6" />
+                                            <FileText className="text-neutral-600 group-hover:text-primary transition-colors h-6 w-6" />
                                         </span>
                                         <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[10px] font-semibold tracking-wide text-neutral-500 uppercase transition-opacity"><T k="landing.nodePos" /></span>
                                     </div>
                                     <div className="group relative cursor-pointer">
                                         <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-neutral-100 border border-neutral-200 shadow-lg group-hover:scale-110 group-hover:border-primary/50 group-hover:shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)] transition-all duration-300">
-                                            <Package className="text-neutral-600 group-hover:text-primary transition-colors h-6 w-6" />
+                                            <CreditCard className="text-neutral-600 group-hover:text-primary transition-colors h-6 w-6" />
                                         </span>
                                         <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[10px] font-semibold tracking-wide text-neutral-500 uppercase transition-opacity"><T k="landing.nodeInventory" /></span>
                                     </div>
@@ -624,7 +625,7 @@ export default function Home() {
                     <section id="business-types" className="py-24 px-6 bg-white border-t border-slate-100">
                         <div className="max-w-7xl mx-auto">
                             <div className="text-center max-w-2xl mx-auto mb-16">
-                                <h2 className="text-4xl font-light text-slate-900 tracking-tight font-bricolage mb-4">
+                                <h2 className="text-4xl font-light text-slate-900 tracking-tight font-dm-sans mb-4">
                                     <T k="landing.bizHeading" />
                                 </h2>
                                 <p className="text-lg text-slate-600 tracking-tight font-dm-sans">
@@ -726,8 +727,8 @@ export default function Home() {
                                             <DollarSign className="w-6 h-6 text-primary" />
                                         </div>
                                         <div>
-                                            <h3 className="text-lg font-semibold text-slate-900"><T k="landing.dial2t" /></h3>
-                                            <p className="text-slate-600"><T k="landing.dial2d" /></p>
+                                            <h3 className="text-lg font-semibold text-slate-900 font-dm-sans"><T k="landing.dial2t" /></h3>
+                                            <p className="text-slate-600 font-dm-sans"><T k="landing.dial2d" /></p>
                                         </div>
                                     </div>
                                     <div className="flex gap-4">

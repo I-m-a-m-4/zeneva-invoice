@@ -1,0 +1,38 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7A18" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="512" height="512" rx="116" fill="url(#bgGrad5)" />
+  
+  <!-- Icon: Executive Folded Invoice Document & Official Stamp -->
+  <g fill="#FFFFFF">
+    <!-- Document with Corner Fold -->
+    <path d="M152 136C152 118.327 166.327 104 184 104H296L360 168V376C360 393.673 345.673 408 328 408H184C166.327 408 152 393.673 152 376V136Z" />
+    
+    <!-- Folded Corner Flap Triangle -->
+    <path d="M296 104V152C296 160.837 303.163 168 312 168H360L296 104Z" fill="#F0F0F0" />
+    <path d="M296 104V152C296 160.837 303.163 168 312 168H360" stroke="url(#bgGrad5)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+    
+    <!-- Invoice Content Rows (Cut out into background) -->
+    <!-- Invoice Header & Brand Notch -->
+    <rect x="188" y="152" width="76" height="16" rx="8" fill="url(#bgGrad5)" />
+    
+    <!-- Ledger Item 1 -->
+    <rect x="188" y="200" width="136" height="12" rx="6" fill="url(#bgGrad5)" />
+    <!-- Ledger Item 2 -->
+    <rect x="188" y="232" width="136" height="12" rx="6" fill="url(#bgGrad5)" />
+    <!-- Ledger Item 3 -->
+    <rect x="188" y="264" width="96" height="12" rx="6" fill="url(#bgGrad5)" />
+    
+    <!-- Subtotal Summary Box -->
+    <rect x="188" y="308" width="136" height="40" rx="12" fill="url(#bgGrad5)" />
+  </g>
+  
+  <!-- Stamp / Seal (Bottom Right of Document) -->
+  <circle cx="316" cy="328" r="14" fill="#FFFFFF" />
+  <path d="M310 328L314 332L322 324" stroke="url(#bgGrad5)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

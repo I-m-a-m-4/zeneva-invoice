@@ -21,22 +21,19 @@ import { useI18n } from "@/context/i18n-context";
 // Titles and descriptions are keys resolved at render — the array is module-level
 // and cannot reach `t()`. The word-highlight below still matches on English, so
 // other locales draw the headline plain rather than part-italic.
-const loginVideoSlides = [
+const loginSlides = [
   {
-    video: 'https://res.cloudinary.com/dd1czj85j/video/upload/v1786053655/zeneva/zeneva_welcome_signup_video_6.mp4',
-    poster: '/signup-video-6-poster.jpg',
+    image: '/images/auth/slide-1.jpg',
     titleKey: 'auth.loginSlide1Title',
     descKey: 'auth.loginSlide1Desc',
   },
   {
-    video: 'https://res.cloudinary.com/dd1czj85j/video/upload/v1786053651/zeneva/zeneva_welcome_signup_video_5.mp4',
-    poster: '/signup-video-5-poster.jpg',
+    image: '/images/auth/slide-2.jpg',
     titleKey: 'auth.loginSlide2Title',
     descKey: 'auth.loginSlide2Desc',
   },
   {
-    video: 'https://res.cloudinary.com/dd1czj85j/video/upload/v1786053621/zeneva/zeneva_welcome_signup_video_2.mp4',
-    poster: '/signup-video-2-poster.jpg',
+    image: '/images/auth/slide-3.jpg',
     titleKey: 'auth.loginSlide3Title',
     descKey: 'auth.loginSlide3Desc',
   }
@@ -52,13 +49,12 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
-
-  const handleVideoEnded = (index: number) => {
-    if (index === currentSlide) {
-      setCurrentSlide((prev) => (prev + 1) % loginVideoSlides.length);
-    }
-  };
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % loginSlides.length);
+    }, 7000);
+    return () => clearInterval(timer);
+  }, []);
 
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
@@ -234,8 +230,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full min-h-screen flex lg:grid lg:grid-cols-2">
-      <div className="flex flex-col min-h-screen relative w-full px-4 sm:px-6 py-8">
+    <div className="w-full min-h-screen lg:h-screen flex lg:grid lg:grid-cols-2 bg-background">
+      <div className="flex flex-col min-h-screen lg:min-h-0 lg:h-full lg:overflow-y-auto relative w-full px-4 sm:px-6 py-8">
         <div className="absolute top-8 left-4 sm:left-8 z-20">
           <Button variant="ghost" asChild>
             <Link href="/signup">
@@ -365,65 +361,69 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-      <div className="hidden bg-muted lg:block relative overflow-hidden bg-black">
-        {/* Background Videos */}
-        {loginVideoSlides.map((slide, index) => (
-          <video
-            key={index}
-            ref={(el) => { videoRefs.current[index] = el; }}
-            loop={false}
-            muted
-            playsInline
-            autoPlay={index === currentSlide}
-            preload="auto"
-            poster={slide.poster}
-            onEnded={() => handleVideoEnded(index)}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
-              index === currentSlide ? 'opacity-80 z-[0]' : 'opacity-0 z-[-1]'
-            }`}
-          >
-            <source src={slide.video} type="video/mp4" />
-          </video>
-        ))}
-
-        {/* Orangish filter overlay */}
-        <div className="absolute inset-0 bg-orange-600/60 mix-blend-multiply z-[1] pointer-events-none" />
-
-        {/* Dark overlay gradient for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-[2]" />
-
-        <div className="absolute bottom-12 left-12 right-12 p-0 bg-transparent z-10">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentSlide}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
+      <div className="hidden lg:flex flex-col p-3 sm:p-4 lg:p-5 h-full">
+        <div className="relative w-full h-full overflow-hidden rounded-2xl lg:rounded-3xl bg-black shadow-2xl border border-black/5 dark:border-white/10">
+          {/* Background Images */}
+          {loginSlides.map((slide, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 h-full w-full transition-all duration-1000 ease-in-out ${
+                index === currentSlide ? 'opacity-90 scale-100 z-[0]' : 'opacity-0 scale-105 pointer-events-none z-[-1]'
+              }`}
             >
-              <h2 className="text-white text-4xl font-bold font-headline leading-tight tracking-tight drop-shadow-lg">
-                {t(loginVideoSlides[currentSlide].titleKey).split(" ").map((word, i) => (
-                  <React.Fragment key={i}>
-                    {word === "for" || word === "Galaxy" || word === "System" ? <span className="text-primary italic"> {word} </span> : word + " "}
-                  </React.Fragment>
-                ))}
-              </h2>
-              <p className="text-white/90 mt-4 text-xl font-light leading-relaxed drop-shadow-md max-w-[600px]">
-                {t(loginVideoSlides[currentSlide].descKey)}
-              </p>
-            </motion.div>
-          </AnimatePresence>
-
-          <div className="mt-6 flex items-center gap-3">
-            {loginVideoSlides.map((_, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "h-1.5 transition-all duration-500 rounded-full shadow-[0_0_10px_rgba(255,165,0,0.5)]",
-                  currentSlide === i ? "w-12 bg-primary" : "w-2 bg-white/30"
-                )}
+              <Image
+                src={slide.image}
+                alt={t(slide.titleKey)}
+                fill
+                priority={index === 0}
+                className="object-cover"
+                sizes="(min-width: 1024px) 50vw, 100vw"
               />
-            ))}
+            </div>
+          ))}
+
+          {/* Orangish subtle filter overlay */}
+          <div className="absolute inset-0 bg-orange-600/10 mix-blend-multiply z-[1] pointer-events-none" />
+
+          {/* Dark overlay gradient for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent z-[2]" />
+
+          <div className="absolute bottom-8 left-8 right-8 lg:bottom-10 lg:left-10 lg:right-10 p-0 bg-transparent z-10">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentSlide}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+              >
+                <h2 className="text-white text-3xl lg:text-4xl font-bold font-headline leading-tight tracking-tight drop-shadow-lg">
+                  {t(loginSlides[currentSlide].titleKey).split(" ").map((word, i) => (
+                    <React.Fragment key={i}>
+                      {word === "for" || word === "Galaxy" || word === "System" ? <span className="text-primary italic"> {word} </span> : word + " "}
+                    </React.Fragment>
+                  ))}
+                </h2>
+                <p className="text-white/90 mt-3 lg:mt-4 text-lg lg:text-xl font-light leading-relaxed drop-shadow-md max-w-[560px]">
+                  {t(loginSlides[currentSlide].descKey)}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="mt-6 flex items-center gap-3">
+              {loginSlides.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setCurrentSlide(i)}
+                  aria-label={`Go to slide ${i + 1}`}
+                  className={cn(
+                    "h-1.5 transition-all duration-500 rounded-full cursor-pointer focus:outline-none",
+                    currentSlide === i ? "w-12 bg-primary shadow-[0_0_12px_rgba(255,165,0,0.6)]" : "w-2.5 bg-white/40 hover:bg-white/70"
+                  )}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>

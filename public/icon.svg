@@ -1,7 +1,42 @@
-<svg width="400" height="400" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect x="10" y="10" width="180" height="180" rx="24" ry="24" fill="#F97316" />
-  <g transform="translate(-30, -30) scale(1.3)">
-    <path d="M 100 55 A 35 35 0 1 0 100 125 A 35 35 0 1 0 100 55 Z M 100 63 A 27 27 0 1 1 100 117 A 27 27 0 1 1 100 63 Z" fill="#ffffff" stroke="#ffffff" stroke-width="6" />
-    <path d="M 60 127 Q 100 154 140 127 Q 100 142 60 127 Z" fill="#ffffff" stroke="#ffffff" stroke-width="6" />
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7A18" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="512" height="512" rx="116" fill="url(#bgGrad)" />
+  
+  <!-- Icon: Perforated Receipt & Verified Payment Check -->
+  <g fill="#FFFFFF">
+    <!-- Receipt Body with Zig-Zag Perforated Bottom -->
+    <path d="M148 124C148 110.745 158.745 100 172 100H340C353.255 100 364 110.745 364 124V384L337 366L310 384L283 366L256 384L229 366L202 384L175 366L148 384V124Z" />
+    
+    <!-- Receipt Details (Negative Space cutout) -->
+    <!-- Brand / Invoice Title Bar -->
+    <rect x="188" y="148" width="80" height="16" rx="8" fill="url(#bgGrad)" />
+    
+    <!-- Itemized Ledger Rows -->
+    <rect x="188" y="188" width="136" height="10" rx="5" fill="url(#bgGrad)" />
+    <rect x="188" y="214" width="136" height="10" rx="5" fill="url(#bgGrad)" />
+    <rect x="188" y="240" width="96" height="10" rx="5" fill="url(#bgGrad)" />
+    
+    <!-- Dotted Divider Line -->
+    <circle cx="196" cy="274" r="4" fill="url(#bgGrad)" />
+    <circle cx="216" cy="274" r="4" fill="url(#bgGrad)" />
+    <circle cx="236" cy="274" r="4" fill="url(#bgGrad)" />
+    <circle cx="256" cy="274" r="4" fill="url(#bgGrad)" />
+    <circle cx="276" cy="274" r="4" fill="url(#bgGrad)" />
+    <circle cx="296" cy="274" r="4" fill="url(#bgGrad)" />
+    <circle cx="316" cy="274" r="4" fill="url(#bgGrad)" />
+    
+    <!-- Settlement Total Pill -->
+    <rect x="188" y="296" width="70" height="28" rx="8" fill="url(#bgGrad)" />
   </g>
+  
+  <!-- Verified Success Checkmark Badge (Floating Top-Right) -->
+  <circle cx="344" cy="148" r="44" fill="#FFFFFF" />
+  <circle cx="344" cy="148" r="38" fill="url(#bgGrad)" />
+  <path d="M330 148L340 158L360 138" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
 </svg>

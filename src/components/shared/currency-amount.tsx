@@ -29,7 +29,7 @@ export function CurrencyAmount({
   // If there's no fraction (e.g. locale doesn't use it or hideFraction is true)
   if (parts.length === 1 || hideFraction) {
     return (
-      <span className={cn("inline-flex items-baseline", className)}>
+      <span className={cn("inline-flex items-baseline tabular-nums", className)}>
         <span className={symbolClassName}>{symbol}</span>
         <span>{formatted}</span>
       </span>
@@ -46,7 +46,7 @@ export function CurrencyAmount({
 
   if (separatorIndex === -1) {
     return (
-      <span className={cn("inline-flex items-baseline", className)}>
+      <span className={cn("inline-flex items-baseline tabular-nums", className)}>
         <span className={symbolClassName}>{symbol}</span>
         <span>{formatted}</span>
       </span>
@@ -57,7 +57,7 @@ export function CurrencyAmount({
   const fractionPart = formatted.substring(separatorIndex);
 
   return (
-    <span className={cn("inline-flex items-baseline", className)}>
+    <span className={cn("inline-flex items-baseline tabular-nums", className)}>
       <span className={symbolClassName}>{symbol}</span>
       <span>{integerPart}</span>
       <span className={fractionClassName}>{fractionPart}</span>

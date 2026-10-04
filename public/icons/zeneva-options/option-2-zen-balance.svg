@@ -1,0 +1,30 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7A18" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="512" height="512" rx="116" fill="url(#bgGrad2)" />
+  
+  <!-- Icon: Zen Balance & Invoice Sheet -->
+  <g fill="#FFFFFF">
+    <!-- Invoice Sheet -->
+    <path d="M164 120C164 108.954 172.954 100 184 100H328C339.046 100 348 108.954 348 120V310C348 321.046 339.046 330 328 330H184C172.954 330 164 321.046 164 310V120Z" />
+    
+    <!-- Zen Balance Stones Base (Harmonious Foundation) -->
+    <!-- Base large stone -->
+    <path d="M130 395C130 375.67 186.411 360 256 360C325.589 360 382 375.67 382 395C382 414.33 325.589 430 256 430C186.411 430 130 414.33 130 395Z" />
+    <!-- Secondary mid stone -->
+    <path d="M176 348C176 333.641 211.817 322 256 322C300.183 322 336 333.641 336 348C336 362.359 300.183 374 256 374C211.817 374 176 362.359 176 348Z" opacity="0.9" />
+
+    <!-- Invoice Inner Lines (Knocked out with background gradient) -->
+    <rect x="200" y="144" width="64" height="14" rx="7" fill="url(#bgGrad2)" />
+    <rect x="200" y="178" width="112" height="10" rx="5" fill="url(#bgGrad2)" />
+    <rect x="200" y="206" width="112" height="10" rx="5" fill="url(#bgGrad2)" />
+    <rect x="200" y="234" width="76" height="10" rx="5" fill="url(#bgGrad2)" />
+    <!-- Total Badge Cutout -->
+    <rect x="200" y="266" width="112" height="24" rx="8" fill="url(#bgGrad2)" />
+  </g>
+</svg>

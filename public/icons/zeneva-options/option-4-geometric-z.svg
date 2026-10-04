@@ -1,0 +1,21 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7A18" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="512" height="512" rx="116" fill="url(#bgGrad4)" />
+  
+  <!-- Icon: Precision Geometric Fintech 'Z' Monogram -->
+  <g fill="#FFFFFF">
+    <!-- Top Geometric Bar of Z -->
+    <path d="M136 156C136 142.745 146.745 132 160 132H352C365.255 132 376 142.745 376 156V184C376 197.255 365.255 208 352 208H238L367.6 304.8C372.9 308.8 376 315.1 376 321.8V356C376 369.255 365.255 380 352 380H160C146.745 380 136 369.255 136 356V328C136 314.745 146.745 304 160 304H274L144.4 207.2C139.1 203.2 136 196.9 136 190.2V156Z" />
+    
+    <!-- Upward Growth Slash / Bill Crease Accent -->
+    <polygon points="210,256 302,256 270,230 178,230" fill="url(#bgGrad4)" opacity="0.4" />
+    <circle cx="330" cy="170" r="10" fill="url(#bgGrad4)" />
+    <circle cx="182" cy="342" r="10" fill="url(#bgGrad4)" />
+  </g>
+</svg>

@@ -183,7 +183,7 @@ const Sidebar = React.forwardRef<
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+            className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden font-sidebar"
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
@@ -191,7 +191,7 @@ const Sidebar = React.forwardRef<
             }
             side={resolvedSide}
           >
-            <div className="flex h-full w-full flex-col">{children}</div>
+            <div className="flex h-full w-full flex-col font-sidebar">{children}</div>
           </SheetContent>
         </Sheet>
       )
@@ -200,10 +200,11 @@ const Sidebar = React.forwardRef<
     return (
       <div
         ref={ref}
+        data-sidebar="sidebar"
         data-state={state}
         data-collapsible={collapsible}
         className={cn(
-            "group hidden md:flex flex-col h-full duration-200 transition-[width] ease-linear",
+            "group hidden md:flex flex-col h-full duration-200 transition-[width] ease-linear font-sidebar",
             collapsible === 'icon' && state === 'collapsed' ? "w-[--sidebar-width-icon]" : "w-[--sidebar-width]",
             className
         )}
