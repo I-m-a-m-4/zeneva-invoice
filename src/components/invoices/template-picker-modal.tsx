@@ -135,7 +135,7 @@ export function TemplatePickerModal({
           {/* Window Title Bar matching Zoho Screenshot */}
           <div className="bg-[#1e222d] text-white px-5 py-3 flex items-center justify-between border-b border-zinc-800 select-none">
             <div className="flex items-center gap-2.5">
-              <div className="h-5 w-5 rounded bg-purple-600 flex items-center justify-center text-[11px] font-bold">
+              <div className="h-5 w-5 rounded bg-primary flex items-center justify-center text-[11px] font-bold">
                 Z
               </div>
               <span className="font-semibold text-sm tracking-wide">Zeneva Invoice - Templates</span>
@@ -181,16 +181,16 @@ export function TemplatePickerModal({
                       className={cn(
                         'w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-all text-left',
                         isSelected
-                          ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-900 dark:text-purple-200 font-bold shadow-xs'
+                          ? 'bg-primary/10 text-primary font-bold shadow-xs'
                           : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                       )}
                     >
                       <div className="flex items-center gap-2.5">
-                        <Icon className={cn('h-4 w-4', isSelected ? 'text-purple-600 dark:text-purple-400' : 'text-muted-foreground')} />
+                        <Icon className={cn('h-4 w-4', isSelected ? 'text-primary' : 'text-muted-foreground')} />
                         <span>{item.label}</span>
                       </div>
                       {item.count && (
-                        <span className={cn('text-[10px] px-1.5 py-0.2 rounded-full font-mono', isSelected ? 'bg-purple-200 dark:bg-purple-900 text-purple-900 dark:text-purple-100 font-bold' : 'text-muted-foreground bg-muted')}>
+                        <span className={cn('text-[10px] px-1.5 py-0.2 rounded-full font-mono', isSelected ? 'bg-primary/20 text-primary font-bold' : 'text-muted-foreground bg-muted')}>
                           {item.count}
                         </span>
                       )}
@@ -199,9 +199,9 @@ export function TemplatePickerModal({
                 })}
               </div>
 
-              <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg text-[11px] text-purple-950 dark:text-purple-200">
-                <div className="flex items-center gap-1 font-bold mb-1">
-                  <Sparkles className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+              <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg text-[11px] text-foreground">
+                <div className="flex items-center gap-1 font-bold mb-1 text-primary">
+                  <Sparkles className="h-3 w-3 text-primary" />
                   <span>Instant Switch</span>
                 </div>
                 Selecting a template applies it across all existing and new invoices immediately.
@@ -301,7 +301,7 @@ export function TemplatePickerModal({
                                 {tmpl.name}
                               </h3>
                               {tmpl.badge && (
-                                <Badge variant="outline" className="text-[9px] font-semibold bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800 shrink-0">
+                                <Badge variant="outline" className="text-[9px] font-semibold bg-primary/10 text-primary border-primary/20 shrink-0">
                                   {tmpl.badge}
                                 </Badge>
                               )}
@@ -319,7 +319,7 @@ export function TemplatePickerModal({
                               className={cn(
                                 'flex-1 text-xs font-bold h-7.5',
                                 isActive
-                                  ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                                  ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
                                   : 'border-border text-foreground hover:bg-muted'
                               )}
                             >
@@ -360,7 +360,7 @@ export function TemplatePickerModal({
             <div className="sticky top-0 bg-white border-b border-zinc-200 px-6 py-3.5 flex items-center justify-between z-10 shadow-xs">
               <div className="flex items-center gap-2">
                 <span className="font-bold text-sm text-zinc-900">
-                  Previewing: <span className="text-purple-600 capitalize">{previewTemplate}</span> Template
+                  Previewing: <span className="text-primary capitalize">{previewTemplate}</span> Template
                 </span>
                 {previewTemplate === activeTemplate && (
                   <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 text-[10px]">
@@ -376,7 +376,7 @@ export function TemplatePickerModal({
                     handleApply(previewTemplate);
                     setPreviewTemplate(null);
                   }}
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs h-8 px-4"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-8 px-4"
                 >
                   <Check className="h-3.5 w-3.5 mr-1.5 stroke-[3]" />
                   Apply This Template

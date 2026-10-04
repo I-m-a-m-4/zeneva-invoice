@@ -149,11 +149,11 @@ export const THEME_STYLES: Record<PromoToastColor, ThemeStyle> = {
     headerGlow: 'from-emerald-600/25 via-emerald-500/10 to-transparent',
   },
   purple: {
-    glowBorder: 'border-purple-500/40 shadow-purple-500/20 ring-purple-500/20',
-    badgeBg: 'bg-purple-600 text-white shadow-xs',
-    buttonClass: 'bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-500/25',
-    accentText: 'text-purple-500 dark:text-purple-400',
-    headerGlow: 'from-purple-600/25 via-purple-500/10 to-transparent',
+    glowBorder: 'border-orange-500/40 shadow-orange-500/20 ring-orange-500/20',
+    badgeBg: 'bg-primary text-primary-foreground shadow-xs',
+    buttonClass: 'bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 hover:from-orange-500 hover:to-amber-500 text-white shadow-lg shadow-orange-500/25',
+    accentText: 'text-primary',
+    headerGlow: 'from-orange-600/25 via-orange-500/10 to-transparent',
   },
   amber: {
     glowBorder: 'border-amber-500/40 shadow-amber-500/20 ring-amber-500/20',

@@ -236,7 +236,7 @@ export default function ProductItemsPage() {
             Manage your inventory catalog, SKU variants, unit rates, and instant invoicing
           </p>
         </div>
-        <Button onClick={openAdd} className="bg-purple-600 hover:bg-purple-700 text-white font-semibold shadow-sm">
+        <Button onClick={openAdd} className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm">
           <Plus className="h-4 w-4 mr-2" /> Add Item / Variant
         </Button>
       </div>
@@ -311,7 +311,7 @@ export default function ProductItemsPage() {
               <Package className="mx-auto h-10 w-10 text-muted-foreground/50 mb-3" />
               <p className="text-sm font-semibold text-foreground">No Catalog Items Found</p>
               <p className="text-xs text-muted-foreground mt-1 mb-4">Add your inventory products and variant SKUs to bill clients quickly.</p>
-              <Button size="sm" onClick={openAdd} className="bg-purple-600 hover:bg-purple-700 text-white">
+              <Button size="sm" onClick={openAdd} className="bg-primary hover:bg-primary/90 text-primary-foreground">
                 <Plus className="h-4 w-4 mr-1.5" /> Add First Item
               </Button>
             </div>
@@ -343,7 +343,7 @@ export default function ProductItemsPage() {
                       </TableCell>
                       <TableCell>
                         {item.variantName && item.variantValue ? (
-                          <Badge variant="secondary" className="bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800 text-[11px]">
+                          <Badge variant="secondary" className="bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20 text-[11px]">
                             {item.variantName}: {item.variantValue}
                           </Badge>
                         ) : (
@@ -368,7 +368,7 @@ export default function ProductItemsPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="h-7 text-xs border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-950/40"
+                            className="h-7 text-xs border-primary/30 text-primary hover:bg-primary/10"
                             onClick={() => handleCreateInvoiceForItem(item)}
                             title="Generate invoice for this item"
                           >
@@ -510,7 +510,7 @@ export default function ProductItemsPage() {
               <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-purple-600 hover:bg-purple-700 text-white">
+              <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90 text-primary-foreground">
                 {editingItem ? 'Save Changes' : 'Add Item'}
               </Button>
             </DialogFooter>

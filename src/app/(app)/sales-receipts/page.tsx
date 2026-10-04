@@ -56,7 +56,7 @@ export default function SalesReceiptsPage() {
             Complete transaction repository of paid sales and instant store receipts
           </p>
         </div>
-        <Button asChild className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs h-9 px-4 rounded-md shadow-sm">
+        <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-9 px-4 rounded-md shadow-sm">
           <Link href="/sales/pos/select-products">
             <CreditCard className="h-4 w-4 mr-2" /> New POS Sale
           </Link>
@@ -121,7 +121,7 @@ export default function SalesReceiptsPage() {
               <FileText className="mx-auto h-10 w-10 text-muted-foreground/40 mb-3" />
               <p className="text-sm font-semibold text-foreground">No Sales Receipts Recorded</p>
               <p className="text-xs text-muted-foreground mt-1 mb-4">Completed store sales automatically populate receipts here.</p>
-              <Button asChild size="sm" className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs">
+              <Button asChild size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs">
                 <Link href="/sales/pos/select-products">Start a Sale</Link>
               </Button>
             </div>

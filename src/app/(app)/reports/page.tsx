@@ -707,7 +707,7 @@ export default function ReportsDashboard() {
                         className={cn(
                             "h-8 text-xs font-semibold gap-1.5",
                             viewMode === 'center'
-                                ? "bg-purple-600 hover:bg-purple-700 text-white"
+                                ? "bg-primary hover:bg-primary/90 text-primary-foreground"
                                 : "border-border text-foreground hover:bg-muted"
                         )}
                     >
@@ -721,7 +721,7 @@ export default function ReportsDashboard() {
                         className={cn(
                             "h-8 text-xs font-semibold gap-1.5",
                             viewMode === 'dashboard'
-                                ? "bg-purple-600 hover:bg-purple-700 text-white"
+                                ? "bg-primary hover:bg-primary/90 text-primary-foreground"
                                 : "border-border text-foreground hover:bg-muted"
                         )}
                     >

@@ -279,7 +279,7 @@ export default function ProjectsPage() {
                       <TableCell>
                         {p.status === 'completed' && <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Completed</Badge>}
                         {p.status === 'in_progress' && <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">In Progress</Badge>}
-                        {p.status === 'planning' && <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">Planning</Badge>}
+                        {p.status === 'planning' && <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">Planning</Badge>}
                         {p.status === 'on_hold' && <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">On Hold</Badge>}
                       </TableCell>
                       <TableCell className="text-right">
@@ -287,7 +287,7 @@ export default function ProjectsPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="h-7 text-xs border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-950/40"
+                            className="h-7 text-xs border-primary/30 text-primary hover:bg-primary/10"
                             onClick={() => handleBillProject(p)}
                             title="Generate invoice for this project"
                           >

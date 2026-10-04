@@ -177,7 +177,7 @@ export default function CreditNotesPage() {
         </div>
         <Button
           onClick={() => setIsDialogOpen(true)}
-          className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs h-9 px-4 rounded-md shadow-sm"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-9 px-4 rounded-md shadow-sm"
         >
           <Plus className="h-4 w-4 mr-1.5" /> New Credit Note
         </Button>
@@ -231,7 +231,7 @@ export default function CreditNotesPage() {
               <Button
                 size="sm"
                 onClick={() => setIsDialogOpen(true)}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs"
               >
                 <Plus className="h-4 w-4 mr-1.5" /> Create Credit Note
               </Button>
@@ -260,7 +260,7 @@ export default function CreditNotesPage() {
                         <TableCell className="font-medium text-foreground">{cn.customerName}</TableCell>
                         <TableCell className="font-mono text-xs">
                           {cn.invoiceId ? (
-                            <Link href={`/invoice/details?id=${cn.invoiceId}`} className="text-purple-600 dark:text-purple-400 font-bold hover:underline flex items-center gap-1">
+                            <Link href={`/invoice/details?id=${cn.invoiceId}`} className="text-primary font-bold hover:underline flex items-center gap-1">
                               {cn.invoiceReference || 'Invoice'}
                               <ExternalLink className="h-3 w-3" />
                             </Link>
@@ -326,7 +326,7 @@ export default function CreditNotesPage() {
         <DialogContent className="bg-card text-card-foreground border-border max-w-md">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2">
-              <RotateCcw className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <RotateCcw className="h-5 w-5 text-primary" />
               Issue Credit Note
             </DialogTitle>
             <DialogDescription className="text-xs">
@@ -337,7 +337,7 @@ export default function CreditNotesPage() {
           <form onSubmit={handleCreate} className="space-y-4 pt-2">
             {invoiceList.length > 0 && (
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-purple-600 dark:text-purple-400">Link to Customer Invoice (Optional)</Label>
+                <Label className="text-xs font-semibold text-primary">Link to Customer Invoice (Optional)</Label>
                 <Select value={selectedInvoiceId} onValueChange={handleSelectInvoice}>
                   <SelectTrigger className="bg-background border-border text-xs h-9">
                     <SelectValue placeholder="Choose an invoice to adjust..." />
@@ -392,7 +392,7 @@ export default function CreditNotesPage() {
               <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="text-xs h-9">
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs h-9 px-5">
+              <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-9 px-5">
                 {isSubmitting ? 'Creating...' : 'Issue Credit Note'}
               </Button>
             </DialogFooter>

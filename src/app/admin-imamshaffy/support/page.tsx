@@ -921,7 +921,7 @@ function ChatDetail({ thread, adminUser, onBack }: { thread: SupportThread, admi
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="h-6 px-2 text-[10px] text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/50 flex items-center gap-1 font-semibold"
+                            className="h-6 px-2 text-[10px] text-primary hover:bg-primary/10 flex items-center gap-1 font-semibold"
                             onClick={() => setEmailPreviewOpen(true)}
                         >
                             <Eye className="h-3 w-3" /> Preview Email Template

@@ -209,7 +209,7 @@ export default function EstimatesPage() {
         </div>
         <Button
           onClick={() => setIsDialogOpen(true)}
-          className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs h-9 px-4 rounded-md shadow-sm"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-9 px-4 rounded-md shadow-sm"
         >
           <Plus className="h-4 w-4 mr-1.5" /> New Quote
         </Button>
@@ -263,7 +263,7 @@ export default function EstimatesPage() {
               <Button
                 size="sm"
                 onClick={() => setIsDialogOpen(true)}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs"
               >
                 <Plus className="h-4 w-4 mr-1.5" /> Create Quote
               </Button>
@@ -320,7 +320,7 @@ export default function EstimatesPage() {
                               variant="outline"
                               onClick={() => handleConvertToInvoice(e)}
                               disabled={convertingId === id}
-                              className="h-7 text-xs border-purple-600/40 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/30 font-semibold"
+                              className="h-7 text-xs border-primary/40 text-primary hover:bg-primary/10 font-semibold"
                               title="Convert to Live Invoice"
                             >
                               {convertingId === id ? (
@@ -369,7 +369,7 @@ export default function EstimatesPage() {
         <DialogContent className="bg-card text-card-foreground border-border max-w-md">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2">
-              <Plus className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <Plus className="h-5 w-5 text-primary" />
               Create Project Quote
             </DialogTitle>
             <DialogDescription className="text-xs">
@@ -428,7 +428,7 @@ export default function EstimatesPage() {
               <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="text-xs h-9">
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs h-9 px-5">
+              <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-9 px-5">
                 {isSubmitting ? 'Creating...' : 'Save Quote'}
               </Button>
             </DialogFooter>

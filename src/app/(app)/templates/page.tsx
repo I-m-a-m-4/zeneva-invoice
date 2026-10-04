@@ -157,7 +157,7 @@ export default function TemplatesPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Invoice Templates</h1>
-            <Badge variant="outline" className="bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800 text-xs">
+            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs">
               Zoho Compatible Layouts (22 Available)
             </Badge>
           </div>
@@ -169,11 +169,11 @@ export default function TemplatesPage() {
         <div className="flex items-center gap-2">
           <Button asChild variant="outline" size="sm" className="h-8 text-xs font-semibold border-border">
             <Link href="/getting-started">
-              <Sparkles className="h-3.5 w-3.5 mr-1.5 text-purple-600 dark:text-purple-400" />
+              <Sparkles className="h-3.5 w-3.5 mr-1.5 text-primary" />
               Getting Started
             </Link>
           </Button>
-          <Button asChild size="sm" className="h-8 text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white">
+          <Button asChild size="sm" className="h-8 text-xs font-bold bg-primary hover:bg-primary/90 text-primary-foreground">
             <Link href="/invoices/new">
               Create Invoice <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
             </Link>
@@ -209,16 +209,16 @@ export default function TemplatesPage() {
                   className={cn(
                     'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all text-left',
                     isSelected
-                      ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-900 dark:text-purple-200 font-bold shadow-xs'
+                      ? 'bg-primary/10 text-primary font-bold shadow-xs'
                       : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   )}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className={cn('h-4 w-4', isSelected ? 'text-purple-600 dark:text-purple-400' : 'text-muted-foreground')} />
+                    <Icon className={cn('h-4 w-4', isSelected ? 'text-primary' : 'text-muted-foreground')} />
                     <span>{item.label}</span>
                   </div>
                   {item.count && (
-                    <span className={cn('text-[10px] px-2 py-0.5 rounded-full font-mono', isSelected ? 'bg-purple-200 dark:bg-purple-900 text-purple-900 dark:text-purple-100 font-bold' : 'text-muted-foreground bg-muted')}>
+                    <span className={cn('text-[10px] px-2 py-0.5 rounded-full font-mono', isSelected ? 'bg-primary/20 text-primary font-bold' : 'text-muted-foreground bg-muted')}>
                       {item.count}
                     </span>
                   )}
@@ -227,9 +227,9 @@ export default function TemplatesPage() {
             })}
           </div>
 
-          <div className="mt-6 p-4 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs space-y-1.5 text-purple-950 dark:text-purple-200">
-            <div className="flex items-center gap-1.5 font-bold">
-              <Sparkles className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
+          <div className="mt-6 p-4 rounded-xl bg-primary/10 border border-primary/20 text-xs space-y-1.5 text-foreground">
+            <div className="flex items-center gap-1.5 font-bold text-primary">
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
               <span>Automatic Branding</span>
             </div>
             <p className="text-[11px] text-muted-foreground leading-relaxed">
@@ -248,7 +248,7 @@ export default function TemplatesPage() {
                   {selectedDocType === 'invoices' ? 'Choose a Template' : `${selectedDocType.replace('-', ' ').toUpperCase()} TEMPLATES`}
                 </h2>
                 <div className="text-xs text-muted-foreground font-mono bg-muted/60 px-2.5 py-0.5 rounded-md border border-border">
-                  Active: <span className="text-purple-600 dark:text-purple-400 font-bold capitalize">{activeTemplate}</span>
+                  Active: <span className="text-primary font-bold capitalize">{activeTemplate}</span>
                 </div>
               </div>
 
@@ -293,7 +293,7 @@ export default function TemplatesPage() {
                       className={cn(
                         'pb-2.5 font-medium transition-colors relative whitespace-nowrap',
                         isActive
-                          ? 'text-purple-600 dark:text-purple-400 font-bold border-b-2 border-purple-600 dark:border-purple-400'
+                          ? 'text-primary font-bold border-b-2 border-primary'
                           : 'text-muted-foreground hover:text-foreground'
                       )}
                     >
@@ -385,7 +385,7 @@ export default function TemplatesPage() {
             <div className="sticky top-0 bg-white border-b border-zinc-200 px-6 py-3.5 flex items-center justify-between z-10 shadow-xs">
               <div className="flex items-center gap-2">
                 <span className="font-bold text-sm text-zinc-900">
-                  Previewing: <span className="text-purple-600 capitalize">{previewTemplate}</span> Template
+                  Previewing: <span className="text-primary capitalize">{previewTemplate}</span> Template
                 </span>
                 {previewTemplate === activeTemplate && (
                   <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 text-[10px]">
@@ -401,7 +401,7 @@ export default function TemplatesPage() {
                     handleApplyTemplate(previewTemplate);
                     setPreviewTemplate(null);
                   }}
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs h-8 px-4"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-8 px-4"
                 >
                   <Check className="h-3.5 w-3.5 mr-1.5 stroke-[3]" />
                   Apply This Template
@@ -458,7 +458,7 @@ function TemplateCardItem({
       className={cn(
         'group bg-card text-card-foreground rounded-2xl border-2 transition-all duration-200 flex flex-col overflow-hidden shadow-xs hover:shadow-lg',
         isActive
-          ? 'border-purple-600 dark:border-purple-500 ring-2 ring-purple-500/20'
+          ? 'border-primary ring-2 ring-primary/20'
           : 'border-border hover:border-muted-foreground/40'
       )}
     >
@@ -500,7 +500,7 @@ function TemplateCardItem({
             {tmpl.badge && (
               <Badge
                 variant="outline"
-                className="text-[10px] font-semibold bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
+                className="text-[10px] font-semibold bg-primary/10 text-primary border-primary/20"
               >
                 {tmpl.badge}
               </Badge>
@@ -519,7 +519,7 @@ function TemplateCardItem({
             className={cn(
               'flex-1 text-xs font-bold h-8',
               isActive
-                ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-xs'
+                ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-xs'
                 : 'border-border text-foreground hover:bg-muted'
             )}
           >

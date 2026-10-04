@@ -174,7 +174,7 @@ export default function PaymentReceivedPage() {
         </div>
         <Button
           onClick={() => setIsDialogOpen(true)}
-          className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs h-9 px-4 rounded-md shadow-sm"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-9 px-4 rounded-md shadow-sm"
         >
           <Plus className="h-4 w-4 mr-1.5" /> Record Payment
         </Button>
@@ -226,7 +226,7 @@ export default function PaymentReceivedPage() {
               <Button
                 size="sm"
                 onClick={() => setIsDialogOpen(true)}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs"
               >
                 <Plus className="h-4 w-4 mr-1.5" /> Record Payment
               </Button>
@@ -254,7 +254,7 @@ export default function PaymentReceivedPage() {
                         <TableCell className="font-medium text-foreground">{p.customerName}</TableCell>
                         <TableCell className="font-mono text-xs">
                           {p.invoiceId ? (
-                            <Link href={`/invoice/details?id=${p.invoiceId}`} className="text-purple-600 dark:text-purple-400 font-bold hover:underline flex items-center gap-1">
+                            <Link href={`/invoice/details?id=${p.invoiceId}`} className="text-primary font-bold hover:underline flex items-center gap-1">
                               {p.invoiceNumber || 'View Invoice'}
                               <ExternalLink className="h-3 w-3" />
                             </Link>
@@ -299,7 +299,7 @@ export default function PaymentReceivedPage() {
         <DialogContent className="bg-card text-card-foreground border-border max-w-md">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <CreditCard className="h-5 w-5 text-primary" />
               Record Payment Received
             </DialogTitle>
             <DialogDescription className="text-xs">
@@ -310,7 +310,7 @@ export default function PaymentReceivedPage() {
           <form onSubmit={handleCreate} className="space-y-4 pt-2">
             {unpaidInvoices.length > 0 && (
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-purple-600 dark:text-purple-400">Link to Unpaid Invoice</Label>
+                <Label className="text-xs font-semibold text-primary">Link to Unpaid Invoice</Label>
                 <Select value={selectedInvoiceId} onValueChange={handleSelectInvoice}>
                   <SelectTrigger className="bg-background border-border text-xs h-9">
                     <SelectValue placeholder="Select an unpaid invoice to settle..." />
@@ -382,7 +382,7 @@ export default function PaymentReceivedPage() {
               <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="text-xs h-9">
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs h-9 px-5">
+              <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-9 px-5">
                 {isSubmitting ? 'Recording...' : 'Record Payment'}
               </Button>
             </DialogFooter>

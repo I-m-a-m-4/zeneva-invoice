@@ -302,7 +302,7 @@ export default function ServicesPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="h-7 text-xs border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-950/40"
+                            className="h-7 text-xs border-primary/30 text-primary hover:bg-primary/10"
                             onClick={() => handleCreateInvoiceForService(s)}
                             title="Generate invoice for this service"
                           >

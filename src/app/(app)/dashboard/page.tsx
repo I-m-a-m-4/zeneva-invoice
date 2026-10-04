@@ -216,7 +216,7 @@ export default function DashboardPage() {
             <Button
               asChild
               size="sm"
-              className="bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs h-8 px-3 rounded-lg shadow-sm"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs h-8 px-3 rounded-lg shadow-sm"
             >
               <Link href="/invoices/new">
                 <Plus className="h-3.5 w-3.5 mr-1" />

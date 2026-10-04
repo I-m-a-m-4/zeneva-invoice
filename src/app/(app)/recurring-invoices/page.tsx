@@ -217,7 +217,7 @@ export default function RecurringInvoicesPage() {
         </div>
         <Button
           onClick={() => setIsDialogOpen(true)}
-          className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs h-9 px-4 rounded-md shadow-sm"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-9 px-4 rounded-md shadow-sm"
         >
           <Plus className="h-4 w-4 mr-1.5" /> New Recurring Profile
         </Button>
@@ -227,7 +227,7 @@ export default function RecurringInvoicesPage() {
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Active Run Rate</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-purple-600 dark:text-purple-400">
+            <CardTitle className="text-2xl font-bold font-mono text-primary">
               <CurrencyAmount amount={totalMonthlyRunRate} currency={currencySymbol} />
             </CardTitle>
           </CardHeader>
@@ -273,7 +273,7 @@ export default function RecurringInvoicesPage() {
               <Button
                 size="sm"
                 onClick={() => setIsDialogOpen(true)}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs"
               >
                 <Plus className="h-4 w-4 mr-1.5" /> Create Profile
               </Button>
@@ -327,7 +327,7 @@ export default function RecurringInvoicesPage() {
                               variant="outline"
                               onClick={() => handleGenerateInvoiceNow(p)}
                               disabled={runningId === id}
-                              className="h-7 text-xs border-purple-600/40 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/30 font-semibold"
+                              className="h-7 text-xs border-primary/40 text-primary hover:bg-primary/10 font-semibold"
                               title="Generate Live Invoice Now"
                             >
                               {runningId === id ? (
@@ -450,7 +450,7 @@ export default function RecurringInvoicesPage() {
               <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="text-xs h-9">
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs h-9 px-5">
+              <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-9 px-5">
                 {isSubmitting ? 'Creating...' : 'Save Schedule'}
               </Button>
             </DialogFooter>

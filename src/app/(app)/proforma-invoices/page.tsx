@@ -297,7 +297,7 @@ export default function ProformaInvoicesPage() {
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
                           {p.status !== 'converted' && (
-                            <Button variant="outline" size="sm" className="h-7 text-xs border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-950/40" onClick={() => handleConvertToInvoice(p)}>
+                            <Button variant="outline" size="sm" className="h-7 text-xs border-primary/30 text-primary hover:bg-primary/10" onClick={() => handleConvertToInvoice(p)}>
                               <FileCheck className="h-3.5 w-3.5 mr-1 text-green-600" /> Convert to Invoice
                             </Button>
                           )}
