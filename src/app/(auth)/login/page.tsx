@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/firebase";
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Loader, ChevronLeft } from "lucide-react";
+import { Eye, EyeOff, Loader, ChevronLeft, Sparkles, TrendingUp, CheckCircle2, Zap } from "lucide-react";
 import { AppConfig } from "@/lib/config";
 import Image from "next/image";
 
@@ -26,16 +26,28 @@ const loginSlides = [
     image: '/images/auth/slide-1.jpg',
     titleKey: 'auth.loginSlide1Title',
     descKey: 'auth.loginSlide1Desc',
+    badgeText: 'Smart Checkout Active',
+    notifTitle: 'New Sale Completed',
+    notifDesc: 'POS Terminal #01 · ₦42,500.00',
+    notifType: 'sale',
   },
   {
     image: '/images/auth/slide-2.jpg',
     titleKey: 'auth.loginSlide2Title',
     descKey: 'auth.loginSlide2Desc',
+    badgeText: 'Live Inventory Analytics',
+    notifTitle: 'Weekly Target Exceeded',
+    notifDesc: '+38.4% revenue increase',
+    notifType: 'growth',
   },
   {
     image: '/images/auth/slide-3.jpg',
     titleKey: 'auth.loginSlide3Title',
     descKey: 'auth.loginSlide3Desc',
+    badgeText: 'Real-time Cloud Sync',
+    notifTitle: 'Multi-Store Synchronized',
+    notifDesc: 'All inventory updated live',
+    notifType: 'sync',
   }
 ];
 
@@ -169,19 +181,6 @@ export default function LoginPage() {
     }
   };
 
-  useEffect(() => {
-    loginVideoSlides.forEach((_, index) => {
-      const video = videoRefs.current[index];
-      if (!video) return;
-
-      if (index === currentSlide) {
-        video.currentTime = 0;
-        video.play().catch(() => {});
-      } else {
-        video.pause();
-      }
-    });
-  }, [currentSlide]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -363,12 +362,14 @@ export default function LoginPage() {
       </div>
       <div className="hidden lg:flex flex-col p-3 sm:p-4 lg:p-5 h-full">
         <div className="relative w-full h-full overflow-hidden rounded-2xl lg:rounded-3xl bg-black shadow-2xl border border-black/5 dark:border-white/10">
-          {/* Background Images */}
+          {/* Animated Background Images with smooth transitions */}
           {loginSlides.map((slide, index) => (
-            <div
+            <motion.div
               key={index}
-              className={`absolute inset-0 h-full w-full transition-all duration-1000 ease-in-out ${
-                index === currentSlide ? 'opacity-90 scale-100 z-[0]' : 'opacity-0 scale-105 pointer-events-none z-[-1]'
+              animate={index === currentSlide ? { opacity: 0.9, scale: [1, 1.05] } : { opacity: 0, scale: 1 }}
+              transition={{ duration: 7, ease: "easeInOut" }}
+              className={`absolute inset-0 h-full w-full ${
+                index === currentSlide ? 'z-[0]' : 'pointer-events-none z-[-1]'
               }`}
             >
               <Image
@@ -379,14 +380,74 @@ export default function LoginPage() {
                 className="object-cover"
                 sizes="(min-width: 1024px) 50vw, 100vw"
               />
-            </div>
+            </motion.div>
           ))}
 
-          {/* Orangish subtle filter overlay */}
+          {/* Warm tint overlay */}
           <div className="absolute inset-0 bg-orange-600/10 mix-blend-multiply z-[1] pointer-events-none" />
 
-          {/* Dark overlay gradient for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent z-[2]" />
+          {/* Dual gradient overlays for high-contrast readability at top and bottom */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/90 z-[2] pointer-events-none" />
+
+          {/* Upper Animated Content Overlay */}
+          <div className="absolute top-6 left-6 right-6 lg:top-8 lg:left-8 lg:right-8 z-10 flex flex-col gap-3 pointer-events-none">
+            <div className="flex items-center justify-between">
+              {/* Live Operating Status */}
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/90 text-xs font-medium shadow-lg"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span>Zeneva OS Live</span>
+              </motion.div>
+
+              {/* Dynamic Animated Status Chip */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentSlide}
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{ duration: 0.4 }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/20 backdrop-blur-md border border-primary/40 text-primary-foreground text-xs font-semibold shadow-md"
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-primary" />
+                  <span>{loginSlides[currentSlide].badgeText}</span>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Floating Live Activity Glass Card */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentSlide}
+                initial={{ opacity: 0, x: 25, y: -5 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                exit={{ opacity: 0, x: -25, y: -5 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="self-end mt-1 flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/15 shadow-2xl max-w-[320px]"
+              >
+                <div className="h-8 w-8 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0 text-primary">
+                  {loginSlides[currentSlide].notifType === 'sale' && <CheckCircle2 className="h-4 w-4" />}
+                  {loginSlides[currentSlide].notifType === 'growth' && <TrendingUp className="h-4 w-4" />}
+                  {loginSlides[currentSlide].notifType === 'sync' && <Zap className="h-4 w-4" />}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-white truncate">
+                    {loginSlides[currentSlide].notifTitle}
+                  </p>
+                  <p className="text-[11px] text-white/70 truncate">
+                    {loginSlides[currentSlide].notifDesc}
+                  </p>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
           <div className="absolute bottom-8 left-8 right-8 lg:bottom-10 lg:left-10 lg:right-10 p-0 bg-transparent z-10">
             <AnimatePresence mode="wait">
