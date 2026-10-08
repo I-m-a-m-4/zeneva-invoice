@@ -12,7 +12,7 @@ import { format } from 'date-fns';
 import { BusinessInstance, SubscriptionHistory, UserProfile } from '@/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, History, ShieldCheck } from 'lucide-react';
+import { Loader2, History, ShieldCheck, Sparkles, FileText, CheckCircle2, CreditCard, HelpCircle, ArrowUpRight } from 'lucide-react';
 import TrialCountdown from '@/components/settings/trial-countdown';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +21,8 @@ import RefreshButton from '@/components/shared/refresh-button';
 import { usePOS } from '@/context/pos-context';
 import { useI18n } from '@/context/i18n-context';
 import { BillingBodySkeleton } from './skeleton';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 const SubscriptionSection = dynamic(
     () => import('@/components/settings/subscription-section'),
@@ -35,21 +37,6 @@ const SubscriptionSection = dynamic(
     }
 );
 
-/*
- * There is no credit top-up rail here, deliberately.
- *
- * Zen AI credits are an allowance of the plan and nothing else — they are not sold
- * separately. A shop that wants more AI moves up a tier, which is what the plans
- * below are for. The removed section (`ai-credits-section.tsx`, with its Paystack
- * and Dodo rails and a three-pack price list) sold credits as a one-off product;
- * that product is scrapped, so the only surface that quotes an allowance is the
- * plan card, and the only surface that shows the balance is `/ai-insights`.
- *
- * `aiBonusCredits` still exists on the business document and is still spent after
- * the allowance — see `src/lib/server/ai-credits.ts`. It just has one writer now,
- * the super-admin grant on `/admin-imamshaffy/ai-usage`.
- */
-
 function BillingPageSkeleton() {
     return <BillingBodySkeleton />;
 }
@@ -58,17 +45,14 @@ const LifetimeAccessStatus = () => {
     const { t } = useI18n();
     return (
         <div className="flex items-center gap-3">
-            <ShieldCheck className="h-8 w-8 text-green-600" />
+            <ShieldCheck className="h-8 w-8 text-emerald-500" />
             <div>
-                <p className="text-lg font-semibold text-green-600">{t('billing.lifetimeAccess')}</p>
+                <p className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">{t('billing.lifetimeAccess')}</p>
                 <p className="text-xs text-muted-foreground">{t('billing.lifetimeAccessDesc')}</p>
             </div>
         </div>
     );
 };
-
-
-
 
 function BillingPage() {
   const { user, isUserLoading } = useUser();
@@ -78,9 +62,6 @@ function BillingPage() {
 
   const subscriptionHistoryQuery = useMemoFirebase(() => {
     if (!currentBusiness?.id || !firestore) return null;
-    // Bounded: the page renders this as a flat list with no pagination, and a
-    // long-lived account accumulates a row per renewal. Newest 50 is well past
-    // what anyone scrolls, and the ordering already puts them first.
     return query(collection(firestore, 'businessInstances', currentBusiness.id, 'subscription_history'), orderBy('timestamp', 'desc'), limit(50));
   }, [currentBusiness?.id, firestore]);
   const { data: subscriptionHistory, isLoading: isHistoryLoading } = useCollection<SubscriptionHistory>(subscriptionHistoryQuery);
@@ -95,10 +76,18 @@ function BillingPage() {
     return <div className="p-8 text-center text-muted-foreground">{t('billing.profileNotFound')}</div>;
   }
 
+  const currentPlan = currentBusiness.plan || 'starter';
+  const isLifetime = currentBusiness.accessLevel === 'lifetime';
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <PageTitle title={t('billing.title')} subtitle={t('billing.subtitle')} />
+        <div>
+          <PageTitle title={t('billing.title')} subtitle={t('billing.subtitle')} />
+          <p className="text-xs text-muted-foreground mt-1">
+            Enterprise-grade invoicing, automated payment collection & client management.
+          </p>
+        </div>
         <RefreshButton />
       </div>
 
@@ -112,38 +101,113 @@ function BillingPage() {
         </div>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-primary" />{t('billing.sectionTitle')}</CardTitle>
-          <CardDescription>{t('billing.sectionDesc')}</CardDescription>
+      {/* Invoicing Feature & Quota Highlights */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="border-border/60 bg-card/60 backdrop-blur-sm">
+          <CardContent className="p-5 flex items-start gap-4">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Active License</p>
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold capitalize text-foreground">{isLifetime ? 'Lifetime License' : `${currentPlan} Plan`}</span>
+                <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 text-[10px] font-bold">
+                  Active
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {isLifetime ? 'Permanent access to all features' : 'Includes automatic continuous updates'}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/60 bg-card/60 backdrop-blur-sm">
+          <CardContent className="p-5 flex items-start gap-4">
+            <div className="h-10 w-10 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+              <FileText className="h-5 w-5" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Invoicing Quota</p>
+              <p className="text-xl font-bold text-foreground">Unlimited</p>
+              <p className="text-xs text-muted-foreground">
+                Invoices, estimates, recurring bills & clients
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/60 bg-card/60 backdrop-blur-sm">
+          <CardContent className="p-5 flex items-start gap-4">
+            <div className="h-10 w-10 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Zen AI Billing Assistant</p>
+              <p className="text-xl font-bold text-foreground">
+                {currentPlan === 'business' ? '600' : currentPlan === 'pro' ? '150' : 'Included'} <span className="text-xs font-normal text-muted-foreground">credits/mo</span>
+              </p>
+              <p className="text-xs text-muted-foreground">
+                AI invoice generation, debtor chasing & cashflow analysis
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Plan Management & Upgrade Section */}
+      <Card className="border-border/70 shadow-sm">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-xl font-bold">
+                <CreditCard className="h-5 w-5 text-primary" />
+                {t('billing.sectionTitle')}
+              </CardTitle>
+              <CardDescription className="mt-1">
+                Select a plan tailored for your business or agency. Change plans or billing cycles at any time.
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
-            <div className="p-4 border rounded-lg bg-muted/50 space-y-2">
-                <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">{t('billing.currentStatus')}</p>
-                {currentBusiness.accessLevel === 'lifetime' ? (
+            <div className="p-4 border rounded-xl bg-muted/40 space-y-2">
+                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">{t('billing.currentStatus')}</p>
+                {isLifetime ? (
                     <LifetimeAccessStatus />
                 ) : (
                     <TrialCountdown business={currentBusiness} />
                 )}
-                
             </div>
             <SubscriptionSection userProfile={userProfile} businessInstance={currentBusiness} />
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-            <CardTitle className="flex items-center gap-2"><History className="h-5 w-5 text-primary" />{t('billing.historyTitle')}</CardTitle>
-            <CardDescription>{t('billing.historyDesc')}</CardDescription>
+      {/* Subscription & Payment History Table */}
+      <Card className="border-border/70 shadow-sm">
+        <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                  <History className="h-5 w-5 text-primary" />
+                  {t('billing.historyTitle')}
+                </CardTitle>
+                <CardDescription className="mt-0.5">
+                  Complete record of your subscription payments, renewals, and invoices.
+                </CardDescription>
+              </div>
+            </div>
         </CardHeader>
         <CardContent>
-            <ScrollArea className="h-60">
+            <ScrollArea className="h-64 rounded-md border">
                  <Table>
                     <TableHeader>
-                        <TableRow>
-                            <TableHead>{t('inventory.colAction')}</TableHead>
-                            <TableHead>{t('billing.colAmount')}</TableHead>
-                            <TableHead className="text-right">{t('common.date')}</TableHead>
+                        <TableRow className="bg-muted/40 hover:bg-muted/40">
+                            <TableHead className="font-semibold">Description / Plan</TableHead>
+                            <TableHead className="font-semibold">{t('billing.colAmount')}</TableHead>
+                            <TableHead className="font-semibold">Status</TableHead>
+                            <TableHead className="text-right font-semibold">Date</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -151,32 +215,66 @@ function BillingPage() {
                             subscriptionHistory
                               .filter(item => !(item.amount === 0 && !item.action.includes('Admin Grant')))
                               .map(item => (
-                                <TableRow key={item.id}>
-                                    <TableCell className="font-medium">{item.action}</TableCell>
-                                    {/*
-                                      * The row's own currency, not a hardcoded ₦.
-                                      *
-                                      * Every writer into `subscription_history` records a
-                                      * `currency`, and the Dodo subscription webhook writes
-                                      * USD. Printing ₦ against those showed an $8 payment as
-                                      * "₦8", which reads as a mis-charge of a factor of
-                                      * 1,500. Historical rows from the scrapped credit-pack
-                                      * rail are USD too, and are still listed here.
-                                      */}
-                                    <TableCell>{item.currency === 'USD' ? '$' : '₦'}{item.amount.toLocaleString()}</TableCell>
-                                    <TableCell className="text-right text-muted-foreground">{item.timestamp ? format(safeToDate(item.timestamp), 'PPp') : t('inventory.notAvailable')}</TableCell>
+                                <TableRow key={item.id} className="hover:bg-muted/30 transition-colors">
+                                    <TableCell className="font-medium text-foreground">
+                                      <div className="flex items-center gap-2">
+                                        <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                                        <span>{item.action}</span>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell className="font-semibold">
+                                      {item.currency === 'USD' ? '$' : '₦'}{item.amount.toLocaleString()}
+                                    </TableCell>
+                                    <TableCell>
+                                      <Badge variant="outline" className="border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs">
+                                        Completed
+                                      </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right text-muted-foreground text-xs font-mono">
+                                      {item.timestamp ? format(safeToDate(item.timestamp), 'PPp') : '-'}
+                                    </TableCell>
                                 </TableRow>
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
-                                    {t('billing.noHistory')}
+                                <TableCell colSpan={4} className="text-center text-muted-foreground py-12">
+                                    <div className="flex flex-col items-center justify-center gap-2">
+                                      <History className="h-8 w-8 opacity-40 text-muted-foreground" />
+                                      <p className="font-medium">{t('billing.noHistory')}</p>
+                                      <p className="text-xs text-muted-foreground">Your transaction receipts and renewal records will appear here.</p>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
             </ScrollArea>
+        </CardContent>
+      </Card>
+
+      {/* Helpful Billing FAQs & Support Link */}
+      <Card className="border-border/60 bg-muted/20">
+        <CardContent className="p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                <HelpCircle className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-foreground">Need custom invoicing limits, bank transfer receipt, or enterprise seats?</h4>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Our team can provide custom invoicing quotes, multi-entity setups, and dedicated onboarding.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Button asChild variant="outline" size="sm" className="border-primary/30 text-primary hover:bg-primary/10">
+                <Link href="/support">
+                  Contact Support <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
+                </Link>
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

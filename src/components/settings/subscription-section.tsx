@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Check, ArrowRight, Loader2, ShieldCheck, Star, Store } from 'lucide-react';
+import { Check, ArrowRight, Loader2, ShieldCheck, Star, Building2 } from 'lucide-react';
 import type { UserProfile, BusinessInstance } from '@/types';
 import { useFirestore, auth } from '@/firebase';
 import { writeBatch, doc, serverTimestamp, collection, addDoc } from 'firebase/firestore';
@@ -12,17 +12,16 @@ import { add, format } from 'date-fns';
 import { Badge } from '../ui/badge';
 import { safeToDate, getCountryFromIP } from '@/lib/utils';
 import { useCallback, useState, useEffect } from 'react';
-import usePaystack from '@/hooks/use-paystack';
+import useFlutterwave from '@/hooks/use-flutterwave';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Label } from '../ui/label';
-import useDodoPayments from '@/hooks/use-dodopayments';
 import { track } from '@vercel/analytics';
 import { AI_MONTHLY_LIMITS, effectivePlan, isPaidPlan, isPaidPlanExpired } from '@/lib/plan';
 import { apiBase } from '@/lib/platform';
 import { usePOS } from '@/context/pos-context';
 import { useI18n } from '@/context/i18n-context';
 
-const PAYSTACK_PUBLIC_KEY = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '';
+const FLUTTERWAVE_PUBLIC_KEY = process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY || 'FLWPUBK-33162c3bb2bb347a6606f3e44645f1c9-X';
 
 type PlanDef = {
     name: string;
@@ -83,8 +82,8 @@ const billingCycles = [
     { id: '12m', months: 12, label: '1 year', discount: 15 }, // 15% off
 ];
 
-// New self-contained button component using custom hook
-const PaystackSubscriptionButton = ({ 
+// Flutterwave unified subscription button (Supports NGN, USD, Cards, Transfers, USSD)
+const FlutterwaveSubscriptionButton = ({ 
     plan, 
     cycle,
     finalAmount,
@@ -107,43 +106,39 @@ const PaystackSubscriptionButton = ({
 }) => {
     const { toast } = useToast();
     const firestore = useFirestore();
-    const { initializePayment, isSdkReady: isScriptLoaded } = usePaystack();
+    const { initializePayment, isSdkReady } = useFlutterwave();
     const { isImpersonating } = usePOS();
 
     const handleSuccessfulPayment = useCallback(async (transaction: any) => {
-        if (!firestore || !userProfile || !businessInstance) {
-            toast({ variant: 'destructive', title: 'Error', description: 'Session expired. Please refresh and try again.' });
+        if (!userProfile || !businessInstance) {
+            toast({ variant: 'destructive', title: 'Session Expired', description: 'Please refresh the page and try again.' });
             setProcessingPlan(null);
             return;
         }
 
-        const paymentRef = typeof transaction === 'string'
-            ? transaction
-            : (transaction?.reference || transaction?.ref || '');
+        const txRef = transaction?.tx_ref || transaction?.reference || '';
+        const transactionId = transaction?.transaction_id || transaction?.id || '';
 
-        if (!paymentRef) {
-            toast({ variant: 'destructive', title: 'Error', description: 'Payment reference missing. Please contact support.' });
+        if (!txRef && !transactionId) {
+            toast({ variant: 'destructive', title: 'Error', description: 'Payment reference missing from payment gateway. Please contact support.' });
             setProcessingPlan(null);
             return;
         }
 
         try {
-            // Verification, pricing and the Firestore write all happen on the
-            // server now. The client cannot be trusted with any of them: it used
-            // to check the amount against a price it had itself chosen, then
-            // write `plan` directly — both bypassable from a modded build.
-            // `firestore.rules` now rejects client writes to entitlement fields.
-            toast({ title: "Processing...", description: "Verifying your payment securely." });
+            toast({ title: "Activating Subscription...", description: "Verifying your payment securely with Flutterwave." });
 
             const { activateSubscription } = await import('@/actions/subscription');
             const { idToken } = await import('@/lib/id-token');
 
             const result = await activateSubscription({
                 idToken: await idToken(),
-                reference: paymentRef,
+                reference: txRef,
+                transactionId,
                 planId: plan.planId,
                 cycleId: cycle.id,
                 currency,
+                gateway: 'flutterwave',
             });
 
             if (!result.ok) {
@@ -155,8 +150,8 @@ const PaystackSubscriptionButton = ({
                     plan: plan.name,
                     cycle: cycle.label,
                     amount: finalAmount,
-                    currency: currency,
-                    gateway: 'Paystack',
+                    currency,
+                    gateway: 'Flutterwave',
                     businessId: businessInstance.id
                 });
             } catch (trackErr) {
@@ -165,34 +160,42 @@ const PaystackSubscriptionButton = ({
 
             toast({
                 variant: 'success',
-                title: 'Subscription Successful!',
-                description: `You are now subscribed to the ${plan.name} plan.`,
+                title: 'Subscription Activated! 🎉',
+                description: `You are now on the ${plan.name} plan (${cycle.label}).`,
             });
+
+            // Reload after brief delay so client Firestore listeners and entitlements reflect
+            if (typeof window !== 'undefined') {
+                setTimeout(() => window.location.reload(), 1200);
+            }
         } catch (error: any) {
-            console.error("Payment processing error:", error);
-            toast({ variant: 'destructive', title: 'Subscription Failed', description: error.message || 'An unexpected error occurred. Please contact support.' });
+            console.error("Flutterwave activation error:", error);
+            toast({
+                variant: 'destructive',
+                title: 'Subscription Activation Failed',
+                description: error.message || 'Payment was received but automatic activation encountered an issue. Please contact support.',
+            });
         } finally {
             setProcessingPlan(null);
         }
-    }, [firestore, userProfile, businessInstance, plan, cycle, finalAmount, currency, toast, setProcessingPlan]);
-    
+    }, [userProfile, businessInstance, plan, cycle, finalAmount, currency, toast, setProcessingPlan]);
+
     const handleSubscribe = useCallback(() => {
         if (isImpersonating) {
             toast({
                 variant: 'destructive',
-                title: 'Action blocked during impersonation',
-                description: 'You cannot initiate billing on behalf of a user. Stop impersonating first.',
+                title: 'Action Blocked',
+                description: 'You cannot initiate billing on behalf of a user while impersonating.',
             });
             return;
         }
         if (isProcessing) return;
-        
-        // Safety check for keys and email
-        if (!PAYSTACK_PUBLIC_KEY || PAYSTACK_PUBLIC_KEY.includes('your_public_key') || PAYSTACK_PUBLIC_KEY === 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx') {
+
+        if (!FLUTTERWAVE_PUBLIC_KEY || FLUTTERWAVE_PUBLIC_KEY.includes('your_public_key')) {
             toast({
                 variant: 'destructive',
                 title: 'Configuration Error',
-                description: 'The payment system is not correctly configured. Please contact the administrator (Invalid Public Key).'
+                description: 'Flutterwave public key is not configured. Please contact administrator.',
             });
             return;
         }
@@ -200,8 +203,8 @@ const PaystackSubscriptionButton = ({
         if (!userProfile?.email) {
             toast({
                 variant: 'destructive',
-                title: 'User Profile Incomplete',
-                description: 'We need your email address to process the payment. Please update your profile.'
+                title: 'Email Required',
+                description: 'An email address is required to process billing.',
             });
             return;
         }
@@ -213,220 +216,92 @@ const PaystackSubscriptionButton = ({
                 plan: plan.name,
                 cycle: cycle.label,
                 amount: finalAmount,
-                currency: currency,
-                gateway: 'Paystack',
+                currency,
+                gateway: 'Flutterwave',
                 businessId: businessInstance.id
             });
         } catch (trackErr) {
             console.warn("Failed to track checkout start event:", trackErr);
         }
 
-        // Log checkout attempt to Firestore for Admin Dashboard visibility
+        // Log checkout attempt to Firestore
         try {
-            addDoc(collection(firestore, 'checkout_attempts'), {
-                userId: userProfile.id,
-                userEmail: userProfile.email || '',
-                userName: userProfile.name || '',
-                businessId: businessInstance.id,
-                businessName: businessInstance.name || '',
-                plan: plan.name,
-                cycle: cycle.label,
-                amount: finalAmount,
-                currency: currency,
-                gateway: 'Paystack',
-                timestamp: serverTimestamp(),
-                status: 'initiated'
-            });
-        } catch (dbErr) {
-            console.error("Failed to log checkout attempt to Firestore:", dbErr);
-        }
-        
-        initializePayment({
-            key: PAYSTACK_PUBLIC_KEY,
-            email: userProfile.email,
-            amount: Math.round(finalAmount * 100), // Ensure it's an integer
-            currency: currency,
-            reference: `z-${businessInstance.id.substring(0, 6)}-${Date.now()}`,
-            metadata: {
-                custom_fields: [
-                    {
-                        display_name: "Business ID",
-                        variable_name: "business_id",
-                        value: businessInstance.id
-                    },
-                    {
-                        display_name: "Plan",
-                        variable_name: "plan",
-                        value: plan.name
-                    }
-                ]
-            },
-            onSuccess: (transaction: any) => {
-                handleSuccessfulPayment(transaction);
-            },
-            onClose: () => {
-                setProcessingPlan(null);
-            },
-        });
-    }, [initializePayment, userProfile, businessInstance, plan, finalAmount, isProcessing, setProcessingPlan, handleSuccessfulPayment, toast, isImpersonating, firestore, currency, cycle]);
-
-    const buttonText = isCurrentPlan ? 'Renew Subscription' : `Subscribe to ${plan.name}`;
-
-    return (
-        <Button
-            onClick={handleSubscribe}
-            className="w-full"
-            disabled={isProcessing}
-        >
-            {isProcessing ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <ArrowRight className="mr-2 h-4 w-4" />}
-            {buttonText}
-        </Button>
-    )
-}
-
-const DodoSubscriptionButton = ({ 
-    plan, 
-    cycle,
-    finalAmount,
-    userProfile, 
-    businessInstance, 
-    isCurrentPlan, 
-    isProcessing, 
-    setProcessingPlan
-}: { 
-    plan: PlanDef, 
-    cycle: typeof billingCycles[0],
-    finalAmount: number,
-    userProfile: UserProfile, 
-    businessInstance: BusinessInstance,
-    isCurrentPlan: boolean,
-    isProcessing: boolean,
-    setProcessingPlan: (planId: string | null) => void;
-}) => {
-    const { toast } = useToast();
-    const firestore = useFirestore();
-    const { initializeCheckout, isScriptLoaded } = useDodoPayments();
-    const { isImpersonating } = usePOS();
-
-    const handleSubscribe = useCallback(async () => {
-        if (isImpersonating) {
-            toast({
-                variant: 'destructive',
-                title: 'Action blocked during impersonation',
-                description: 'You cannot initiate billing on behalf of a user. Stop impersonating first.',
-            });
-            return;
-        }
-        if (!isScriptLoaded) {
-            toast({ title: "Payment gateway is loading...", description: "Please wait a moment and try again." });
-            return;
-        }
-        if (isProcessing) return;
-
-        setProcessingPlan(plan.planId);
-
-        try {
-            track('billing_checkout_initiated', {
-                plan: plan.name,
-                cycle: cycle.label,
-                amount: finalAmount,
-                currency: 'USD',
-                gateway: 'Dodo',
-                businessId: businessInstance.id
-            });
-        } catch (trackErr) {
-            console.warn("Failed to track Dodo checkout start:", trackErr);
-        }
-
-        // Log checkout attempt to Firestore for Admin Dashboard visibility
-        try {
-            addDoc(collection(firestore, 'checkout_attempts'), {
-                userId: userProfile.id,
-                userEmail: userProfile.email || '',
-                userName: userProfile.name || '',
-                businessId: businessInstance.id,
-                businessName: businessInstance.name || '',
-                plan: plan.name,
-                cycle: cycle.label,
-                amount: finalAmount,
-                currency: 'USD',
-                gateway: 'Dodo',
-                timestamp: serverTimestamp(),
-                status: 'initiated'
-            });
-        } catch (dbErr) {
-            console.error("Failed to log checkout attempt to Firestore:", dbErr);
-        }
-
-        try {
-            const response = await fetch(`${apiBase()}/api/dodo/checkout`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    planId: plan.planId,
-                    email: userProfile.email,
+            if (firestore) {
+                addDoc(collection(firestore, 'checkout_attempts'), {
+                    userId: userProfile.id,
+                    userEmail: userProfile.email || '',
+                    userName: userProfile.name || '',
                     businessId: businessInstance.id,
-                    cycleMonths: cycle.months
-                }),
-            });
-
-            /*
-             * Read the body as text and parse it ourselves.
-             *
-             * `response.json()` on a non-JSON body throws
-             * "Unexpected token '<'", which is what the owner saw for the whole
-             * time this endpoint was answering the HTML 404 page — a message
-             * about JSON parsing for what was really a missing route. Any
-             * infrastructure failure (404, 502, a proxy error page) is HTML,
-             * so the status is the useful thing to report, not the parse error.
-             */
-            const raw = await response.text();
-            let data: any = null;
-            try {
-                data = raw ? JSON.parse(raw) : null;
-            } catch {
-                console.error('Dodo checkout returned non-JSON:', response.status, raw.slice(0, 500));
-                throw new Error(
-                    response.status === 404
-                        ? 'The payment service is unavailable (404). Please contact support.'
-                        : `The payment service returned an unexpected response (HTTP ${response.status}).`,
-                );
+                    businessName: businessInstance.name || '',
+                    plan: plan.name,
+                    cycle: cycle.label,
+                    amount: finalAmount,
+                    currency,
+                    gateway: 'Flutterwave',
+                    timestamp: serverTimestamp(),
+                    status: 'initiated'
+                });
             }
-
-            if (!response.ok) {
-                throw new Error(data?.error || `Failed to initialize checkout (HTTP ${response.status})`);
-            }
-
-            if (!data?.checkout_url) {
-                throw new Error('No checkout link was returned. Please try again.');
-            }
-
-            initializeCheckout(data.checkout_url);
-        } catch (error: any) {
-            console.error("Dodo initialization error:", error);
-            toast({ 
-                variant: 'destructive', 
-                title: 'Checkout Failed', 
-                description: error.message || 'Could not connect to the payment server.' 
-            });
-        } finally {
-            setProcessingPlan(null);
+        } catch (dbErr) {
+            console.error("Failed to log checkout attempt:", dbErr);
         }
-    }, [isScriptLoaded, isProcessing, plan, userProfile, businessInstance, cycle, finalAmount, initializeCheckout, toast, setProcessingPlan, firestore, isImpersonating]);
 
-    const buttonText = isCurrentPlan ? 'Renew Subscription' : `Subscribe to ${plan.name}`;
+        const tx_ref = `tx-sub-${businessInstance.id.substring(0, 6)}-${Date.now()}`;
+
+        initializePayment({
+            public_key: FLUTTERWAVE_PUBLIC_KEY,
+            tx_ref,
+            amount: finalAmount,
+            currency,
+            payment_options: 'card,banktransfer,ussd',
+            customer: {
+                email: userProfile.email,
+                name: userProfile.name || (businessInstance as any)?.ownerName || 'Valued Customer',
+                phonenumber: (userProfile as any)?.phone || '',
+            },
+            customizations: {
+                title: 'Zeneva Invoicing',
+                description: `${isCurrentPlan ? 'Renewal for' : 'Subscription to'} ${plan.name} Plan (${cycle.label})`,
+                logo: 'https://zeneva.space/logo.png',
+            },
+            callback: (response: any) => {
+                if (response.status === 'successful' || response.status === 'completed') {
+                    handleSuccessfulPayment(response);
+                } else {
+                    toast({
+                        variant: 'destructive',
+                        title: 'Payment Incomplete',
+                        description: `Payment status: ${response.status || 'not completed'}.`,
+                    });
+                    setProcessingPlan(null);
+                }
+            },
+            onclose: () => {
+                setProcessingPlan(null);
+            }
+        });
+    }, [isImpersonating, isProcessing, userProfile, plan, cycle, finalAmount, currency, businessInstance, initializePayment, handleSuccessfulPayment, toast, setProcessingPlan, firestore, isCurrentPlan]);
+
+    const buttonLabel = isCurrentPlan
+        ? `Renew Subscription (${currency === 'NGN' ? '₦' : '$'}${finalAmount.toLocaleString()})`
+        : `Upgrade to ${plan.name} (${currency === 'NGN' ? '₦' : '$'}${finalAmount.toLocaleString()})`;
 
     return (
-        <Button
-            onClick={handleSubscribe}
-            className="w-full"
-            disabled={isProcessing || !isScriptLoaded}
-        >
-            {isProcessing ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <ShieldCheck className="mr-2 h-4 w-4" />}
-            {buttonText} (USD)
-        </Button>
-    )
-}
+        <div className="w-full space-y-2">
+            <Button
+                onClick={handleSubscribe}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-11 transition-all"
+                disabled={isProcessing}
+            >
+                {isProcessing ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <ShieldCheck className="mr-2 h-4 w-4" />}
+                {buttonLabel}
+            </Button>
+            <p className="text-[11px] text-center text-muted-foreground">
+                Secured by Flutterwave • Cards, Bank Transfer, USSD
+            </p>
+        </div>
+    );
+};
 
 // Main component that uses the button
 export default function SubscriptionSection({ userProfile, businessInstance }: { userProfile: UserProfile; businessInstance: BusinessInstance; }) {
@@ -469,9 +344,9 @@ export default function SubscriptionSection({ userProfile, businessInstance }: {
                 </CardHeader>
                 <CardContent>
                     <div className="flex flex-wrap gap-4 text-sm text-green-600/80">
-                        <div className="flex items-center gap-1.5"><Check className="h-4 w-4" /> Unlimited products</div>
-                        <div className="flex items-center gap-1.5"><Check className="h-4 w-4" /> Unlimited users</div>
-                        <div className="flex items-center gap-1.5"><Check className="h-4 w-4" /> AI Insights</div>
+                        <div className="flex items-center gap-1.5"><Check className="h-4 w-4" /> Unlimited invoices & clients</div>
+                        <div className="flex items-center gap-1.5"><Check className="h-4 w-4" /> Unlimited team members</div>
+                        <div className="flex items-center gap-1.5"><Check className="h-4 w-4" /> Zen AI Invoicing Insights</div>
                     </div>
                 </CardContent>
             </Card>
@@ -527,9 +402,9 @@ export default function SubscriptionSection({ userProfile, businessInstance }: {
                                 <div className="flex justify-between items-start">
                                     <CardTitle className="flex items-center gap-2">
                                         {plan.planId === 'pro' ? (
-                                            <Star className="h-5 w-5 text-indigo-500 shrink-0" />
+                                            <Star className="h-5 w-5 text-primary shrink-0" />
                                         ) : (
-                                            <Store className="h-5 w-5 text-amber-500 shrink-0" />
+                                            <Building2 className="h-5 w-5 text-primary shrink-0" />
                                         )}
                                         {plan.name}
                                     </CardTitle>
@@ -593,30 +468,17 @@ export default function SubscriptionSection({ userProfile, businessInstance }: {
                                 </div>
                             </CardContent>
                             <CardFooter>
-                                {currency === 'NGN' ? (
-                                    <PaystackSubscriptionButton
-                                        plan={plan}
-                                        cycle={selectedCycle}
-                                        finalAmount={finalAmount}
-                                        userProfile={userProfile}
-                                        businessInstance={businessInstance}
-                                        isCurrentPlan={isCurrentPlan}
-                                        isProcessing={processingPlan === plan.planId}
-                                        setProcessingPlan={setProcessingPlan}
-                                        currency={currency}
-                                    />
-                                ) : (
-                                    <DodoSubscriptionButton
-                                        plan={plan}
-                                        cycle={selectedCycle}
-                                        finalAmount={finalAmount}
-                                        userProfile={userProfile}
-                                        businessInstance={businessInstance}
-                                        isCurrentPlan={isCurrentPlan}
-                                        isProcessing={processingPlan === plan.planId}
-                                        setProcessingPlan={setProcessingPlan}
-                                    />
-                                )}
+                                <FlutterwaveSubscriptionButton
+                                    plan={plan}
+                                    cycle={selectedCycle}
+                                    finalAmount={finalAmount}
+                                    userProfile={userProfile}
+                                    businessInstance={businessInstance}
+                                    isCurrentPlan={isCurrentPlan}
+                                    isProcessing={processingPlan === plan.planId}
+                                    setProcessingPlan={setProcessingPlan}
+                                    currency={currency}
+                                />
                             </CardFooter>
                         </Card>
                     )

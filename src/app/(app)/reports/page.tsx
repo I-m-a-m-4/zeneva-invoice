@@ -751,7 +751,7 @@ export default function ReportsDashboard() {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search reports"
-                            className="w-full pl-10 pr-9 py-2.5 rounded-full border border-border/80 bg-card text-foreground text-xs shadow-xs focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder:text-muted-foreground"
+                            className="w-full pl-10 pr-9 py-2.5 rounded-full border border-border/80 bg-card text-foreground text-xs shadow-xs focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-muted-foreground"
                         />
                         {searchQuery && (
                             <button
@@ -764,7 +764,7 @@ export default function ReportsDashboard() {
                     </div>
 
                     {/* Main White Directory Container matching Screenshot 1 */}
-                    <div className="w-full max-w-4xl bg-card text-card-foreground border border-border/80 rounded-2xl shadow-xs p-6 sm:p-10 space-y-9">
+                    <div className="w-full max-w-[1700px] bg-card text-card-foreground border border-border/80 rounded-2xl shadow-xs p-6 sm:p-10 space-y-9">
                         {filteredCatalog.map((category) => (
                             <div key={category.id} className="space-y-3">
                                 {/* Category Header with Folder Icon */}
@@ -788,7 +788,7 @@ export default function ReportsDashboard() {
                                             }}
                                             className="flex items-center justify-between py-2 border-b border-border/50 hover:bg-muted/30 px-1.5 rounded-xs cursor-pointer group transition-colors select-none"
                                         >
-                                            <span className="text-blue-600 dark:text-blue-400 group-hover:underline font-medium">
+                                            <span className="text-primary dark:text-primary group-hover:underline font-medium">
                                                 {rep.name}
                                             </span>
                                             <button

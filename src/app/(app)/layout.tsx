@@ -137,6 +137,7 @@ const navGroups = [
 const navItems = navGroups.flatMap(group => group.items);
 
 const bottomLinks = [
+  { href: '/billing', icon: CreditCard, label: 'Billing', labelKey: 'nav.billing', roles: ['admin', 'owner'] },
   { href: '/settings', icon: Settings, label: 'Settings', labelKey: 'nav.settings', roles: ['admin', 'owner'] },
 ];
 
@@ -1468,8 +1469,8 @@ export default function AuthenticatedLayout({
                 </Link>
                 <BranchSwitcher />
               </SidebarHeader>
-              <SidebarContent className="flex-1 p-2">
-                <div className="flex-1 overflow-y-auto scrollbar-none hover:scrollbar-thin scrollbar-thumb-muted-foreground/20">
+              <SidebarContent className="flex-1 min-h-0 p-2 overflow-hidden flex flex-col">
+                <div className="flex-1 min-h-0 overflow-y-auto scrollbar-none hover:scrollbar-thin scrollbar-thumb-muted-foreground/20 pr-1">
                   <SidebarMenu>
                     {!isMounted || isUserLoading ? (
                       // Show skeletons for the top 5 nav items while loading or before mounting
@@ -1486,9 +1487,9 @@ export default function AuthenticatedLayout({
                         const visibleItems = filterNavByRole(group.items);
                         if (visibleItems.length === 0) return null;
                         return (
-                          <div key={group.label || `group-${gIdx}`} className={gIdx > 0 ? 'mt-4 pt-3 border-t border-sidebar-border/30' : ''}>
+                          <div key={group.label || `group-${gIdx}`} className={gIdx > 0 ? 'mt-3 pt-3 border-t border-dashed border-border/80 dark:border-border/60' : ''}>
                             {group.label ? (
-                              <div className="px-3 pb-1 pt-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 group-data-[state=collapsed]:hidden font-sidebar">
+                              <div className="px-3 pb-1.5 pt-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 dark:text-muted-foreground/75 group-data-[state=collapsed]:hidden font-sidebar">
                                 {group.label}
                               </div>
                             ) : null}
@@ -1521,7 +1522,7 @@ export default function AuthenticatedLayout({
                   </SidebarMenu>
                 </div>
               </SidebarContent>
-              <SidebarFooter className="p-2 pb-12 md:pb-8">
+              <SidebarFooter className="p-2 pb-2 shrink-0 border-t border-border/40 mt-auto">
                 <SidebarMenu>
                   {isMounted && visibleBottomLinks.map((link) => {
                     const isSupport = link.href === '/support';
@@ -1612,8 +1613,11 @@ export default function AuthenticatedLayout({
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild><Link href="/achievements"><Award className="me-2 h-4 w-4" />Achievements</Link></DropdownMenuItem>
+                    {(userRole === 'admin' || userRole === 'owner') && (
+                      <DropdownMenuItem asChild><Link href="/billing"><CreditCard className="me-2 h-4 w-4" />Billing & Plans</Link></DropdownMenuItem>
+                    )}
                     {userRole === 'admin' && (
-                      <DropdownMenuItem asChild><Link href="/settings">Settings</Link></DropdownMenuItem>
+                      <DropdownMenuItem asChild><Link href="/settings"><Settings className="me-2 h-4 w-4" />Settings</Link></DropdownMenuItem>
                     )}
                     <DropdownMenuItem asChild><Link href="/support"><LifeBuoy className="me-2 h-4 w-4" />Support</Link></DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -1646,7 +1650,7 @@ export default function AuthenticatedLayout({
                     <span>Your trial expires in {trialDaysRemaining} {trialDaysRemaining === 1 ? 'day' : 'days'}. Upgrade your plan to continue using Zeneva.</span>
                   </div>
                   <Button variant="outline" size="sm" className="h-7 text-xs bg-orange-100 border-orange-200 text-orange-800 hover:bg-orange-200" asChild>
-                    <Link href="/settings/billing">Upgrade Now</Link>
+                    <Link href="/billing">Upgrade Now</Link>
                   </Button>
                 </div>
               )}

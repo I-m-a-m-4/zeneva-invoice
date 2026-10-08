@@ -74,7 +74,7 @@ const TrialCountdown: React.FC<TrialCountdownProps> = ({ business, expiryDate })
                 <div>
                     <p className="text-lg font-semibold text-amber-600">Subscription ended — now on Starter</p>
                     <p className="text-xs text-muted-foreground">
-                        Your products and sales history are all still here. Renew to switch premium features back on.
+                        Your invoices, clients, and payment records are all safe. Renew to switch premium features back on.
                     </p>
                 </div>
             </div>

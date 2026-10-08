@@ -39,11 +39,13 @@ export type UpgradeResult = { ok: true; plan: string; expiresAt: string } | { ok
 export async function activateSubscription(params: {
   idToken?: string;
   reference: string;
+  transactionId?: string | number;
   planId: string;
   cycleId: string;
   currency: 'NGN' | 'USD';
+  gateway?: 'flutterwave' | 'paystack';
 }): Promise<UpgradeResult> {
-  const { idToken, reference, planId, cycleId, currency } = params;
+  const { idToken, reference, transactionId, planId, cycleId, currency, gateway = 'flutterwave' } = params;
 
   let uid: string;
   try {
@@ -65,11 +67,6 @@ export async function activateSubscription(params: {
   const businessId = userSnap.data()?.businessId;
   if (!businessId) return { ok: false, error: 'No business linked to this account.' };
 
-  const secret = process.env.PAYSTACK_SECRET_KEY;
-  if (!secret || secret.includes('xxx')) {
-    return { ok: false, error: 'Payment verification is not configured on the server.' };
-  }
-
   // A reference may be redeemed once. Checking before verifying keeps a replayed
   // reference from extending a subscription repeatedly.
   const existing = await adminFirestore
@@ -81,30 +78,81 @@ export async function activateSubscription(params: {
     return { ok: false, error: 'This payment has already been applied.' };
   }
 
-  let payload: any;
-  try {
-    const res = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
-      headers: { Authorization: `Bearer ${secret}`, 'Content-Type': 'application/json' },
-      cache: 'no-store',
-    });
-    payload = await res.json();
-    if (!res.ok || !payload?.status || payload?.data?.status !== 'success') {
-      return { ok: false, error: payload?.data?.gateway_response || 'Payment could not be verified.' };
+  let paidAmount = 0;
+
+  if (gateway === 'flutterwave') {
+    const flwSecret = process.env.FLUTTERWAVE_SECRET_KEY || 'FLWSECK-43d41d0befc821edd7a9b6a098ae827b-1a0a6503a4avt-X';
+    if (!flwSecret || flwSecret.includes('xxx')) {
+      return { ok: false, error: 'Flutterwave verification is not configured on the server.' };
     }
-  } catch {
-    return { ok: false, error: 'Could not reach the payment provider.' };
-  }
 
-  // Price the plan server-side and compare against what Paystack says was paid.
-  const base = (currency === 'USD' ? price.usd : price.ngn) * cycle.months;
-  const expected = Math.round(base * (1 - cycle.discount / 100) * 100); // kobo/cents
+    let payload: any;
+    try {
+      const verifyUrl = transactionId
+        ? `https://api.flutterwave.com/v3/transactions/${encodeURIComponent(String(transactionId))}/verify`
+        : `https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=${encodeURIComponent(reference)}`;
 
-  if (payload.data.currency !== currency) {
-    return { ok: false, error: 'Transaction currency does not match the selected plan.' };
-  }
-  // Tolerate a 1-unit rounding difference, nothing more.
-  if (Math.abs(payload.data.amount - expected) > 100) {
-    return { ok: false, error: 'Paid amount does not match the plan price. Contact support.' };
+      const res = await fetch(verifyUrl, {
+        headers: { Authorization: `Bearer ${flwSecret}`, 'Content-Type': 'application/json' },
+        cache: 'no-store',
+      });
+      payload = await res.json();
+
+      if (!res.ok || payload?.status !== 'success' || payload?.data?.status !== 'successful') {
+        return { ok: false, error: payload?.message || 'Flutterwave payment could not be verified.' };
+      }
+    } catch {
+      return { ok: false, error: 'Could not reach Flutterwave verification service.' };
+    }
+
+    // Verify currency and amount
+    const returnedCurrency = String(payload.data.currency || '').toUpperCase();
+    if (returnedCurrency !== currency.toUpperCase()) {
+      return { ok: false, error: `Transaction currency (${returnedCurrency}) does not match the selected plan (${currency}).` };
+    }
+
+    const base = (currency === 'USD' ? price.usd : price.ngn) * cycle.months;
+    const expectedFull = Math.round(base * (1 - cycle.discount / 100));
+
+    // Flutterwave amounts are recorded in main units (e.g. 10000 NGN or 10 USD)
+    const charged = Number(payload.data.amount ?? payload.data.charged_amount ?? 0);
+    if (charged < expectedFull - 2) {
+      return { ok: false, error: `Paid amount (${charged}) does not match required plan price (${expectedFull}).` };
+    }
+
+    paidAmount = charged;
+  } else {
+    // Paystack fallback
+    const secret = process.env.PAYSTACK_SECRET_KEY;
+    if (!secret || secret.includes('xxx')) {
+      return { ok: false, error: 'Payment verification is not configured on the server.' };
+    }
+
+    let payload: any;
+    try {
+      const res = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
+        headers: { Authorization: `Bearer ${secret}`, 'Content-Type': 'application/json' },
+        cache: 'no-store',
+      });
+      payload = await res.json();
+      if (!res.ok || !payload?.status || payload?.data?.status !== 'success') {
+        return { ok: false, error: payload?.data?.gateway_response || 'Payment could not be verified.' };
+      }
+    } catch {
+      return { ok: false, error: 'Could not reach the payment provider.' };
+    }
+
+    const base = (currency === 'USD' ? price.usd : price.ngn) * cycle.months;
+    const expected = Math.round(base * (1 - cycle.discount / 100) * 100); // kobo/cents
+
+    if (payload.data.currency !== currency) {
+      return { ok: false, error: 'Transaction currency does not match the selected plan.' };
+    }
+    if (Math.abs(payload.data.amount - expected) > 100) {
+      return { ok: false, error: 'Paid amount does not match the plan price. Contact support.' };
+    }
+
+    paidAmount = payload.data.amount / 100;
   }
 
   const businessRef = adminFirestore.collection('businessInstances').doc(businessId);
@@ -128,16 +176,20 @@ export async function activateSubscription(params: {
     userId: uid,
     businessId,
     plan: planId,
-    amount: payload.data.amount / 100,
+    amount: paidAmount,
     currency,
     reference,
+    gateway,
+    transactionId: transactionId || null,
     timestamp: FieldValue.serverTimestamp(),
     verifiedServerSide: true,
   });
   batch.set(businessRef.collection('subscription_history').doc(), {
     action: `Subscribed to ${planId} plan for ${cycle.months} month(s)`,
-    amount: payload.data.amount / 100,
+    amount: paidAmount,
     currency,
+    gateway,
+    reference,
     timestamp: FieldValue.serverTimestamp(),
   });
   await batch.commit();

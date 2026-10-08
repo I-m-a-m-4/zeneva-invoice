@@ -443,7 +443,7 @@ export const ReportDetailView: React.FC<ReportDetailViewProps> = ({ report, onBa
           <Button
             size="sm"
             onClick={handleRefresh}
-            className="h-7 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white px-3 ml-2"
+            className="h-7 text-xs font-bold bg-primary hover:bg-primary/90 text-primary-foreground px-3 ml-2 shadow-xs"
           >
             Run Report
           </Button>
@@ -457,7 +457,7 @@ export const ReportDetailView: React.FC<ReportDetailViewProps> = ({ report, onBa
 
           <button
             onClick={() => toast({ title: 'Column Customizer', description: 'All available columns for this report are currently enabled.' })}
-            className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 font-medium"
+            className="text-primary hover:text-primary/80 hover:underline flex items-center gap-1 font-medium"
           >
             <SlidersHorizontal className="h-3 w-3" /> Customize Report Columns
           </button>
@@ -465,8 +465,8 @@ export const ReportDetailView: React.FC<ReportDetailViewProps> = ({ report, onBa
       </div>
 
       {/* Main Report Document Canvas Sheet matching Screenshot 2 */}
-      <div className="flex-1 p-4 sm:p-8 bg-muted/10 overflow-y-auto flex flex-col items-center">
-        <div className="w-full max-w-5xl bg-card text-card-foreground rounded-xl border border-border shadow-xs p-6 sm:p-10 min-h-[500px] flex flex-col justify-between print:shadow-none print:border-none">
+      <div className="flex-1 p-3 sm:p-6 bg-muted/10 overflow-y-auto flex flex-col items-center">
+        <div className="w-full max-w-[1700px] bg-card text-card-foreground rounded-xl border border-border shadow-xs p-6 sm:p-10 min-h-[500px] flex flex-col justify-between print:shadow-none print:border-none">
           {/* Document Header */}
           <div className="text-center pb-6 border-b border-border/60">
             <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
