@@ -19,7 +19,7 @@ function walk(dir) {
 
 const apiFiles = walk(path.join(process.cwd(), 'src/app/api'));
 
-const specialFiles = ['src/app/robots.ts', 'src/app/sitemap.ts'];
+const specialFiles = ['src/app/robots.ts', 'src/app/sitemap.ts', 'src/app/pay'];
 specialFiles.forEach(file => {
   if (fs.existsSync(path.join(process.cwd(), file))) {
     apiFiles.push(path.join(process.cwd(), file));

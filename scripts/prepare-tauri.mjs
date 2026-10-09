@@ -8,6 +8,7 @@ const pathsToDelete = [
   'src/app/industries',
   'src/app/blog',
   'src/app/store',
+  'src/app/pay',
   // NOTE: 'src/app/admin-imamshaffy' is deliberately NOT deleted.
   // Deleting it is what made the Admin Panel link dead-end on mobile: the route
   // was never in the bundle, so it fell through to the root redirect below. The
