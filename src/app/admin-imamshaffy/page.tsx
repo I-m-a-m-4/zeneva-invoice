@@ -6700,23 +6700,33 @@ export default function AdminDashboardPage() {
 
     const [adminApiData, setAdminApiData] = useState<any>(null);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const inFlightRef = useRef(false);
 
-    const loadAdminMetrics = useCallback(async (isSilent = false) => {
+    const loadAdminMetrics = useCallback(async (isSilent = false, forceFresh = false) => {
+        if (inFlightRef.current) return;
+        inFlightRef.current = true;
         if (!isSilent) setIsRefreshing(true);
         try {
-            const raw = await adminApiFetch('/api/admin/metrics', { timeoutMs: 90000 });
+            const endpoint = forceFresh ? '/api/admin/metrics?fresh=true' : '/api/admin/metrics';
+            const raw = await adminApiFetch(endpoint, { timeoutMs: 90000 });
             const revived = reviveTimestamps(raw);
             setAdminApiData(revived);
         } catch (e) {
             console.error('Failed to load admin metrics API:', e);
         } finally {
+            inFlightRef.current = false;
             if (!isSilent) setIsRefreshing(false);
         }
     }, []);
 
     useEffect(() => {
         loadAdminMetrics();
-        const interval = setInterval(() => loadAdminMetrics(true), 30000);
+        // Poll every 90 seconds, only when the browser tab is visible
+        const interval = setInterval(() => {
+            if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+                loadAdminMetrics(true);
+            }
+        }, 90000);
         return () => clearInterval(interval);
     }, [loadAdminMetrics]);
 
@@ -6795,7 +6805,7 @@ export default function AdminDashboardPage() {
         storefrontShares={storefrontShares || []}
         receiptShares={receiptShares || []}
         onlineOrders={sortedOnlineOrders}
-        onRefresh={() => loadAdminMetrics(false)}
+        onRefresh={() => loadAdminMetrics(false, true)}
         isRefreshing={isRefreshing}
     />
 }
