@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
+const isTauri = process.env.IS_TAURI === 'true';
+
 const nextConfig = {
+  ...(isTauri ? { output: 'export' } : {}),
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -7,6 +10,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
+    unoptimized: isTauri,
     remotePatterns: [
       {
         protocol: 'https',

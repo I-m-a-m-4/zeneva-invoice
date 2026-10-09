@@ -43,7 +43,7 @@ process.env.IS_TAURI = 'true';
 // that tree and ~20 endpoints ship as 404s, which is how the Paystack webhooks
 // and /api/upload went missing in production.
 try {
-  execSync('npm run build', { stdio: 'inherit' });
+  execSync('npm run build', { stdio: 'inherit', env: { ...process.env, IS_TAURI: 'true' } });
   console.log('Next.js build finished.');
 } catch (err) {
   console.error('Next.js build failed — restoring API routes before exiting.');
