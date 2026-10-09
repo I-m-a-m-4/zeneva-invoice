@@ -1,6 +1,6 @@
 {
-  "name": "nextn",
-  "version": "3.3.3",
+  "name": "zeneva-invoice",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "predev": "node scripts/free-port.mjs && node scripts/clean-sw.mjs",

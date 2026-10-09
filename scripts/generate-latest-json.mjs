@@ -18,7 +18,7 @@ async function main() {
 
     const latestJson = {
       version: tagName,
-      notes: `Zeneva Desktop v${version} release.`,
+      notes: `Zeneva Invoice v${version} release.`,
       pub_date: new Date().toISOString(),
       platforms: {}
     };
@@ -44,7 +44,7 @@ async function main() {
             const signature = fs.readFileSync(sigPath, 'utf8').trim();
             latestJson.platforms['windows-x86_64'] = {
                 signature,
-                url: `https://github.com/I-m-a-m-4/zeneva/releases/download/${tagName}/${fileName}`
+                url: `https://github.com/I-m-a-m-4/zeneva-invoice/releases/download/${tagName}/${fileName}`
             };
             foundWindows = true;
             break;
@@ -65,11 +65,11 @@ async function main() {
         const signature = fs.readFileSync(appSigPath, 'utf8').trim();
         latestJson.platforms['darwin-x86_64'] = {
             signature,
-            url: `https://github.com/I-m-a-m-4/zeneva/releases/download/${tagName}/${fileName}`
+            url: `https://github.com/I-m-a-m-4/zeneva-invoice/releases/download/${tagName}/${fileName}`
         };
         latestJson.platforms['darwin-aarch64'] = {
             signature,
-            url: `https://github.com/I-m-a-m-4/zeneva/releases/download/${tagName}/${fileName}`
+            url: `https://github.com/I-m-a-m-4/zeneva-invoice/releases/download/${tagName}/${fileName}`
         };
     }
 

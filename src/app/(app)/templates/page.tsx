@@ -158,7 +158,7 @@ export default function TemplatesPage() {
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Invoice Templates</h1>
             <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs">
-              Zoho Compatible Layouts (22 Available)
+              22 Professional Layouts
             </Badge>
           </div>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">
@@ -182,52 +182,54 @@ export default function TemplatesPage() {
       </div>
 
       {/* Main Container mirroring Zoho Templates Window */}
-      <div className="mt-6 flex-1 rounded-2xl border border-border bg-card text-card-foreground shadow-sm flex flex-col lg:flex-row overflow-hidden min-h-[760px]">
+      <div className="mt-4 sm:mt-6 flex-1 rounded-2xl border border-border bg-card text-card-foreground shadow-sm flex flex-col lg:flex-row overflow-hidden min-h-0 lg:min-h-[760px]">
         {/* Left Sidebar: Document Types matching screenshot */}
-        <div className="w-full lg:w-64 bg-muted/30 border-b lg:border-b-0 lg:border-r border-border p-4 flex flex-col justify-between shrink-0">
-          <div className="space-y-1.5">
-            <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+        <div className="w-full lg:w-64 bg-muted/30 border-b lg:border-b-0 lg:border-r border-border p-3 sm:p-4 flex flex-col justify-between shrink-0">
+          <div>
+            <div className="px-1.5 lg:px-3 py-1 lg:py-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
               Document Types
             </div>
-            {[
-              { id: 'quotes', label: 'Quotes', icon: FileCheck },
-              { id: 'invoices', label: 'Invoices', icon: FileText, count: '22' },
-              { id: 'credit-notes', label: 'Credit Notes', icon: CreditCard },
-              { id: 'receipts', label: 'Payment Receipts', icon: ReceiptIcon },
-              { id: 'statements', label: 'Customer Statement', icon: Users },
-            ].map((item) => {
-              const Icon = item.icon;
-              const isSelected = selectedDocType === item.id;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedDocType(item.id as DocType);
-                    setActiveCategory('all');
-                  }}
-                  className={cn(
-                    'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all text-left',
-                    isSelected
-                      ? 'bg-primary/10 text-primary font-bold shadow-xs'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon className={cn('h-4 w-4', isSelected ? 'text-primary' : 'text-muted-foreground')} />
-                    <span>{item.label}</span>
-                  </div>
-                  {item.count && (
-                    <span className={cn('text-[10px] px-2 py-0.5 rounded-full font-mono', isSelected ? 'bg-primary/20 text-primary font-bold' : 'text-muted-foreground bg-muted')}>
-                      {item.count}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+            <div className="flex lg:flex-col gap-1.5 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 scrollbar-none">
+              {[
+                { id: 'quotes', label: 'Quotes', icon: FileCheck },
+                { id: 'invoices', label: 'Invoices', icon: FileText, count: '22' },
+                { id: 'credit-notes', label: 'Credit Notes', icon: CreditCard },
+                { id: 'receipts', label: 'Payment Receipts', icon: ReceiptIcon },
+                { id: 'statements', label: 'Customer Statement', icon: Users },
+              ].map((item) => {
+                const Icon = item.icon;
+                const isSelected = selectedDocType === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedDocType(item.id as DocType);
+                      setActiveCategory('all');
+                    }}
+                    className={cn(
+                      'shrink-0 lg:w-full flex items-center justify-between gap-2 px-3 py-2 lg:px-3.5 lg:py-2.5 rounded-xl text-xs font-medium transition-all text-left whitespace-nowrap',
+                      isSelected
+                        ? 'bg-primary/10 text-primary font-bold shadow-xs'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                    )}
+                  >
+                    <div className="flex items-center gap-2 lg:gap-3">
+                      <Icon className={cn('h-4 w-4 shrink-0', isSelected ? 'text-primary' : 'text-muted-foreground')} />
+                      <span>{item.label}</span>
+                    </div>
+                    {item.count && (
+                      <span className={cn('text-[10px] px-2 py-0.5 rounded-full font-mono', isSelected ? 'bg-primary/20 text-primary font-bold' : 'text-muted-foreground bg-muted')}>
+                        {item.count}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="mt-6 p-4 rounded-xl bg-primary/10 border border-primary/20 text-xs space-y-1.5 text-foreground">
+          <div className="hidden lg:block mt-6 p-4 rounded-xl bg-primary/10 border border-primary/20 text-xs space-y-1.5 text-foreground">
             <div className="flex items-center gap-1.5 font-bold text-primary">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
               <span>Automatic Branding</span>
@@ -239,12 +241,12 @@ export default function TemplatesPage() {
         </div>
 
         {/* Right Gallery: Category Tabs & Template Grid */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-background">
+        <div className="flex-1 flex flex-col overflow-hidden bg-background min-w-0">
           {/* Header Bar: Category Tabs matching Zoho Screenshots */}
-          <div className="px-6 pt-5 pb-3 border-b border-border bg-card/40">
+          <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 border-b border-border bg-card/40">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <h2 className="text-lg font-bold text-foreground">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <h2 className="text-base sm:text-lg font-bold text-foreground">
                   {selectedDocType === 'invoices' ? 'Choose a Template' : `${selectedDocType.replace('-', ' ').toUpperCase()} TEMPLATES`}
                 </h2>
                 <div className="text-xs text-muted-foreground font-mono bg-muted/60 px-2.5 py-0.5 rounded-md border border-border">
@@ -260,7 +262,7 @@ export default function TemplatesPage() {
                   placeholder="Filter templates..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-8 pr-7 py-1 text-xs rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                 />
                 {searchQuery && (
                   <button
@@ -275,7 +277,7 @@ export default function TemplatesPage() {
 
             {/* Category Filter Tabs for Invoices matching screenshot exactly */}
             {selectedDocType === 'invoices' && (
-              <div className="flex items-center gap-6 mt-4 border-b border-border text-xs overflow-x-auto pb-px">
+              <div className="flex items-center gap-4 sm:gap-6 mt-3 sm:mt-4 border-b border-border text-xs overflow-x-auto pb-px scrollbar-none">
                 {[
                   { id: 'all', label: `All (${categoryCounts.all})` },
                   { id: 'standard', label: `Standard (${categoryCounts.standard})` },
@@ -306,26 +308,26 @@ export default function TemplatesPage() {
           </div>
 
           {/* Template Grid Canvas */}
-          <div className="flex-1 overflow-y-auto p-6 bg-muted/10 space-y-8">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-5 md:p-6 bg-muted/10 space-y-6 sm:space-y-8">
             {/* Render grouped sections when "All (22)" is selected */}
             {groupedSections ? (
               groupedSections.map((section) => (
-                <div key={section.id} className="space-y-4">
+                <div key={section.id} className="space-y-3 sm:space-y-4">
                   <div className="flex items-center justify-between border-b border-border/60 pb-2">
                     <span className="text-xs font-black tracking-wider uppercase text-muted-foreground">
                       {section.label} ({section.items.length})
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                     {section.items.map((tmpl) => (
                       <TemplateCardItem
                         key={tmpl.id}
                         tmpl={tmpl}
                         isActive={activeTemplate === tmpl.id}
                         isSaving={isSaving}
-                        businessName={business?.name || 'Zylker Inc'}
-                        currencySymbol={currencySymbol || '$'}
+                        businessName={business?.name || 'Zeneva Retail Ltd'}
+                        currencySymbol={currencySymbol || '₦'}
                         onPreview={() => setPreviewTemplate(tmpl.id)}
                         onApply={() => handleApplyTemplate(tmpl.id)}
                       />
@@ -334,22 +336,22 @@ export default function TemplatesPage() {
                 </div>
               ))
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between border-b border-border/60 pb-2">
                   <span className="text-xs font-black tracking-wider uppercase text-muted-foreground">
                     {activeCategory === 'all' ? 'TEMPLATES' : activeCategory.toUpperCase()} ({templatesToDisplay.length})
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                   {templatesToDisplay.map((tmpl) => (
                     <TemplateCardItem
                       key={tmpl.id}
                       tmpl={tmpl}
                       isActive={activeTemplate === tmpl.id}
                       isSaving={isSaving}
-                      businessName={business?.name || 'Zylker Inc'}
-                      currencySymbol={currencySymbol || '$'}
+                      businessName={business?.name || 'Zeneva Retail Ltd'}
+                      currencySymbol={currencySymbol || '₦'}
                       onPreview={() => setPreviewTemplate(tmpl.id)}
                       onApply={() => handleApplyTemplate(tmpl.id)}
                     />
@@ -381,27 +383,27 @@ export default function TemplatesPage() {
       {/* Live Full Invoice Preview Dialog */}
       {previewTemplate && (
         <Dialog open={!!previewTemplate} onOpenChange={() => setPreviewTemplate(null)}>
-          <DialogContent className="max-w-4xl max-h-[92vh] overflow-y-auto p-0 bg-zinc-100 text-zinc-900 border-zinc-300">
-            <div className="sticky top-0 bg-white border-b border-zinc-200 px-6 py-3.5 flex items-center justify-between z-10 shadow-xs">
+          <DialogContent className="w-[96vw] max-w-4xl max-h-[92vh] overflow-y-auto p-0 bg-zinc-100 text-zinc-900 border-zinc-300">
+            <div className="sticky top-0 bg-white border-b border-zinc-200 px-4 sm:px-6 py-3 flex flex-col sm:flex-row gap-2.5 sm:items-center justify-between z-10 shadow-xs">
               <div className="flex items-center gap-2">
-                <span className="font-bold text-sm text-zinc-900">
+                <span className="font-bold text-xs sm:text-sm text-zinc-900">
                   Previewing: <span className="text-primary capitalize">{previewTemplate}</span> Template
                 </span>
                 {previewTemplate === activeTemplate && (
                   <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 text-[10px]">
-                    Currently Active
+                    Active
                   </Badge>
                 )}
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                 <Button
                   size="sm"
                   onClick={() => {
                     handleApplyTemplate(previewTemplate);
                     setPreviewTemplate(null);
                   }}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-8 px-4"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-8 px-3.5 flex-1 sm:flex-initial"
                 >
                   <Check className="h-3.5 w-3.5 mr-1.5 stroke-[3]" />
                   Apply This Template
@@ -417,7 +419,7 @@ export default function TemplatesPage() {
               </div>
             </div>
 
-            <div className="p-6 sm:p-10 flex justify-center">
+            <div className="p-2 sm:p-6 md:p-10 flex justify-center overflow-x-auto">
               <ReceiptDetails
                 receipt={sampleReceipt}
                 business={business}
