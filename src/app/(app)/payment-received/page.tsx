@@ -184,19 +184,19 @@ export default function PaymentReceivedPage() {
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Remittance Collected</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground"><CurrencyAmount amount={totalCollected} currency={currencySymbol} /></CardTitle>
+            <CardTitle className="text-2xl font-bold text-foreground"><CurrencyAmount amount={totalCollected} currency={currencySymbol} /></CardTitle>
           </CardHeader>
         </Card>
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Payments Logged</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground">{payments.length}</CardTitle>
+            <CardTitle className="text-2xl font-bold text-foreground">{payments.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Open Invoices Awaiting Settlement</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-amber-600 dark:text-amber-400">{unpaidInvoices.length}</CardTitle>
+            <CardTitle className="text-2xl font-bold text-amber-600 dark:text-amber-400">{unpaidInvoices.length}</CardTitle>
           </CardHeader>
         </Card>
       </div>
@@ -250,9 +250,9 @@ export default function PaymentReceivedPage() {
                     const id = p.id || '';
                     return (
                       <TableRow key={id} className="hover:bg-muted/30 transition-colors">
-                        <TableCell className="font-mono font-bold text-foreground">#{p.paymentNumber}</TableCell>
+                        <TableCell className="font-bold text-foreground">#{p.paymentNumber}</TableCell>
                         <TableCell className="font-medium text-foreground">{p.customerName}</TableCell>
-                        <TableCell className="font-mono text-xs">
+                        <TableCell className="text-xs">
                           {p.invoiceId ? (
                             <Link href={`/invoice/details?id=${p.invoiceId}`} className="text-primary font-bold hover:underline flex items-center gap-1">
                               {p.invoiceNumber || 'View Invoice'}
@@ -262,7 +262,7 @@ export default function PaymentReceivedPage() {
                             <span className="text-muted-foreground">{p.invoiceNumber || '—'}</span>
                           )}
                         </TableCell>
-                        <TableCell className="text-xs text-muted-foreground font-mono">
+                        <TableCell className="text-xs text-muted-foreground">
                           {p.createdAt ? format(safeToDate(p.createdAt), 'dd MMM yyyy') : 'N/A'}
                         </TableCell>
                         <TableCell>
@@ -270,7 +270,7 @@ export default function PaymentReceivedPage() {
                             {p.paymentMode}
                           </Badge>
                         </TableCell>
-                        <TableCell className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                        <TableCell className="font-bold text-emerald-600 dark:text-emerald-400">
                           <CurrencyAmount amount={p.amount} currency={currencySymbol} />
                         </TableCell>
                         <TableCell className="text-right">

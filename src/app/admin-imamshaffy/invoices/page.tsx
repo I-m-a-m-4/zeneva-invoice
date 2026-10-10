@@ -225,7 +225,7 @@ export default function AdminInvoicesPage() {
               Gross Invoiced
               <DollarSign className="h-4 w-4 text-purple-600" />
             </CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground mt-1">
+            <CardTitle className="text-2xl font-bold text-foreground mt-1">
               ₦{metrics.grossTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </CardTitle>
           </CardHeader>
@@ -241,7 +241,7 @@ export default function AdminInvoicesPage() {
               Total Collected
               <CheckCircle2 className="h-4 w-4 text-emerald-600" />
             </CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground mt-1">
+            <CardTitle className="text-2xl font-bold text-foreground mt-1">
               ₦{metrics.paidTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </CardTitle>
           </CardHeader>
@@ -257,7 +257,7 @@ export default function AdminInvoicesPage() {
               Overdue Receivables
               <AlertTriangle className="h-4 w-4 text-rose-600" />
             </CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground mt-1">
+            <CardTitle className="text-2xl font-bold text-foreground mt-1">
               ₦{metrics.overdueTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </CardTitle>
           </CardHeader>
@@ -273,7 +273,7 @@ export default function AdminInvoicesPage() {
               Invoicing Tenants
               <Building className="h-4 w-4 text-indigo-600" />
             </CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground mt-1">
+            <CardTitle className="text-2xl font-bold text-foreground mt-1">
               {metrics.activeBusinessesCount}
             </CardTitle>
           </CardHeader>

@@ -67,19 +67,19 @@ export default function SalesReceiptsPage() {
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Receipts Collected</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground"><CurrencyAmount amount={totalReceiptsAmount} currency={currencySymbol} /></CardTitle>
+            <CardTitle className="text-2xl font-bold text-foreground"><CurrencyAmount amount={totalReceiptsAmount} currency={currencySymbol} /></CardTitle>
           </CardHeader>
         </Card>
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Completed Transactions</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground">{filtered.length}</CardTitle>
+            <CardTitle className="text-2xl font-bold text-foreground">{filtered.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Average Sale Value</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground">
+            <CardTitle className="text-2xl font-bold text-foreground">
               <CurrencyAmount amount={filtered.length > 0 ? totalReceiptsAmount / filtered.length : 0} currency={currencySymbol} />
             </CardTitle>
           </CardHeader>
@@ -146,9 +146,9 @@ export default function SalesReceiptsPage() {
 
                     return (
                       <TableRow key={rId} className="hover:bg-muted/30 transition-colors">
-                        <TableCell className="font-mono font-bold text-foreground">#{rNum}</TableCell>
+                        <TableCell className="font-bold text-foreground">#{rNum}</TableCell>
                         <TableCell className="font-medium text-foreground">{r.customer?.name || 'Walk-in Customer'}</TableCell>
-                        <TableCell className="text-xs text-muted-foreground font-mono">
+                        <TableCell className="text-xs text-muted-foreground">
                           {r.createdAt ? format(safeToDate(r.createdAt), 'dd MMM yyyy, h:mm a') : 'N/A'}
                         </TableCell>
                         <TableCell>
@@ -156,7 +156,7 @@ export default function SalesReceiptsPage() {
                             {r.paymentMethod || 'Cash'}
                           </Badge>
                         </TableCell>
-                        <TableCell className="font-bold font-mono text-foreground">
+                        <TableCell className="font-bold text-foreground">
                           <CurrencyAmount amount={r.total} currency={currencySymbol} />
                         </TableCell>
                         <TableCell className="text-right">

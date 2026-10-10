@@ -227,7 +227,7 @@ export default function RecurringInvoicesPage() {
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Active Run Rate</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-primary">
+            <CardTitle className="text-2xl font-bold text-primary">
               <CurrencyAmount amount={totalMonthlyRunRate} currency={currencySymbol} />
             </CardTitle>
           </CardHeader>
@@ -235,7 +235,7 @@ export default function RecurringInvoicesPage() {
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Active Schedules</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground">
+            <CardTitle className="text-2xl font-bold text-foreground">
               {profiles.filter(p => p.status === 'active').length}
             </CardTitle>
           </CardHeader>
@@ -243,7 +243,7 @@ export default function RecurringInvoicesPage() {
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Retainers</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground">{profiles.length}</CardTitle>
+            <CardTitle className="text-2xl font-bold text-foreground">{profiles.length}</CardTitle>
           </CardHeader>
         </Card>
       </div>
@@ -304,10 +304,10 @@ export default function RecurringInvoicesPage() {
                             {p.frequency}
                           </Badge>
                         </TableCell>
-                        <TableCell className="font-mono font-bold text-foreground">
+                        <TableCell className="font-bold text-foreground">
                           <CurrencyAmount amount={p.amount} currency={currencySymbol} />
                         </TableCell>
-                        <TableCell className="text-xs font-mono text-muted-foreground">{p.nextRunDate || 'Pending'}</TableCell>
+                        <TableCell className="text-xs text-muted-foreground">{p.nextRunDate || 'Pending'}</TableCell>
                         <TableCell>
                           <Badge
                             className={`text-[10px] font-semibold uppercase ${

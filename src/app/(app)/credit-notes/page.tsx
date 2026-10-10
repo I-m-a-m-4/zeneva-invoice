@@ -187,13 +187,13 @@ export default function CreditNotesPage() {
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Open Credit Balance</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground"><CurrencyAmount amount={totalOpenCredits} currency={currencySymbol} /></CardTitle>
+            <CardTitle className="text-2xl font-bold text-foreground"><CurrencyAmount amount={totalOpenCredits} currency={currencySymbol} /></CardTitle>
           </CardHeader>
         </Card>
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Open Credit Notes</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground">
+            <CardTitle className="text-2xl font-bold text-foreground">
               {creditNotes.filter(cn => cn.status === 'open').length}
             </CardTitle>
           </CardHeader>
@@ -201,7 +201,7 @@ export default function CreditNotesPage() {
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Adjustments Issued</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground">{creditNotes.length}</CardTitle>
+            <CardTitle className="text-2xl font-bold text-foreground">{creditNotes.length}</CardTitle>
           </CardHeader>
         </Card>
       </div>
@@ -256,9 +256,9 @@ export default function CreditNotesPage() {
                     const id = cn.id || '';
                     return (
                       <TableRow key={id} className="hover:bg-muted/30 transition-colors">
-                        <TableCell className="font-mono font-bold text-foreground">#{cn.creditNoteNumber}</TableCell>
+                        <TableCell className="font-bold text-foreground">#{cn.creditNoteNumber}</TableCell>
                         <TableCell className="font-medium text-foreground">{cn.customerName}</TableCell>
-                        <TableCell className="font-mono text-xs">
+                        <TableCell className="text-xs">
                           {cn.invoiceId ? (
                             <Link href={`/invoice/details?id=${cn.invoiceId}`} className="text-primary font-bold hover:underline flex items-center gap-1">
                               {cn.invoiceReference || 'Invoice'}
@@ -268,11 +268,11 @@ export default function CreditNotesPage() {
                             <span className="text-muted-foreground">{cn.invoiceReference || '—'}</span>
                           )}
                         </TableCell>
-                        <TableCell className="text-xs text-muted-foreground font-mono">
+                        <TableCell className="text-xs text-muted-foreground">
                           {cn.createdAt ? format(safeToDate(cn.createdAt), 'dd MMM yyyy') : 'N/A'}
                         </TableCell>
                         <TableCell className="text-xs text-muted-foreground max-w-xs truncate">{cn.reason}</TableCell>
-                        <TableCell className="font-mono font-bold text-foreground">
+                        <TableCell className="font-bold text-foreground">
                           <CurrencyAmount amount={cn.amount} currency={currencySymbol} />
                         </TableCell>
                         <TableCell>

@@ -328,11 +328,11 @@ export default function InvoicesPage() {
 
                     return (
                       <tr key={inv.id} className="hover:bg-muted/40 transition-colors">
-                        <td className="py-3.5 px-4 font-mono text-xs text-muted-foreground tabular-nums">
+                        <td className="py-3.5 px-4 text-xs text-muted-foreground">
                           {format(dateCreated, 'dd MMM yyyy')}
                         </td>
                         <td className="py-3.5 px-4">
-                          <span className="font-mono text-xs text-muted-foreground whitespace-nowrap">
+                          <span className="text-xs text-muted-foreground whitespace-nowrap font-medium">
                             #{inv.receiptNumber || inv.id.substring(0, 8).toUpperCase()}
                           </span>
                         </td>
@@ -354,7 +354,7 @@ export default function InvoicesPage() {
                             </Badge>
                           )}
                         </td>
-                        <td className="py-3.5 px-4 text-right font-mono text-xs text-muted-foreground tabular-nums">
+                        <td className="py-3.5 px-4 text-right text-xs text-muted-foreground">
                           {format(dueDate, 'dd MMM yyyy')}
                         </td>
                         <td className="py-3.5 px-4 text-right font-bold text-foreground">

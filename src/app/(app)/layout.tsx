@@ -1455,8 +1455,8 @@ export default function AuthenticatedLayout({
                   {/* Expanded state logo */}
                   <CachedImage 
                     src={AppConfig.logoUrl} 
-                    alt="Zeneva Logo" 
-                    className="w-28 h-auto group-data-[state=expanded]:block hidden" 
+                    alt="Zeneva Invoice Logo" 
+                    className="h-8 md:h-9 w-auto max-w-full group-data-[state=expanded]:block hidden" 
                   />
                   {/* Collapsed state logo */}
                   <div className="w-12 h-12 group-data-[state=collapsed]:block hidden">

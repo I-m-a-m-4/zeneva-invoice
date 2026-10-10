@@ -26,6 +26,7 @@
     "sql:allow-execute",
     "updater:default",
     "shell:default",
+    "shell:allow-open",
     "log:default",
     "dialog:default",
     "process:default",

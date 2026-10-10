@@ -40,6 +40,19 @@ export function apiBase(): string {
   return base.replace(/\/+$/, '');
 }
 
+/**
+ * Web origin to open in the user's external default browser for flows that
+ * must happen outside the embedded WebView (such as Google OAuth).
+ */
+export function browserAuthBase(): string {
+  if (process.env.NODE_ENV === 'development' || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))) {
+    const host = (typeof window !== 'undefined' && window.location.hostname) || 'localhost';
+    return `http://${host}:7007`;
+  }
+  const base = process.env.NEXT_PUBLIC_BASE_URL || 'https://zeneva.space';
+  return base.replace(/\/+$/, '');
+}
+
 /** Running inside the Android or iOS build specifically - not desktop, not web. */
 export function isMobileApp(): boolean {
   if (!isNativeApp()) return false;

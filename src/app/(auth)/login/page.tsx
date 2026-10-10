@@ -17,6 +17,9 @@ import { cn } from "@/lib/utils";
 import { trackLaunchStage } from "@/lib/launch-telemetry";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useI18n } from "@/context/i18n-context";
+import { isNativeApp } from "@/lib/platform";
+import { startDesktopGoogleAuth, DesktopAuthController } from "@/lib/desktop-auth";
+import { DesktopAuthDialog } from "@/components/desktop/DesktopAuthDialog";
 
 // Titles and descriptions are keys resolved at render — the array is module-level
 // and cannot reach `t()`. The word-highlight below still matches on English, so
@@ -69,6 +72,13 @@ export default function LoginPage() {
   }, []);
 
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [desktopAuthController, setDesktopAuthController] = useState<DesktopAuthController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      desktopAuthController?.cancel();
+    };
+  }, [desktopAuthController]);
 
   // Handle getRedirectResult when the page mounts after a Google redirect login
   useEffect(() => {
@@ -112,10 +122,48 @@ export default function LoginPage() {
     if (!auth) return;
     setIsGoogleLoading(true);
     void trackLaunchStage('login_attempted', 'google');
+
+    // Desktop shell: open the system browser on the user's PC to authenticate smoothly
+    if (isNativeApp()) {
+      try {
+        const controller = await startDesktopGoogleAuth({
+          onSuccess: () => {
+            setIsGoogleLoading(false);
+            setDesktopAuthController(null);
+            void trackLaunchStage('login_succeeded', 'google-desktop');
+          },
+          onError: (err) => {
+            setIsGoogleLoading(false);
+            setDesktopAuthController(null);
+            void trackLaunchStage('login_failed', `google-desktop:${err.message}`);
+            toast({
+              variant: "destructive",
+              title: t('auth.googleAuthFailedTitle'),
+              description: err.message || t('auth.tryAgainShort'),
+            });
+          },
+          onCancel: () => {
+            setIsGoogleLoading(false);
+            setDesktopAuthController(null);
+          },
+        });
+        setDesktopAuthController(controller);
+        return;
+      } catch (err: any) {
+        setIsGoogleLoading(false);
+        setDesktopAuthController(null);
+        toast({
+          variant: "destructive",
+          title: t('auth.googleAuthFailedTitle'),
+          description: err.message || t('auth.tryAgainShort'),
+        });
+        return;
+      }
+    }
+
     try {
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: 'select_account' });
-
 
       try {
         await signInWithPopup(auth, provider);
@@ -158,10 +206,6 @@ export default function LoginPage() {
       if (!isCancellation) {
           console.error("Google auth error:", error);
       }
-        error?.code === 'auth/popup-closed-by-user' ||
-        error?.code === 'auth/cancelled-popup-request' ||
-        error?.code === 'auth/user-cancelled' ||
-        error?.code === 'auth/redirect-cancelled-by-user';
 
       void trackLaunchStage('login_failed', `google:${error?.code ?? 'unknown'}`);
 
@@ -488,6 +532,17 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+      <DesktopAuthDialog
+        controller={desktopAuthController}
+        open={!!desktopAuthController}
+        onOpenChange={(open) => {
+          if (!open) {
+            desktopAuthController?.cancel();
+            setDesktopAuthController(null);
+            setIsGoogleLoading(false);
+          }
+        }}
+      />
     </div>
   )
 }

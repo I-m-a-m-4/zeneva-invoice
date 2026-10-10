@@ -437,7 +437,7 @@ export default function NewInvoicePage() {
               <Input
                 value={invoiceNumber}
                 onChange={e => setInvoiceNumber(e.target.value)}
-                className="bg-background border-border text-foreground font-mono text-xs h-9 font-semibold"
+                className="bg-background border-border text-foreground text-xs h-9 font-bold"
                 required
               />
             </div>
@@ -504,8 +504,8 @@ export default function NewInvoicePage() {
                   className="bg-background border-border text-foreground text-xs h-9"
                 />
               ) : (
-                <div className="px-3 py-2 rounded-md bg-muted/30 border border-border/60 text-xs font-mono text-muted-foreground flex items-center justify-between">
-                  <span>{calculatedDueDate ? format(new Date(calculatedDueDate), 'dd MMM yyyy') : 'N/A'}</span>
+                <div className="px-3 py-2 rounded-md bg-muted/30 border border-border/60 text-xs text-muted-foreground flex items-center justify-between">
+                  <span className="font-medium text-foreground">{calculatedDueDate ? format(new Date(calculatedDueDate), 'dd MMM yyyy') : 'N/A'}</span>
                   <span className="text-[11px] text-orange-600 dark:text-orange-400 font-sans font-semibold">Auto-calculated</span>
                 </div>
               )}
@@ -619,7 +619,7 @@ export default function NewInvoicePage() {
                           step="1"
                           value={item.qty}
                           onChange={e => handleItemChange(item.id, 'qty', Math.max(1, parseInt(e.target.value) || 1))}
-                          className="w-20 mx-auto bg-background border-border text-foreground text-xs h-9 text-center font-mono"
+                          className="w-20 mx-auto bg-background border-border text-foreground text-xs h-9 text-center font-medium"
                           required
                         />
                       </td>
@@ -632,7 +632,7 @@ export default function NewInvoicePage() {
                           step="any"
                           value={item.rate || ''}
                           onChange={e => handleItemChange(item.id, 'rate', parseFloat(e.target.value) || 0)}
-                          className="w-32 ml-auto bg-background border-border text-foreground text-xs h-9 text-right font-mono font-medium"
+                          className="w-32 ml-auto bg-background border-border text-foreground text-xs h-9 text-right font-medium"
                           required
                         />
                       </td>
@@ -656,7 +656,7 @@ export default function NewInvoicePage() {
                       </td>
 
                       {/* Amount */}
-                      <td className="p-3 text-right align-top font-mono font-bold text-foreground text-sm pt-4">
+                      <td className="p-3 text-right align-top font-bold text-foreground text-sm pt-4">
                         {currencySymbol}{lineTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
 
@@ -755,7 +755,7 @@ export default function NewInvoicePage() {
             {/* Subtotal */}
             <div className="flex justify-between items-center text-xs">
               <span className="font-semibold text-muted-foreground">Sub Total</span>
-              <span className="font-mono font-semibold text-foreground text-sm">
+              <span className="font-semibold text-foreground text-sm">
                 {subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
@@ -771,7 +771,7 @@ export default function NewInvoicePage() {
                     step="any"
                     value={discountValue || ''}
                     onChange={e => setDiscountValue(parseFloat(e.target.value) || 0)}
-                    className="w-16 h-8 text-xs font-mono border-0 text-right pr-2 focus-visible:ring-0"
+                    className="w-16 h-8 text-xs font-medium border-0 text-right pr-2 focus-visible:ring-0"
                     placeholder="0"
                   />
                   <Select value={discountType} onValueChange={(val: any) => setDiscountType(val)}>
@@ -784,7 +784,7 @@ export default function NewInvoicePage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <span className="font-mono text-muted-foreground text-xs w-20 text-right">
+                <span className="text-muted-foreground text-xs w-20 text-right font-medium">
                   -{discountAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
@@ -801,10 +801,10 @@ export default function NewInvoicePage() {
                     step="any"
                     value={shippingCharges || ''}
                     onChange={e => setShippingCharges(parseFloat(e.target.value) || 0)}
-                    className="w-24 h-8 text-xs font-mono text-right bg-background border-border"
+                    className="w-24 h-8 text-xs font-medium text-right bg-background border-border"
                     placeholder="0.00"
                   />
-                  <span className="font-mono text-muted-foreground text-xs w-20 text-right">
+                  <span className="text-muted-foreground text-xs w-20 text-right font-medium">
                     {Number(shippingCharges || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                 </div>
@@ -829,7 +829,7 @@ export default function NewInvoicePage() {
             {totalTax > 0 && (
               <div className="flex justify-between items-center text-xs">
                 <span className="font-semibold text-muted-foreground">Tax</span>
-                <span className="font-mono text-foreground">
+                <span className="text-foreground font-medium">
                   {totalTax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
@@ -849,10 +849,10 @@ export default function NewInvoicePage() {
                   step="any"
                   value={adjustment || ''}
                   onChange={e => setAdjustment(parseFloat(e.target.value) || 0)}
-                  className="w-24 h-8 text-xs font-mono text-right bg-background border-border"
+                  className="w-24 h-8 text-xs font-medium text-right bg-background border-border"
                   placeholder="+/- 0.00"
                 />
-                <span className="font-mono text-muted-foreground text-xs w-20 text-right">
+                <span className="text-muted-foreground text-xs w-20 text-right font-medium">
                   {Number(adjustment || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
@@ -866,7 +866,7 @@ export default function NewInvoicePage() {
                 <span className="font-bold text-sm text-foreground">Total ( {currencySymbol} )</span>
               </div>
               <div className="text-right">
-                <span className="font-mono font-black text-xl text-orange-600 dark:text-orange-500">
+                <span className="font-black text-xl text-orange-600 dark:text-orange-500">
                   {currencySymbol}{grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>

@@ -20,6 +20,9 @@ import { useToast } from '@/hooks/use-toast';
 import { AppConfig } from '@/lib/config';
 import Image from 'next/image';
 import { doc, getDoc } from 'firebase/firestore';
+import { isNativeApp } from '@/lib/platform';
+import { startDesktopGoogleAuth, DesktopAuthController } from '@/lib/desktop-auth';
+import { DesktopAuthDialog } from '@/components/desktop/DesktopAuthDialog';
 
 const makeSignupSchema = (t: (key: string) => string) => z.object({
   email: z.string()
@@ -133,6 +136,13 @@ function SignupPageContent() {
   }, [currentSlide, isPlaying]);
 
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [desktopAuthController, setDesktopAuthController] = useState<DesktopAuthController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      desktopAuthController?.cancel();
+    };
+  }, [desktopAuthController]);
 
   // `t` is referentially stable until the active catalog changes, so the resolver
   // is rebuilt exactly once per locale switch rather than on every render.
@@ -253,6 +263,77 @@ function SignupPageContent() {
     if (!auth || !firestore) return;
     setIsGoogleLoading(true);
     void trackLaunchStage('signup_started', 'google');
+
+    // Desktop shell: open the system browser on the user's PC to authenticate smoothly
+    if (isNativeApp()) {
+      try {
+        const controller = await startDesktopGoogleAuth({
+          onSuccess: async (credential) => {
+            setIsGoogleLoading(false);
+            setDesktopAuthController(null);
+            void trackLaunchStage('signup_succeeded', 'google-desktop');
+
+            const user = credential.user;
+            const userDocRef = doc(firestore, `users/${user.uid}`);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (!userDocSnap.exists()) {
+              await createUserProfileDocument(firestore, user, user.displayName || '', user.phoneNumber || '', invitationCode);
+              await waitForUserProfile(firestore, user.uid);
+              triggerRefresh();
+
+              // Send welcome email asynchronously
+              fetch('/api/emails/welcome', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email: user.email,
+                  firstName: user.displayName?.split(' ')[0] || '',
+                  businessName: invitationDetails?.businessName || ''
+                })
+              }).catch(err => console.error('Failed to send welcome email:', err));
+
+              await new Promise(resolve => setTimeout(resolve, 1200));
+              router.push(invitationCode ? '/dashboard' : '/onboarding');
+            } else {
+              const profileData = userDocSnap.data();
+              triggerRefresh();
+              await new Promise(resolve => setTimeout(resolve, 1200));
+              if (profileData.surveyCompleted === false) {
+                router.push(invitationCode ? '/dashboard' : '/onboarding');
+              } else {
+                router.push('/dashboard');
+              }
+            }
+          },
+          onError: (err) => {
+            setIsGoogleLoading(false);
+            setDesktopAuthController(null);
+            void trackLaunchStage('signup_failed', `google-desktop:${err.message}`);
+            toast({
+              variant: "destructive",
+              title: t('auth.googleAuthFailedTitle'),
+              description: err.message || t('auth.tryAgainShort'),
+            });
+          },
+          onCancel: () => {
+            setIsGoogleLoading(false);
+            setDesktopAuthController(null);
+          },
+        });
+        setDesktopAuthController(controller);
+        return;
+      } catch (err: any) {
+        setIsGoogleLoading(false);
+        setDesktopAuthController(null);
+        toast({
+          variant: "destructive",
+          title: t('auth.googleAuthFailedTitle'),
+          description: err.message || t('auth.tryAgainShort'),
+        });
+        return;
+      }
+    }
     try {
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: 'select_account' });
@@ -692,6 +773,17 @@ function SignupPageContent() {
           </div>
         </div>
       </div>
+      <DesktopAuthDialog
+        controller={desktopAuthController}
+        open={!!desktopAuthController}
+        onOpenChange={(open) => {
+          if (!open) {
+            desktopAuthController?.cancel();
+            setDesktopAuthController(null);
+            setIsGoogleLoading(false);
+          }
+        }}
+      />
     </div>
   )
 }

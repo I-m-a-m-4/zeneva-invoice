@@ -220,19 +220,19 @@ export default function EstimatesPage() {
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Quotes Value</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground"><CurrencyAmount amount={totalValue} currency={currencySymbol} /></CardTitle>
+            <CardTitle className="text-2xl font-bold text-foreground"><CurrencyAmount amount={totalValue} currency={currencySymbol} /></CardTitle>
           </CardHeader>
         </Card>
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Estimates Issued</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-foreground">{estimates.length}</CardTitle>
+            <CardTitle className="text-2xl font-bold text-foreground">{estimates.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Accepted Proposals</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400">{acceptedCount}</CardTitle>
+            <CardTitle className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{acceptedCount}</CardTitle>
           </CardHeader>
         </Card>
       </div>
@@ -286,7 +286,7 @@ export default function EstimatesPage() {
                     const id = e.id || '';
                     return (
                       <TableRow key={id} className="hover:bg-muted/30 transition-colors">
-                        <TableCell className="font-mono font-bold text-foreground">#{e.estimateNumber}</TableCell>
+                        <TableCell className="font-bold text-foreground">#{e.estimateNumber}</TableCell>
                         <TableCell>
                           <div className="font-medium text-foreground">{e.customerName}</div>
                           {e.customerEmail && <div className="text-[11px] text-muted-foreground">{e.customerEmail}</div>}
@@ -294,7 +294,7 @@ export default function EstimatesPage() {
                         <TableCell className="text-xs text-muted-foreground">
                           {e.createdAt ? format(safeToDate(e.createdAt), 'dd MMM yyyy') : 'N/A'}
                         </TableCell>
-                        <TableCell className="font-mono font-bold text-foreground">
+                        <TableCell className="font-bold text-foreground">
                           <CurrencyAmount amount={e.amount} currency={currencySymbol} />
                         </TableCell>
                         <TableCell>

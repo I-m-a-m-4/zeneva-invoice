@@ -32,6 +32,7 @@ export default function robots(): MetadataRoute.Robots {
           '/invoice/details',
           '/receipts/details',
           '/auth/login-session',
+          '/auth/desktop',
           // Tenant storefronts are served off subdomains via middleware; the
           // /store/* rewrite target is an implementation detail.
           '/store/',
