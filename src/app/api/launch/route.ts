@@ -222,8 +222,9 @@ export async function POST(request: NextRequest) {
       .set(update, { merge: true });
 
     return NextResponse.json({ ok: true }, { headers: corsHeaders });
-  } catch (err) {
-    console.error('[api/launch] failed to record launch stage:', err);
-    return NextResponse.json({ ok: false }, { status: 500, headers: corsHeaders });
+  } catch (err: any) {
+    console.warn('[api/launch] failed to record launch stage (telemetry skipped):', err?.message || err);
+    return NextResponse.json({ ok: false, error: err?.message || 'telemetry_error' }, { status: 200, headers: corsHeaders });
   }
 }
+
