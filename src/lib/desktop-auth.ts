@@ -1,4 +1,4 @@
-import { apiBase, browserAuthBase, openExternal } from '@/lib/platform';
+import { apiBase, browserAuthBase, openExternal, DEFAULT_HOSTED_URL } from '@/lib/platform';
 import { auth } from '@/firebase';
 import { signInWithCustomToken, UserCredential } from 'firebase/auth';
 
@@ -18,30 +18,79 @@ export interface DesktopAuthOptions {
 /**
  * Initiates the browser-assisted Google Authentication flow for the desktop shell.
  * 1. Creates an exchange session on the backend.
- * 2. Launches the user's default browser to zeneva.space/auth/desktop?session=...
+ * 2. Launches the user's default browser to /auth/desktop?session=...
  * 3. Polls the backend until the browser completes Google Sign-in.
  * 4. Signs the desktop app in with the minted Firebase custom token.
  */
 export async function startDesktopGoogleAuth(
   options: DesktopAuthOptions
 ): Promise<DesktopAuthController> {
-  const base = apiBase();
-  const res = await fetch(`${base}/api/auth/desktop-session`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'create' }),
-  });
+  const primaryBase = apiBase();
+  const fallbackBase = DEFAULT_HOSTED_URL;
 
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    throw new Error(data.error || 'Failed to create desktop authentication session.');
+  // Resolve candidate backend base URLs to try
+  const candidates: string[] = [];
+  if (primaryBase && !primaryBase.includes('zeneva.space')) {
+    candidates.push(primaryBase.replace(/\/+$/, ''));
+  }
+  if (!candidates.includes(fallbackBase)) {
+    candidates.push(fallbackBase);
   }
 
-  const { sessionId } = await res.json();
-  const authUrl = `${browserAuthBase()}/auth/desktop?session=${encodeURIComponent(sessionId)}`;
+  let sessionId = '';
+  let workingBase = candidates[0];
+  let lastError = '';
 
-  // Open the system browser
-  await openExternal(authUrl);
+  for (const candidate of candidates) {
+    try {
+      const res = await fetch(`${candidate}/api/auth/desktop-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create' }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.sessionId) {
+          sessionId = data.sessionId;
+          workingBase = candidate;
+          break;
+        }
+      } else {
+        const data = await res.json().catch(() => ({}));
+        lastError = data.error || `HTTP ${res.status}`;
+      }
+    } catch (err: any) {
+      lastError = err?.message || 'Network error';
+    }
+  }
+
+  if (!sessionId) {
+    throw new Error(
+      lastError
+        ? `Could not connect to authentication service (${lastError}). Please check your internet connection.`
+        : 'Failed to create desktop authentication session.'
+    );
+  }
+
+  // Build the browser URL using the hosted web base
+  let webBase = browserAuthBase() || DEFAULT_HOSTED_URL;
+  if (webBase.includes('zeneva.space') || webBase.includes('localhost')) {
+    webBase = DEFAULT_HOSTED_URL;
+  }
+  webBase = webBase.replace(/\/+$/, '');
+
+  const authUrl = `${webBase}/auth/desktop?session=${encodeURIComponent(sessionId)}`;
+
+  // Open the user's default browser
+  try {
+    await openExternal(authUrl);
+  } catch (openErr) {
+    console.warn('Failed to open external browser via shell, attempting window.open:', openErr);
+    if (typeof window !== 'undefined') {
+      window.open(authUrl, '_blank', 'noopener,noreferrer');
+    }
+  }
 
   let isCancelled = false;
   let timerId: any = null;
@@ -50,14 +99,20 @@ export async function startDesktopGoogleAuth(
     isCancelled = true;
     if (timerId) clearTimeout(timerId);
     // Cleanup session on backend
-    fetch(`${base}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`, {
+    fetch(`${workingBase}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`, {
       method: 'DELETE',
     }).catch(() => {});
     options.onCancel?.();
   };
 
   const openBrowserAgain = async () => {
-    await openExternal(authUrl);
+    try {
+      await openExternal(authUrl);
+    } catch {
+      if (typeof window !== 'undefined') {
+        window.open(authUrl, '_blank', 'noopener,noreferrer');
+      }
+    }
   };
 
   const startTime = Date.now();
@@ -74,7 +129,7 @@ export async function startDesktopGoogleAuth(
 
     try {
       const pollRes = await fetch(
-        `${base}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`
+        `${workingBase}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`
       );
       if (pollRes.ok) {
         const data = await pollRes.json();
@@ -88,7 +143,7 @@ export async function startDesktopGoogleAuth(
           const credential = await signInWithCustomToken(auth, data.customToken);
 
           // Cleanup session on backend
-          fetch(`${base}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`, {
+          fetch(`${workingBase}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`, {
             method: 'DELETE',
           }).catch(() => {});
 
@@ -123,3 +178,4 @@ export async function startDesktopGoogleAuth(
 }
 
 export type DesktopAuthController = DesktopAuthSessionController;
+

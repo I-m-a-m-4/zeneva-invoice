@@ -29,14 +29,15 @@ export function isNativeApp(): boolean {
  * inlines as `undefined` in the nested Tauri rebuild (see CLAUDE.md) and every
  * call would hit `undefined/api/...`.
  */
+export const DEFAULT_HOSTED_URL = 'https://zeneva-invoice.vercel.app';
+
 export function apiBase(): string {
   if (!isNativeApp()) return '';
-  // When running locally in development (e.g. Tauri devUrl pointing to localhost),
-  // use the local dev server so newly added or modified local routes work immediately.
-  if (process.env.NODE_ENV === 'development' || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))) {
-    return '';
+  // In development with local devUrl, use local dev server
+  if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined' && window.location.port === '9007') {
+    return 'http://localhost:7007';
   }
-  const base = process.env.NEXT_PUBLIC_BASE_URL || 'https://zeneva.space';
+  const base = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_HOSTED_URL;
   return base.replace(/\/+$/, '');
 }
 
@@ -45,11 +46,9 @@ export function apiBase(): string {
  * must happen outside the embedded WebView (such as Google OAuth).
  */
 export function browserAuthBase(): string {
-  if (process.env.NODE_ENV === 'development' || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))) {
-    const host = (typeof window !== 'undefined' && window.location.hostname) || 'localhost';
-    return `http://${host}:7007`;
-  }
-  const base = process.env.NEXT_PUBLIC_BASE_URL || 'https://zeneva.space';
+  // Opening external browser from native desktop should always use the hosted production app,
+  // because the user's default browser on their PC does not have a local dev server running.
+  const base = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_HOSTED_URL;
   return base.replace(/\/+$/, '');
 }
 
