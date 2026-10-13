@@ -179,6 +179,11 @@ service cloud.firestore {
         allow create: if isSuperAdmin() || isActiveMember(businessId);
         allow update, delete: if false;
       }
+
+      match /subscription_history/{historyId} {
+        allow read: if isSuperAdmin() || isBusinessAdmin(businessId) || isActiveMember(businessId);
+        allow create, update, delete: if isSuperAdmin();
+      }
     }
 
     match /users/{userId} {
@@ -189,11 +194,11 @@ service cloud.firestore {
       allow delete: if false;
 
       match /fcmTokens/{tokenId} {
-        allow read, write: if signedIn() && request.auth.uid == userId;
+        allow read, write: if signedIn() && (request.auth.uid == userId || isSuperAdmin());
       }
 
       match /notifications/{notificationId} {
-        allow read, update, delete: if signedIn() && request.auth.uid == userId;
+        allow read, update, delete: if signedIn() && (request.auth.uid == userId || isSuperAdmin());
         allow create: if signedIn()
           && (request.auth.uid == userId || isTenantAdminOfUser(userId) || isSuperAdmin());
       }
@@ -319,6 +324,67 @@ service cloud.firestore {
     match /store_health_snapshots/{snapshotId} {
       allow read: if isSuperAdmin();
       allow write: if isSuperAdmin();
+    }
+
+    // System notifications (announcements, admin blasts)
+    match /notifications/{notificationId} {
+      allow read: if signedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    // Support threads and chat messages
+    match /supportThreads/{threadId} {
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || isSuperAdmin());
+      allow create: if signedIn();
+      allow update: if signedIn() && (resource.data.userId == request.auth.uid || isSuperAdmin());
+      allow delete: if isSuperAdmin();
+
+      match /messages/{messageId} {
+        allow read: if signedIn();
+        allow create: if signedIn();
+        allow update, delete: if isSuperAdmin();
+      }
+    }
+
+    // User checkout & import telemetry
+    match /checkout_attempts/{attemptId} {
+      allow create: if signedIn();
+      allow read, update, delete: if isSuperAdmin();
+    }
+
+    match /import_attempts/{attemptId} {
+      allow create: if signedIn();
+      allow read, update, delete: if isSuperAdmin();
+    }
+
+    match /ai_support_logs/{logId} {
+      allow create: if signedIn();
+      allow read, update, delete: if isSuperAdmin();
+    }
+
+    match /faq_search_logs/{logId} {
+      allow create: if signedIn();
+      allow read, update, delete: if isSuperAdmin();
+    }
+
+    match /sale_completed_events/{eventId} {
+      allow create: if signedIn();
+      allow read, update, delete: if isSuperAdmin();
+    }
+
+    match /stock_adjusted_events/{eventId} {
+      allow create: if signedIn();
+      allow read, update, delete: if isSuperAdmin();
+    }
+
+    match /product_snapshot_events/{eventId} {
+      allow create: if signedIn();
+      allow read, update, delete: if isSuperAdmin();
+    }
+
+    match /reorder_point_events/{eventId} {
+      allow create: if signedIn();
+      allow read, update, delete: if isSuperAdmin();
     }
 
     match /{document=**} {
