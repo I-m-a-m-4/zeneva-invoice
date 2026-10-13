@@ -34,20 +34,33 @@ const TrialCountdown: React.FC<TrialCountdownProps> = ({ business, expiryDate })
         return expiryDate ?? null;
     }, [business, expiryDate]);
 
+    const trialEndDate = React.useMemo(() => {
+        if (business?.trialExpiresAt) {
+            const exp = safeToDate(business.trialExpiresAt);
+            if (exp && !Number.isNaN(exp.getTime())) return exp;
+        }
+        const created = safeToDate(business?.createdAt);
+        if (created && !Number.isNaN(created.getTime())) {
+            return new Date(created.getTime() + 30 * 24 * 60 * 60 * 1000);
+        }
+        return null;
+    }, [business]);
+
+    const targetDate = paid ? renewalDate : trialEndDate;
+
     const [timeLeft, setTimeLeft] = useState<{
         days: number; hours: number; minutes: number; seconds: number;
     } | null>(null);
 
     useEffect(() => {
-        // Only a live paid subscription has anything to count down to.
-        if (!paid || lapsed || !renewalDate) {
+        if (isLifetime || lapsed || (trialExpired && !paid) || !targetDate) {
             setTimeLeft(null);
             return;
         }
 
         const calculate = () => {
-            const distance = renewalDate.getTime() - Date.now();
-            if (distance < 0) return null;
+            const distance = targetDate.getTime() - Date.now();
+            if (distance <= 0) return null;
             return {
                 days: Math.floor(distance / (1000 * 60 * 60 * 24)),
                 hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
@@ -59,12 +72,14 @@ const TrialCountdown: React.FC<TrialCountdownProps> = ({ business, expiryDate })
         setTimeLeft(calculate());
         const id = setInterval(() => {
             const next = calculate();
-            if (next === null) clearInterval(id);
+            if (next === null) {
+                clearInterval(id);
+            }
             setTimeLeft(next);
         }, 1000);
 
         return () => clearInterval(id);
-    }, [paid, lapsed, renewalDate]);
+    }, [paid, lapsed, trialExpired, isLifetime, targetDate]);
 
     if (isLifetime) {
         return (
@@ -93,9 +108,9 @@ const TrialCountdown: React.FC<TrialCountdownProps> = ({ business, expiryDate })
         );
     }
 
-    // Unpaid user: 30-Day Pro Trial
+    // Unpaid user: 30-Day Pro Trial with live real-time countdown
     if (!paid) {
-        if (trialExpired) {
+        if (trialExpired || (!timeLeft && trialEndDate && trialEndDate.getTime() <= Date.now())) {
             return (
                 <div className="flex items-center gap-3">
                     <AlertTriangle className="h-8 w-8 text-destructive animate-pulse" />
@@ -111,13 +126,14 @@ const TrialCountdown: React.FC<TrialCountdownProps> = ({ business, expiryDate })
 
         return (
             <div className="flex items-center gap-3">
-                <Sparkles className="h-8 w-8 text-orange-500 animate-pulse" />
+                <Clock className="h-8 w-8 text-primary animate-pulse" />
                 <div>
-                    <p className="text-lg font-semibold text-orange-600 dark:text-orange-400">
-                        Pro Plan (30-Day Free Trial) — {trialDays} {trialDays === 1 ? 'day' : 'days'} remaining
+                    <p className="text-lg font-semibold text-primary">
+                        Pro Plan (30-Day Free Trial) · {timeLeft ? `${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m ${timeLeft.seconds}s remaining` : `${trialDays} days remaining`}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                        You are enjoying full Pro plan privileges. Choose a plan below at any time for uninterrupted access.
+                        {trialEndDate ? `Trial ends on ${format(trialEndDate, 'PPp')}. ` : ''}
+                        Enjoy full Pro plan access. Choose a plan below at any time for uninterrupted operations.
                     </p>
                 </div>
             </div>

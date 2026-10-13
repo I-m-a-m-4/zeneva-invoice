@@ -21,7 +21,6 @@ import RefreshButton from '@/components/shared/refresh-button';
 import { usePOS } from '@/context/pos-context';
 import { useI18n } from '@/context/i18n-context';
 import { BillingBodySkeleton } from './skeleton';
-import { isPaidPlan, isPaidPlanExpired, effectivePlan, isTrialExpired, getTrialDaysRemaining } from '@/lib/plan';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
@@ -77,13 +76,6 @@ function BillingPage() {
     return <div className="p-8 text-center text-muted-foreground">{t('billing.profileNotFound')}</div>;
   }
 
-  const currentPlan = currentBusiness.plan || 'starter';
-  const isLifetime = currentBusiness.accessLevel === 'lifetime';
-  const isPaid = isPaidPlan(currentBusiness) && !isPaidPlanExpired(currentBusiness);
-  const trialExpired = isTrialExpired(currentBusiness);
-  const trialDaysRemaining = getTrialDaysRemaining(currentBusiness);
-  const activePlan = effectivePlan(currentBusiness);
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -105,85 +97,6 @@ function BillingPage() {
           </div>
         </div>
       )}
-
-      {/* Invoicing Feature & Quota Highlights */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-border/60 bg-card/60 backdrop-blur-sm">
-          <CardContent className="p-5 flex items-start gap-4">
-            <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-            <div className="space-y-1">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Active License</p>
-              <div className="flex items-center gap-2">
-                <span className="text-xl font-bold capitalize text-foreground">
-                  {isLifetime
-                    ? 'Lifetime License'
-                    : isPaid
-                    ? `${currentPlan} Plan`
-                    : !trialExpired
-                    ? 'Pro Plan (Trial)'
-                    : 'Trial Expired'}
-                </span>
-                <Badge
-                  variant={trialExpired && !isPaid && !isLifetime ? 'destructive' : 'outline'}
-                  className={cn(
-                    'text-[10px] font-bold',
-                    (!trialExpired || isPaid || isLifetime) && 'border-primary/30 text-primary bg-primary/5'
-                  )}
-                >
-                  {isLifetime || isPaid
-                    ? 'Active'
-                    : !trialExpired
-                    ? `${trialDaysRemaining}d left`
-                    : 'Locked'}
-                </Badge>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {isLifetime
-                  ? 'Permanent access to all features'
-                  : isPaid
-                  ? 'Includes automatic continuous updates'
-                  : !trialExpired
-                  ? 'Full Pro plan access included during 30-day trial'
-                  : 'Upgrade to unlock full workspace access'}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-sm">
-          <CardContent className="p-5 flex items-start gap-4">
-            <div className="h-10 w-10 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-              <FileText className="h-5 w-5" />
-            </div>
-            <div className="space-y-1">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Invoicing Quota</p>
-              <p className="text-xl font-bold text-foreground">Unlimited</p>
-              <p className="text-xs text-muted-foreground">
-                Invoices, estimates, recurring bills & clients
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-sm">
-          <CardContent className="p-5 flex items-start gap-4">
-            <div className="h-10 w-10 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div className="space-y-1">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Zen AI Billing Assistant</p>
-              <p className="text-xl font-bold text-foreground">
-                {activePlan === 'business' ? '600' : '150'} <span className="text-xs font-normal text-muted-foreground">credits/mo</span>
-              </p>
-              <p className="text-xs text-muted-foreground">
-                AI invoice generation, debtor chasing & cashflow analysis
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Plan Management & Upgrade Section */}
       <Card className="border-border/70 shadow-sm">
