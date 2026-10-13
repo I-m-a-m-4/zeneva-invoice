@@ -25,44 +25,33 @@ export interface DesktopAuthOptions {
 export async function startDesktopGoogleAuth(
   options: DesktopAuthOptions
 ): Promise<DesktopAuthController> {
-  const primaryBase = apiBase();
-  const fallbackBase = DEFAULT_HOSTED_URL;
-
-  // Resolve candidate backend base URLs to try
-  const candidates: string[] = [];
-  if (primaryBase && !primaryBase.includes('zeneva.space')) {
-    candidates.push(primaryBase.replace(/\/+$/, ''));
-  }
-  if (!candidates.includes(fallbackBase)) {
-    candidates.push(fallbackBase);
-  }
+  // Both the desktop shell and the external system browser MUST talk to the exact same host.
+  // In native desktop environments, browserAuthBase() resolves to the hosted production domain
+  // (DEFAULT_HOSTED_URL) because external browsers do not run a dev server and Google OAuth requires
+  // the hosted domain.
+  const authBase = browserAuthBase();
 
   let sessionId = '';
-  let workingBase = candidates[0];
   let lastError = '';
 
-  for (const candidate of candidates) {
-    try {
-      const res = await fetch(`${candidate}/api/auth/desktop-session`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'create' }),
-      });
+  try {
+    const res = await fetch(`${authBase}/api/auth/desktop-session`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'create' }),
+    });
 
-      if (res.ok) {
-        const data = await res.json();
-        if (data.sessionId) {
-          sessionId = data.sessionId;
-          workingBase = candidate;
-          break;
-        }
-      } else {
-        const data = await res.json().catch(() => ({}));
-        lastError = data.error || `HTTP ${res.status}`;
+    if (res.ok) {
+      const data = await res.json();
+      if (data.sessionId) {
+        sessionId = data.sessionId;
       }
-    } catch (err: any) {
-      lastError = err?.message || 'Network error';
+    } else {
+      const data = await res.json().catch(() => ({}));
+      lastError = data.error || `HTTP ${res.status}`;
     }
+  } catch (err: any) {
+    lastError = err?.message || 'Network error';
   }
 
   if (!sessionId) {
@@ -73,14 +62,8 @@ export async function startDesktopGoogleAuth(
     );
   }
 
-  // Build the browser URL using the hosted web base
-  let webBase = browserAuthBase() || DEFAULT_HOSTED_URL;
-  if (webBase.includes('zeneva.space') || webBase.includes('localhost')) {
-    webBase = DEFAULT_HOSTED_URL;
-  }
-  webBase = webBase.replace(/\/+$/, '');
-
-  const authUrl = `${webBase}/auth/desktop?session=${encodeURIComponent(sessionId)}`;
+  // Build the browser URL using the exact same authBase
+  const authUrl = `${authBase}/auth/desktop?session=${encodeURIComponent(sessionId)}`;
 
   // Open the user's default browser
   try {
@@ -99,7 +82,7 @@ export async function startDesktopGoogleAuth(
     isCancelled = true;
     if (timerId) clearTimeout(timerId);
     // Cleanup session on backend
-    fetch(`${workingBase}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`, {
+    fetch(`${authBase}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`, {
       method: 'DELETE',
     }).catch(() => {});
     options.onCancel?.();
@@ -129,7 +112,7 @@ export async function startDesktopGoogleAuth(
 
     try {
       const pollRes = await fetch(
-        `${workingBase}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`
+        `${authBase}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`
       );
       if (pollRes.ok) {
         const data = await pollRes.json();
@@ -143,7 +126,7 @@ export async function startDesktopGoogleAuth(
           const credential = await signInWithCustomToken(auth, data.customToken);
 
           // Cleanup session on backend
-          fetch(`${workingBase}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`, {
+          fetch(`${authBase}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`, {
             method: 'DELETE',
           }).catch(() => {});
 

@@ -143,14 +143,22 @@ export function isPaidPlanExpired(business: BusinessLike): boolean {
 }
 
 /**
- * Number of days remaining in the 30-day trial for Starter users.
+ * Number of days remaining in the 30-day Pro trial for unpaid users.
  * Paid plans or lifetime access return 0.
  */
 export function getTrialDaysRemaining(business: BusinessLike): number {
   if (!business) return 0;
   if (business.accessLevel === 'lifetime') return 0;
-  if (isPaidPlan(business)) return 0;
-  if (business.plan && business.plan !== 'starter') return 0;
+  if (isPaidPlan(business) && !isPaidPlanExpired(business)) return 0;
+
+  if (business.trialExpiresAt && (!business.plan || business.plan === 'starter')) {
+    const expiry = safeToDate(business.trialExpiresAt);
+    if (expiry && !Number.isNaN(expiry.getTime())) {
+      const diffTime = expiry.getTime() - Date.now();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return Math.max(0, diffDays);
+    }
+  }
 
   const created = safeToDate(business.createdAt);
   if (!created || Number.isNaN(created.getTime()) || created.getTime() === 0) return 0;
@@ -164,13 +172,19 @@ export function getTrialDaysRemaining(business: BusinessLike): number {
 }
 
 /**
- * True when a Starter plan is older than 30 days.
+ * True when a Starter/unpaid account has exceeded the 30-day trial period.
  */
 export function isTrialExpired(business: BusinessLike): boolean {
   if (!business) return false;
   if (business.accessLevel === 'lifetime') return false;
-  if (isPaidPlan(business)) return false;
-  if (business.plan && business.plan !== 'starter') return false;
+  if (isPaidPlan(business) && !isPaidPlanExpired(business)) return false;
+
+  if (business.trialExpiresAt && (!business.plan || business.plan === 'starter')) {
+    const expiry = safeToDate(business.trialExpiresAt);
+    if (expiry && !Number.isNaN(expiry.getTime())) {
+      return expiry.getTime() <= Date.now();
+    }
+  }
 
   const created = safeToDate(business.createdAt);
   // If we have no createdAt, we assume it's an old account and the trial is expired.
@@ -183,6 +197,31 @@ export function isTrialExpired(business: BusinessLike): boolean {
 }
 
 /**
+ * True when an account must be locked out from operational pages.
+ * - Super admin ('belloimam431@gmail.com') is never locked out.
+ * - Lifetime access is never locked out.
+ * - Active paid subscribers are never locked out.
+ * - Paid subscribers whose subscription expired are locked out.
+ * - Unpaid / Starter accounts whose 30-day Pro trial expired are locked out.
+ */
+export function isAccountLocked(business: BusinessLike, userEmail?: string | null): boolean {
+  if (!business) return false;
+  if (userEmail === 'belloimam431@gmail.com') return false;
+  if (business.accessLevel === 'lifetime') return false;
+
+  // Active paid plan
+  if (isPaidPlan(business) && !isPaidPlanExpired(business)) return false;
+
+  // Lapsed paid plan
+  if (isPaidPlanExpired(business)) return true;
+
+  // Unpaid user whose 30-day Pro trial has expired
+  if (isTrialExpired(business)) return true;
+
+  return false;
+}
+
+/**
  * Core features (Checkout, Adding Products, etc) are available for all active businesses.
  * Lapsed paid plans downgrade to Starter rather than blocking POS sales.
  */
@@ -190,15 +229,14 @@ export function isCoreFeatureBlocked(business: BusinessLike): boolean {
   if (!business) return false;
   if (business.status === 'deleted' || business.status === 'blocked') return true;
   if (business.accessLevel === 'lifetime') return false;
-  // Paid plans or free starter plans are allowed to run core POS operations
-  return false;
+  return isAccountLocked(business);
 }
 
 /**
  * The plan whose entitlements actually apply right now.
  *
- * Gate every paid feature on this rather than on `business.plan`, so a lapsed
- * subscription cleanly stops unlocking what it used to unlock.
+ * All users who sign up enjoy 30 days on the Pro plan.
+ * Once the trial lapses without an active paid subscription, they fall back to starter.
  */
 export function effectivePlan(business: BusinessLike): PlanId {
   if (!business) return 'starter';
@@ -206,7 +244,14 @@ export function effectivePlan(business: BusinessLike): PlanId {
   if (isPaidPlanExpired(business)) return 'starter';
 
   const plan = business.plan;
-  if (plan === 'pro' || plan === 'business') return plan;
+  if (plan === 'business') return 'business';
+  if (plan === 'pro') return 'pro';
+
+  // For new signups on starter, grant full Pro access during their 30-day trial
+  if (!isTrialExpired(business)) {
+    return 'pro';
+  }
+
   return 'starter';
 }
 
@@ -238,14 +283,11 @@ export function hasBusinessFeatures(business: BusinessLike): boolean {
 
 /**
  * Whether the base app is usable.
- *
- * An expired date is deliberately *not* part of this. The free plan never
- * expires, and a lapsed paid plan downgrades to it, so no date locks anyone
- * out. Only a business that has actually been removed is shut off.
  */
 export function isSubscriptionActive(business: BusinessLike): boolean {
   if (!business) return true;
-  return business.status !== 'deleted';
+  if (business.status === 'deleted' || business.status === 'blocked') return false;
+  return true;
 }
 
 /**

@@ -28,26 +28,55 @@ function DesktopAuthContent() {
       return;
     }
 
+    let isMounted = true;
     const verifySession = async () => {
-      try {
-        const res = await fetch(`/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`);
-        const data = await res.json();
+      let attempts = 0;
+      const maxAttempts = 3;
 
-        if (res.status === 404 || data.status === 'not_found') {
-          setError('Invalid or expired authentication session. Please try again from Zeneva Desktop.');
-        } else if (data.status === 'expired') {
-          setError('This sign-in session has expired. Please initiate sign-in again from Zeneva Desktop.');
-        } else if (data.status === 'completed') {
-          setIsSuccess(true);
+      while (attempts < maxAttempts && isMounted) {
+        try {
+          const res = await fetch(`/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`);
+          const data = await res.json().catch(() => ({}));
+
+          if (res.ok && data.status) {
+            if (data.status === 'completed') {
+              if (isMounted) setIsSuccess(true);
+              break;
+            } else if (data.status === 'expired') {
+              if (isMounted) setError('This sign-in session has expired. Please initiate sign-in again from Zeneva Desktop.');
+              break;
+            } else if (data.status === 'pending') {
+              // Valid active session ready for sign-in
+              break;
+            }
+          }
+
+          attempts++;
+          if (attempts < maxAttempts) {
+            await new Promise((r) => setTimeout(r, 600));
+          } else if (isMounted) {
+            setError('Invalid or expired authentication session. Please try again from Zeneva Desktop.');
+          }
+        } catch (err) {
+          attempts++;
+          if (attempts < maxAttempts) {
+            await new Promise((r) => setTimeout(r, 600));
+          } else if (isMounted) {
+            setError('Could not connect to authentication service. Please check your internet connection.');
+          }
         }
-      } catch (err: any) {
-        console.warn('Session verification warning:', err);
-      } finally {
+      }
+
+      if (isMounted) {
         setCheckingSession(false);
       }
     };
 
     verifySession();
+
+    return () => {
+      isMounted = false;
+    };
   }, [sessionId]);
 
   const handleGoogleSignIn = async () => {

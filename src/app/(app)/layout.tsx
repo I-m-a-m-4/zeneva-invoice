@@ -37,7 +37,7 @@ import { FeatureUpdateModal } from '@/components/shared/feature-update-modal';
 import { usePOS } from '@/context/pos-context';
 import { Badge } from '@/components/ui/badge';
 import { cn, safeToDate, getCountryFromIP } from '@/lib/utils';
-import { isPaidPlan, getTrialDaysRemaining, isPaidPlanExpired } from '@/lib/plan';
+import { isPaidPlan, getTrialDaysRemaining, isPaidPlanExpired, isAccountLocked } from '@/lib/plan';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import NetworkStatusIndicator from '@/components/shared/network-status-indicator';
@@ -1223,14 +1223,14 @@ export default function AuthenticatedLayout({
   }
 
 
-  // --- Subscription Guard Configuration ---
-  // Deliberately never triggers on an expired date. Free plans do not expire
-  // and a lapsed paid plan falls back to Starter with the shop still trading,
-  // so `isSubscriptionActive` is only false for a business that has been
-  // removed outright. The card below is that last-resort case.
-  const restrictedRoutes = ['/sales', '/storefront', '/ai-insights', '/customers', '/inventory', '/reports', '/receipts', '/online-orders', '/audit-log'];
-  const isRestrictedRoute = restrictedRoutes.some(route => pathname.startsWith(route));
-  const showSubscriptionBlock = !isSubscriptionActive && isRestrictedRoute && !isLoading;
+  // --- Subscription & Trial Guard Configuration ---
+  // Users enjoy a 30-day Pro trial upon signing up. After 30 days without an active
+  // paid subscription (or if a paid plan expired), all operational pages are locked
+  // except for /billing and /support.
+  const isLocked = isAccountLocked(businessInstance, currentUserProfile?.email);
+  const isBillingRoute = pathname === '/billing';
+  const isSupportRoute = pathname === '/support';
+  const showSubscriptionBlock = (!isSubscriptionActive || isLocked) && !isBillingRoute && !isSupportRoute && !isLoading;
   // --- End of Subscription Guard Config ---
 
   // Pages that fill the viewport and manage their own internal scrolling, so the
@@ -1774,19 +1774,21 @@ export default function AuthenticatedLayout({
                     </DropdownMenuContent>
                   </DropdownMenu>
 
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="sm" className="hidden sm:inline-flex items-center gap-1.5 h-8 px-2.5 text-xs font-semibold border-orange-200 dark:border-orange-900/50 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 hover:bg-orange-100 hover:text-orange-800 transition-colors shadow-xs" asChild>
-                        <Link href="/admin-imamshaffy">
-                          <ShieldAlert className="h-3.5 w-3.5 text-orange-500 animate-pulse" />
-                          <span>Admin Imamshaffy</span>
-                        </Link>
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Open Imamshaffy Super Admin Portal</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  {currentUserProfile?.email === 'belloimam431@gmail.com' && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="outline" size="sm" className="hidden sm:inline-flex items-center gap-1.5 h-8 px-2.5 text-xs font-semibold border-orange-200 dark:border-orange-900/50 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 hover:bg-orange-100 hover:text-orange-800 transition-colors shadow-xs" asChild>
+                          <Link href="/admin-imamshaffy">
+                            <ShieldAlert className="h-3.5 w-3.5 text-orange-500 animate-pulse" />
+                            <span>Admin Imamshaffy</span>
+                          </Link>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Open Imamshaffy Super Admin Portal</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
 
                   <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
@@ -1826,20 +1828,23 @@ export default function AuthenticatedLayout({
                           </Link>
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link href="/admin-imamshaffy" className="text-orange-600 dark:text-orange-400 font-semibold flex items-center">
-                          <ShieldAlert className="me-2 h-4 w-4 text-orange-500" />
-                          <span>Imamshaffy Admin</span>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/admin-imamshaffy/invoices" className="text-muted-foreground flex items-center text-xs">
-                          <FileText className="me-2 h-4 w-4" />
-                          <span>Admin Invoices</span>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
+                      {currentUserProfile?.email === 'belloimam431@gmail.com' && (
+                        <>
+                          <DropdownMenuItem asChild>
+                            <Link href="/admin-imamshaffy" className="text-orange-600 dark:text-orange-400 font-semibold flex items-center">
+                              <ShieldAlert className="me-2 h-4 w-4 text-orange-500" />
+                              <span>Imamshaffy Admin</span>
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href="/admin-imamshaffy/invoices" className="text-muted-foreground flex items-center text-xs">
+                              <FileText className="me-2 h-4 w-4" />
+                              <span>Admin Invoices</span>
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                        </>
+                      )}
                       <DropdownMenuItem onClick={handleLogout}>
                         <LogOut className="me-2 h-4 w-4" />
                         <span>Log out</span>
@@ -1941,29 +1946,31 @@ export default function AuthenticatedLayout({
                               </svg>
                           </div>
                           <CardTitle className="text-4xl font-extrabold tracking-tight text-foreground">
-                            Account Inactive
+                            {!isPaidPlan(businessInstance) ? '30-Day Pro Trial Ended' : 'Subscription Ended'}
                           </CardTitle>
                           <CardDescription className="text-lg mt-3 px-4">
-                            <span className="font-bold text-foreground">{(businessInstance?.name || 'your business').toLowerCase()}</span> is no longer active. Please contact support to restore access.
+                            {!isPaidPlan(businessInstance)
+                              ? 'Your 30-day Pro trial has ended. Select a plan below to unlock your workspace and resume invoicing.'
+                              : 'Your subscription has ended. Renew your plan to unlock your workspace and resume operations.'}
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="px-8 pb-10">
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div className="p-5 rounded-2xl bg-muted/30 border border-border/50 shadow-sm">
-                              <h4 className="text-xs font-bold text-primary mb-4 uppercase tracking-wider">Restricted Features</h4>
+                              <h4 className="text-xs font-bold text-primary mb-4 uppercase tracking-wider">Locked Features</h4>
                               <ul className="text-sm space-y-3 text-muted-foreground font-medium">
-                                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-orange-500" /> POS & Sales</li>
-                                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-orange-500" /> Storefront</li>
-                                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-orange-500" /> Zen AI</li>
-                                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-orange-500" /> Customers</li>
+                                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-orange-500" /> Invoicing & Receipts</li>
+                                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-orange-500" /> POS & Customer CRM</li>
+                                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-orange-500" /> Zen AI Assistant</li>
+                                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-orange-500" /> Inventory & Reports</li>
                               </ul>
                             </div>
                              <div className="p-5 rounded-2xl bg-orange-500/5 border border-orange-500/10 flex flex-col justify-center text-center">
-                               <p className="text-xs text-muted-foreground mb-5 leading-relaxed">Unlock all features instantly with our business-ready plans.</p>
+                               <p className="text-xs text-muted-foreground mb-5 leading-relaxed">Choose a subscription to unlock all features immediately.</p>
                                <Button asChild className="w-full h-12 shadow-md hover:scale-[1.05] active:scale-95 transition-all duration-300 bg-orange-500 hover:bg-orange-600 font-bold">
                                  <Link href="/billing">
                                    <ArrowRight className="me-2 h-4 w-4" />
-                                   Review Plans
+                                   Review Plans & Unlock
                                  </Link>
                                </Button>
                                <Button variant="ghost" onClick={handleLogout} className="mt-3 text-xs text-muted-foreground hover:text-foreground font-semibold hover:bg-muted/50 h-9 transition-colors">

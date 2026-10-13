@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { apiBase, openExternal } from '@/lib/platform';
 
 declare global {
   interface Window {
@@ -129,6 +130,33 @@ export default function useFlutterwave() {
           await loadScript();
           setIsSdkReady(true);
         } catch (err: any) {
+          console.warn('Flutterwave SDK failed, attempting hosted checkout fallback:', err);
+          // Attempt fallback to hosted payment link via API
+          try {
+            const fallbackRes = await fetch(apiBase('/api/payments/flutterwave'), {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: config.customer.email,
+                name: config.customer.name,
+                phone: config.customer.phonenumber,
+                amount: config.amount,
+                currency: config.currency,
+              }),
+            });
+            const fallbackData = await fallbackRes.json();
+            if (fallbackData?.authorizationUrl) {
+              toast({
+                title: 'Opening Payment Window',
+                description: 'Redirecting to Flutterwave secure checkout in your browser.',
+              });
+              await openExternal(fallbackData.authorizationUrl);
+              return;
+            }
+          } catch (apiErr) {
+            console.error('Hosted checkout fallback failed:', apiErr);
+          }
+
           toast({
             variant: 'destructive',
             title: 'Payment Gateway Unavailable',

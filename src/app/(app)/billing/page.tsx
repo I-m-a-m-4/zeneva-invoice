@@ -21,8 +21,9 @@ import RefreshButton from '@/components/shared/refresh-button';
 import { usePOS } from '@/context/pos-context';
 import { useI18n } from '@/context/i18n-context';
 import { BillingBodySkeleton } from './skeleton';
-import Link from 'next/link';
+import { isPaidPlan, isPaidPlanExpired, effectivePlan, isTrialExpired, getTrialDaysRemaining } from '@/lib/plan';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const SubscriptionSection = dynamic(
     () => import('@/components/settings/subscription-section'),
@@ -78,6 +79,10 @@ function BillingPage() {
 
   const currentPlan = currentBusiness.plan || 'starter';
   const isLifetime = currentBusiness.accessLevel === 'lifetime';
+  const isPaid = isPaidPlan(currentBusiness) && !isPaidPlanExpired(currentBusiness);
+  const trialExpired = isTrialExpired(currentBusiness);
+  const trialDaysRemaining = getTrialDaysRemaining(currentBusiness);
+  const activePlan = effectivePlan(currentBusiness);
 
   return (
     <div className="flex flex-col gap-6">
@@ -111,13 +116,37 @@ function BillingPage() {
             <div className="space-y-1">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Active License</p>
               <div className="flex items-center gap-2">
-                <span className="text-xl font-bold capitalize text-foreground">{isLifetime ? 'Lifetime License' : `${currentPlan} Plan`}</span>
-                <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 text-[10px] font-bold">
-                  Active
+                <span className="text-xl font-bold capitalize text-foreground">
+                  {isLifetime
+                    ? 'Lifetime License'
+                    : isPaid
+                    ? `${currentPlan} Plan`
+                    : !trialExpired
+                    ? 'Pro Plan (Trial)'
+                    : 'Trial Expired'}
+                </span>
+                <Badge
+                  variant={trialExpired && !isPaid && !isLifetime ? 'destructive' : 'outline'}
+                  className={cn(
+                    'text-[10px] font-bold',
+                    (!trialExpired || isPaid || isLifetime) && 'border-primary/30 text-primary bg-primary/5'
+                  )}
+                >
+                  {isLifetime || isPaid
+                    ? 'Active'
+                    : !trialExpired
+                    ? `${trialDaysRemaining}d left`
+                    : 'Locked'}
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground">
-                {isLifetime ? 'Permanent access to all features' : 'Includes automatic continuous updates'}
+                {isLifetime
+                  ? 'Permanent access to all features'
+                  : isPaid
+                  ? 'Includes automatic continuous updates'
+                  : !trialExpired
+                  ? 'Full Pro plan access included during 30-day trial'
+                  : 'Upgrade to unlock full workspace access'}
               </p>
             </div>
           </CardContent>
@@ -146,7 +175,7 @@ function BillingPage() {
             <div className="space-y-1">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Zen AI Billing Assistant</p>
               <p className="text-xl font-bold text-foreground">
-                {currentPlan === 'business' ? '600' : currentPlan === 'pro' ? '150' : 'Included'} <span className="text-xs font-normal text-muted-foreground">credits/mo</span>
+                {activePlan === 'business' ? '600' : '150'} <span className="text-xs font-normal text-muted-foreground">credits/mo</span>
               </p>
               <p className="text-xs text-muted-foreground">
                 AI invoice generation, debtor chasing & cashflow analysis

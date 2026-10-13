@@ -46,9 +46,13 @@ export function apiBase(): string {
  * must happen outside the embedded WebView (such as Google OAuth).
  */
 export function browserAuthBase(): string {
-  // Opening external browser from native desktop should always use the hosted production app,
-  // because the user's default browser on their PC does not have a local dev server running.
-  const base = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_HOSTED_URL;
+  // Opening external browser from native desktop must always use the hosted production app,
+  // because external browsers on desktop do not run the local dev server and Google OAuth
+  // redirect origins require the hosted production domain (DEFAULT_HOSTED_URL).
+  let base = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_HOSTED_URL;
+  if (!base || base.includes('zeneva.space') || base.includes('localhost')) {
+    base = DEFAULT_HOSTED_URL;
+  }
   return base.replace(/\/+$/, '');
 }
 
