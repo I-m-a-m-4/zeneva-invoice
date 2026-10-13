@@ -277,6 +277,13 @@ service cloud.firestore {
       allow delete: if isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId);
     }
 
+    // Global platform settings (promo toasts, feature flags, etc.)
+    // Any signed-in user may read; only Admin SDK may write.
+    match /platform_settings/{settingId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

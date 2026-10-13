@@ -38,6 +38,8 @@ export function ConsoleGuard() {
       'hydration mismatch',
       'some attributes of the server rendered HTML',
       'Hydration failed',
+      'PromoToast listener notice',
+      'desktop-session',
       'Firestore (11.10.0)',
       // Firestore transport noise. These are routine when the SDK retries and
       // recovers, so users should never see them - but when the client gets
