@@ -5,6 +5,14 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isSuperAdmin() {
+      return signedIn() && request.auth.token.email in [
+        'belloimam431@gmail.com',
+        'bimex4@gmail.com',
+        'safewayderma@gmail.com'
+      ];
+    }
+
     function currentUserPath() {
       return /databases/$(database)/documents/users/$(request.auth.uid);
     }
@@ -145,39 +153,39 @@ service cloud.firestore {
     }
 
     match /businessInstances/{businessId} {
-      allow get: if isActiveMember(businessId);
-      allow list: if false;
+      allow get: if isSuperAdmin() || isActiveMember(businessId);
+      allow list: if isSuperAdmin();
       allow create: if canCreateOwnerBusiness(businessId);
-      allow update: if isBusinessAdmin(businessId)
+      allow update: if (isBusinessAdmin(businessId) || isSuperAdmin())
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'address', 'settings', 'updatedAt']);
       allow delete: if false;
 
       match /stats/{statId} {
-        allow read: if canReadReceipts(businessId) || can('view_reports', businessId);
-        allow create, update: if canUpdateStats(businessId);
+        allow read: if isSuperAdmin() || canReadReceipts(businessId) || can('view_reports', businessId);
+        allow create, update: if isSuperAdmin() || canUpdateStats(businessId);
         allow delete: if false;
       }
 
       match /onlineOrders/{orderId} {
-        allow read, create, update, delete: if can('manage_online_orders', businessId);
+        allow read, create, update, delete: if isSuperAdmin() || can('manage_online_orders', businessId);
       }
 
       match /purchaseOrders/{orderId} {
-        allow read, create, update, delete: if can('manage_inventory', businessId);
+        allow read, create, update, delete: if isSuperAdmin() || can('manage_inventory', businessId);
       }
 
       match /auditLogs/{logId} {
-        allow read: if can('view_audit_logs', businessId);
-        allow create: if isActiveMember(businessId);
+        allow read: if isSuperAdmin() || can('view_audit_logs', businessId);
+        allow create: if isSuperAdmin() || isActiveMember(businessId);
         allow update, delete: if false;
       }
     }
 
     match /users/{userId} {
-      allow get: if signedIn() && (request.auth.uid == userId || isActiveMember(resource.data.businessId));
-      allow list: if isActiveMember(resource.data.businessId);
+      allow get: if signedIn() && (request.auth.uid == userId || isSuperAdmin() || isActiveMember(resource.data.businessId));
+      allow list: if isSuperAdmin() || isActiveMember(resource.data.businessId);
       allow create: if isNewOwnerProfile(userId) || isInvitedProfile(userId);
-      allow update: if canUpdateOwnProfile(userId) || canManageTenantUser(userId);
+      allow update: if canUpdateOwnProfile(userId) || canManageTenantUser(userId) || isSuperAdmin();
       allow delete: if false;
 
       match /fcmTokens/{tokenId} {
@@ -187,19 +195,19 @@ service cloud.firestore {
       match /notifications/{notificationId} {
         allow read, update, delete: if signedIn() && request.auth.uid == userId;
         allow create: if signedIn()
-          && (request.auth.uid == userId || isTenantAdminOfUser(userId));
+          && (request.auth.uid == userId || isTenantAdminOfUser(userId) || isSuperAdmin());
       }
 
       match /sessions/{sessionId} {
-        allow read, write: if signedIn() && request.auth.uid == userId;
+        allow read, write: if signedIn() && (request.auth.uid == userId || isSuperAdmin());
       }
 
       match /journey/{journeyId} {
-        allow read, write: if signedIn() && request.auth.uid == userId;
+        allow read, write: if signedIn() && (request.auth.uid == userId || isSuperAdmin());
       }
 
       match /receipts/{receiptId} {
-        allow read: if signedIn() && request.auth.uid == userId;
+        allow read: if signedIn() && (request.auth.uid == userId || isSuperAdmin());
         allow write: if false;
       }
     }
@@ -207,13 +215,16 @@ service cloud.firestore {
     match /invitations/{invitationCode} {
       allow get: if signedIn()
         && (resource.data.get('email', null) == request.auth.token.email
-          || isBusinessAdmin(resource.data.businessId));
+          || isBusinessAdmin(resource.data.businessId)
+          || isSuperAdmin());
       allow list: if isBusinessAdmin(resource.data.businessId)
+        || isSuperAdmin()
         || (signedIn() && resource.data.get('email', null) == request.auth.token.email);
-      allow create: if isBusinessAdmin(request.resource.data.businessId)
+      allow create: if (isBusinessAdmin(request.resource.data.businessId) || isSuperAdmin())
         && request.resource.data.get('role', null) in ['manager', 'vendor_operator'];
       allow update: if false;
       allow delete: if isBusinessAdmin(resource.data.businessId)
+        || isSuperAdmin()
         || (signedIn()
           && resource.data.get('email', null) == request.auth.token.email
           && existsAfter(/databases/$(database)/documents/users/$(request.auth.uid))
@@ -221,67 +232,93 @@ service cloud.firestore {
     }
 
     match /products/{productId} {
-      allow read: if isActiveMember(resource.data.businessId);
-      allow create: if validTenantCreate() && can('manage_inventory', request.resource.data.businessId);
-      allow update: if validTenantUpdate() && can('manage_inventory', resource.data.businessId);
-      allow delete: if isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId);
+      allow read: if isSuperAdmin() || isActiveMember(resource.data.businessId);
+      allow create: if isSuperAdmin() || (validTenantCreate() && can('manage_inventory', request.resource.data.businessId));
+      allow update: if isSuperAdmin() || (validTenantUpdate() && can('manage_inventory', resource.data.businessId));
+      allow delete: if isSuperAdmin() || (isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId));
     }
 
     match /customers/{customerId} {
-      allow read: if isActiveMember(resource.data.businessId) && can('view_customers', resource.data.businessId);
-      allow create: if validTenantCreate() && can('view_customers', request.resource.data.businessId);
-      allow update: if validTenantUpdate() && can('view_customers', resource.data.businessId);
-      allow delete: if isActiveMember(resource.data.businessId) && can('view_customers', resource.data.businessId);
+      allow read: if isSuperAdmin() || (isActiveMember(resource.data.businessId) && can('view_customers', resource.data.businessId));
+      allow create: if isSuperAdmin() || (validTenantCreate() && can('view_customers', request.resource.data.businessId));
+      allow update: if isSuperAdmin() || (validTenantUpdate() && can('view_customers', resource.data.businessId));
+      allow delete: if isSuperAdmin() || (isActiveMember(resource.data.businessId) && can('view_customers', resource.data.businessId));
     }
 
     match /receipts/{receiptId} {
-      allow read: if isActiveMember(resource.data.businessId) && canReadReceipts(resource.data.businessId);
-      allow create: if validTenantCreate() && can('record_sales', request.resource.data.businessId);
-      allow update: if validTenantUpdate() && can('record_sales', resource.data.businessId);
-      allow delete: if isActiveMember(resource.data.businessId) && can('record_sales', resource.data.businessId);
+      allow read: if isSuperAdmin() || (isActiveMember(resource.data.businessId) && canReadReceipts(resource.data.businessId));
+      allow create: if isSuperAdmin() || (validTenantCreate() && can('record_sales', request.resource.data.businessId));
+      allow update: if isSuperAdmin() || (validTenantUpdate() && can('record_sales', resource.data.businessId));
+      allow delete: if isSuperAdmin() || (isActiveMember(resource.data.businessId) && can('record_sales', resource.data.businessId));
     }
 
     match /branches/{branchId} {
-      allow read: if isActiveMember(resource.data.businessId);
-      allow create: if validTenantCreate() && isBusinessAdmin(request.resource.data.businessId);
-      allow update: if validTenantUpdate() && isBusinessAdmin(resource.data.businessId);
-      allow delete: if isActiveMember(resource.data.businessId) && isBusinessAdmin(resource.data.businessId);
+      allow read: if isSuperAdmin() || isActiveMember(resource.data.businessId);
+      allow create: if isSuperAdmin() || (validTenantCreate() && isBusinessAdmin(request.resource.data.businessId));
+      allow update: if isSuperAdmin() || (validTenantUpdate() && isBusinessAdmin(resource.data.businessId));
+      allow delete: if isSuperAdmin() || (isActiveMember(resource.data.businessId) && isBusinessAdmin(resource.data.businessId));
     }
 
     match /inventory_transactions/{transactionId} {
-      allow read: if isActiveMember(resource.data.businessId)
-        && (can('manage_inventory', resource.data.businessId) || can('view_reports', resource.data.businessId));
-      allow create: if validTenantCreate()
-        && (can('manage_inventory', request.resource.data.businessId) || can('record_sales', request.resource.data.businessId));
+      allow read: if isSuperAdmin() || (isActiveMember(resource.data.businessId)
+        && (can('manage_inventory', resource.data.businessId) || can('view_reports', resource.data.businessId)));
+      allow create: if isSuperAdmin() || (validTenantCreate()
+        && (can('manage_inventory', request.resource.data.businessId) || can('record_sales', request.resource.data.businessId)));
       allow update, delete: if false;
     }
 
     match /purchases/{purchaseId} {
-      allow read: if isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId);
-      allow create: if validTenantCreate() && can('manage_inventory', request.resource.data.businessId);
-      allow update: if validTenantUpdate() && can('manage_inventory', resource.data.businessId);
-      allow delete: if isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId);
+      allow read: if isSuperAdmin() || (isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId));
+      allow create: if isSuperAdmin() || (validTenantCreate() && can('manage_inventory', request.resource.data.businessId));
+      allow update: if isSuperAdmin() || (validTenantUpdate() && can('manage_inventory', resource.data.businessId));
+      allow delete: if isSuperAdmin() || (isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId));
     }
 
     match /expenses/{expenseId} {
-      allow read: if isActiveMember(resource.data.businessId) && can('view_reports', resource.data.businessId);
-      allow create: if validTenantCreate() && isBusinessAdmin(request.resource.data.businessId);
-      allow update: if validTenantUpdate() && isBusinessAdmin(resource.data.businessId);
-      allow delete: if isActiveMember(resource.data.businessId) && isBusinessAdmin(resource.data.businessId);
+      allow read: if isSuperAdmin() || (isActiveMember(resource.data.businessId) && can('view_reports', resource.data.businessId));
+      allow create: if isSuperAdmin() || (validTenantCreate() && isBusinessAdmin(request.resource.data.businessId));
+      allow update: if isSuperAdmin() || (validTenantUpdate() && isBusinessAdmin(resource.data.businessId));
+      allow delete: if isSuperAdmin() || (isActiveMember(resource.data.businessId) && isBusinessAdmin(resource.data.businessId));
     }
 
     match /suppliers/{supplierId} {
-      allow read: if isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId);
-      allow create: if validTenantCreate() && can('manage_inventory', request.resource.data.businessId);
-      allow update: if validTenantUpdate() && can('manage_inventory', resource.data.businessId);
-      allow delete: if isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId);
+      allow read: if isSuperAdmin() || (isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId));
+      allow create: if isSuperAdmin() || (validTenantCreate() && can('manage_inventory', request.resource.data.businessId));
+      allow update: if isSuperAdmin() || (validTenantUpdate() && can('manage_inventory', resource.data.businessId));
+      allow delete: if isSuperAdmin() || (isActiveMember(resource.data.businessId) && can('manage_inventory', resource.data.businessId));
     }
 
     // Global platform settings (promo toasts, feature flags, etc.)
     // Any signed-in user may read; only Admin SDK may write.
     match /platform_settings/{settingId} {
       allow read: if signedIn();
-      allow write: if false;
+      allow write: if isSuperAdmin();
+    }
+
+    // CEO broadcasts, system broadcasts, feature updates, error logs
+    match /ceo_broadcasts/{broadcastId} {
+      allow read: if signedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    match /system_broadcasts/{broadcastId} {
+      allow read: if signedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    match /feature_updates/{updateId} {
+      allow read: if signedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    match /error_logs/{logId} {
+      allow create: if signedIn();
+      allow read, update, delete: if isSuperAdmin();
+    }
+
+    match /store_health_snapshots/{snapshotId} {
+      allow read: if isSuperAdmin();
+      allow write: if isSuperAdmin();
     }
 
     match /{document=**} {
