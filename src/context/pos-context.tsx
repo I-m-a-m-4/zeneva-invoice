@@ -1080,8 +1080,8 @@ export function POSProvider({ children }: { children: ReactNode }) {
   // orders inside the selected date range, and the online-orders page runs its
   // own (also bounded) query for the full table. A status filter cannot be
   // added here — it would need a composite index and would miss orders whose
-  // status the snapshot page is about to flip.
-  const onlineOrdersQuery = useMemoFirebase(() => (canFetchSubData ? query(collection(firestore, 'businessInstances', businessId, 'onlineOrders'), orderBy('createdAt', 'desc'), limit(ONLINE_ORDERS_LISTENER_LIMIT)) : null), [canFetchSubData, businessId, firestore]);
+  // Avoid requiring a collection index on createdAt by fetching and sorting in memory.
+  const onlineOrdersQuery = useMemoFirebase(() => (canFetchSubData ? query(collection(firestore, 'businessInstances', businessId, 'onlineOrders'), limit(ONLINE_ORDERS_LISTENER_LIMIT)) : null), [canFetchSubData, businessId, firestore]);
   const { data: initialOnlineOrders } = useCollection<OnlineOrder>(onlineOrdersQuery);
 
   /**
@@ -1364,9 +1364,14 @@ export function POSProvider({ children }: { children: ReactNode }) {
   }, [allCustomers, activeBranchId, businessId]);
 
   const onlineOrders = useMemo(() => {
-    if (!initialOnlineOrders) return [];
-    if (!activeBranchId || activeBranchId === 'all') return initialOnlineOrders;
-    return initialOnlineOrders.filter(o => {
+    if (!initialOnlineOrders || initialOnlineOrders.length === 0) return [];
+    const sorted = [...initialOnlineOrders].sort((a, b) => {
+      const timeA = safeToDate(a.createdAt).getTime() || 0;
+      const timeB = safeToDate(b.createdAt).getTime() || 0;
+      return timeB - timeA;
+    });
+    if (!activeBranchId || activeBranchId === 'all') return sorted;
+    return sorted.filter(o => {
       if (activeBranchId === businessId) {
         return !o.branchId || o.branchId === businessId || o.branchId === 'all';
       }

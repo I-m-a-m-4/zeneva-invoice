@@ -76,6 +76,8 @@ function BillingPage() {
     return <div className="p-8 text-center text-muted-foreground">{t('billing.profileNotFound')}</div>;
   }
 
+  const isLifetime = currentBusiness.accessLevel === 'lifetime';
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

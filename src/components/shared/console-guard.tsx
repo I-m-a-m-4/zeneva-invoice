@@ -21,6 +21,7 @@ export function ConsoleGuard() {
       'Vercel Web Analytics',
       'Failed to load script',
       'beforeinstallpromptevent.preventDefault',
+      'must call beforeinstallpromptevent.prompt',
       'facebook.net',
       'tiktok.com',
       'twitter.com',
