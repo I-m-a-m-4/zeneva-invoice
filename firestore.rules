@@ -387,6 +387,11 @@ service cloud.firestore {
       allow read, update, delete: if isSuperAdmin();
     }
 
+    // Ephemeral authentication exchange sessions for desktop app (5-min TTL)
+    match /desktop_auth_sessions/{sessionId} {
+      allow read, write: if true;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

@@ -1,6 +1,7 @@
 import { apiBase, browserAuthBase, openExternal, DEFAULT_HOSTED_URL } from '@/lib/platform';
-import { auth } from '@/firebase';
-import { signInWithCustomToken, UserCredential } from 'firebase/auth';
+import { auth, firestore } from '@/firebase';
+import { signInWithCustomToken, signInWithCredential, GoogleAuthProvider, UserCredential } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 export interface DesktopAuthSessionController {
   sessionId: string;
@@ -20,7 +21,7 @@ export interface DesktopAuthOptions {
  * 1. Creates an exchange session on the backend.
  * 2. Launches the user's default browser to /auth/desktop?session=...
  * 3. Polls the backend until the browser completes Google Sign-in.
- * 4. Signs the desktop app in with the minted Firebase custom token.
+ * 4. Signs the desktop app in with the minted Firebase custom token or OAuth credentials.
  */
 export async function startDesktopGoogleAuth(
   options: DesktopAuthOptions
@@ -110,34 +111,62 @@ export async function startDesktopGoogleAuth(
     }
 
     try {
+      let data: any = null;
+
+      // 1. Fetch from HTTP endpoint
       const pollRes = await fetch(
         `${authBase}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`
       );
       if (pollRes.ok) {
-        const data = await pollRes.json();
+        data = await pollRes.json();
+      }
 
-        if (data.status === 'completed' && data.customToken) {
-          if (!auth) {
-            throw new Error('Firebase Auth is not initialized');
+      // 2. Also check Firestore document directly if available
+      if ((!data || data.status !== 'completed') && firestore) {
+        try {
+          const snap = await getDoc(doc(firestore, `desktop_auth_sessions/${sessionId}`));
+          if (snap.exists()) {
+            const fsData = snap.data();
+            if (fsData.status === 'completed' && (fsData.customToken || fsData.googleIdToken)) {
+              data = fsData;
+            }
           }
+        } catch {
+          // ignore firestore direct read failure
+        }
+      }
 
+      if (data && data.status === 'completed') {
+        if (!auth) {
+          throw new Error('Firebase Auth is not initialized');
+        }
+
+        let credential: UserCredential;
+
+        if (data.customToken) {
           // Sign in to Firebase Auth on desktop using the custom token
-          const credential = await signInWithCustomToken(auth, data.customToken);
-
-          // Cleanup session on backend
-          fetch(`${authBase}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`, {
-            method: 'DELETE',
-          }).catch(() => {});
-
-          options.onSuccess(credential);
-          return;
+          credential = await signInWithCustomToken(auth, data.customToken);
+        } else if (data.googleIdToken) {
+          // Sign in directly using Google OAuth credential in Firebase Client SDK
+          const oauthCred = GoogleAuthProvider.credential(data.googleIdToken, data.googleAccessToken || undefined);
+          credential = await signInWithCredential(auth, oauthCred);
+        } else {
+          throw new Error('No authentication token received from sign-in session');
         }
 
-        if (data.status === 'expired') {
-          cancel();
-          options.onError(new Error('Sign-in session has expired.'));
-          return;
-        }
+        // Cleanup session on backend
+        fetch(`${authBase}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`, {
+          method: 'DELETE',
+        }).catch(() => {});
+
+        options.onSuccess(credential);
+        return;
+      }
+
+      if (data && data.status === 'expired') {
+        cancel();
+        options.onError(new Error('Sign-in session has expired.'));
+        return;
       }
     } catch (err: any) {
       console.warn('Desktop auth poll warning:', err?.message);

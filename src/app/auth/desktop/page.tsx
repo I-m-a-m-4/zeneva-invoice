@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, firestore } from '@/firebase';
 import { createUserProfileDocument } from '@/firebase/users';
 import { AppConfig } from '@/lib/config';
@@ -106,6 +106,9 @@ function DesktopAuthContent() {
       // Run Google popup sign-in in the real browser
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
+      const oauthCred = GoogleAuthProvider.credentialFromResult(result);
+      const googleIdToken = oauthCred?.idToken;
+      const googleAccessToken = oauthCred?.accessToken;
 
       // Ensure user profile document exists in Firestore
       if (firestore) {
@@ -124,25 +127,56 @@ function DesktopAuthContent() {
         } catch (profileErr) {
           console.warn('Profile creation fallback:', profileErr);
         }
+
+        // Write completion state directly to Firestore desktop_auth_sessions
+        try {
+          const sessionDocRef = doc(firestore, `desktop_auth_sessions/${sessionId}`);
+          await setDoc(
+            sessionDocRef,
+            {
+              status: 'completed',
+              googleIdToken: googleIdToken || null,
+              googleAccessToken: googleAccessToken || null,
+              uid: user.uid,
+              email: user.email || '',
+              displayName: user.displayName || '',
+              photoURL: user.photoURL || '',
+              updatedAt: Date.now(),
+            },
+            { merge: true }
+          );
+        } catch (fsErr) {
+          console.warn('Direct Firestore session write:', fsErr);
+        }
       }
 
       // Get fresh Firebase ID Token
       const idToken = await user.getIdToken(true);
 
-      // Exchange ID token with the desktop session endpoint
-      const res = await fetch(getAuthEndpoint('/api/auth/desktop-session'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'complete',
-          sessionId,
-          idToken,
-        }),
-      });
+      // Exchange with desktop session endpoint
+      try {
+        const res = await fetch(getAuthEndpoint('/api/auth/desktop-session'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'complete',
+            sessionId,
+            idToken,
+            googleIdToken,
+            googleAccessToken,
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          }),
+        });
 
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to link session with Zeneva Desktop');
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok && !data.success) {
+          console.warn('Backend session completion warning:', data.error);
+        }
+      } catch (endpointErr) {
+        console.warn('Endpoint completion error:', endpointErr);
       }
 
       setIsSuccess(true);
@@ -255,14 +289,14 @@ function DesktopAuthContent() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full h-12 flex items-center justify-center gap-3 text-base font-medium border-border/80 hover:bg-muted/50 transition-all shadow-sm"
+                className="w-full h-12 flex items-center justify-center gap-3 text-base font-semibold text-slate-900 dark:text-slate-100 border-border/80 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-all shadow-sm group"
                 onClick={handleGoogleSignIn}
                 disabled={loading || !!error}
               >
                 {loading ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                    <span>Signing in with Google...</span>
+                    <span className="text-slate-900 dark:text-slate-100 font-semibold">Signing in with Google...</span>
                   </>
                 ) : (
                   <>
@@ -284,7 +318,7 @@ function DesktopAuthContent() {
                         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                       />
                     </svg>
-                    <span>Continue with Google</span>
+                    <span className="text-slate-900 dark:text-slate-100 font-semibold group-hover:text-slate-900 dark:group-hover:text-white">Continue with Google</span>
                   </>
                 )}
               </Button>

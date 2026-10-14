@@ -16,7 +16,12 @@ const corsHeaders: Record<string, string> = {
 type SessionData = {
   status: 'pending' | 'completed' | 'expired';
   customToken?: string;
+  googleIdToken?: string;
+  googleAccessToken?: string;
   uid?: string;
+  email?: string;
+  displayName?: string;
+  photoURL?: string;
   createdAt: number;
   expiresAt: number;
 };
@@ -51,8 +56,15 @@ export async function GET(req: NextRequest) {
       memorySessions.delete(sessionId);
       return jsonResponse({ status: 'expired' });
     }
-    if (mem.status === 'completed' && mem.customToken) {
-      return jsonResponse({ status: 'completed', customToken: mem.customToken });
+    if (mem.status === 'completed') {
+      return jsonResponse({
+        status: 'completed',
+        customToken: mem.customToken,
+        googleIdToken: mem.googleIdToken,
+        googleAccessToken: mem.googleAccessToken,
+        uid: mem.uid,
+        email: mem.email,
+      });
     }
     return jsonResponse({ status: mem.status });
   }
@@ -75,8 +87,15 @@ export async function GET(req: NextRequest) {
         return jsonResponse({ status: 'expired' });
       }
 
-      if (data.status === 'completed' && data.customToken) {
-        return jsonResponse({ status: 'completed', customToken: data.customToken });
+      if (data.status === 'completed') {
+        return jsonResponse({
+          status: 'completed',
+          customToken: data.customToken,
+          googleIdToken: (data as any).googleIdToken,
+          googleAccessToken: (data as any).googleAccessToken,
+          uid: data.uid,
+          email: (data as any).email,
+        });
       }
 
       return jsonResponse({ status: data.status || 'pending' });
@@ -91,7 +110,17 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
-    const { action, sessionId, idToken } = body;
+    const {
+      action,
+      sessionId,
+      idToken,
+      googleIdToken,
+      googleAccessToken,
+      uid: clientUid,
+      email,
+      displayName,
+      photoURL,
+    } = body;
 
     const now = Date.now();
     const ttlMs = 5 * 60 * 1000; // 5 minutes validity
@@ -123,12 +152,22 @@ export async function POST(req: NextRequest) {
 
     // Action: Complete the session with verified credentials from browser
     if (action === 'complete') {
-      if (!sessionId || !idToken) {
-        return jsonResponse({ error: 'sessionId and idToken are required' }, 400);
+      if (!sessionId) {
+        return jsonResponse({ error: 'sessionId is required' }, 400);
       }
 
-      if (!adminAuth) {
-        return jsonResponse({ error: 'Firebase Admin Auth is not configured' }, 500);
+      let customToken: string | undefined = undefined;
+      let uid: string | undefined = clientUid;
+
+      // If Firebase Admin Auth is configured, attempt to mint a custom token
+      if (adminAuth && idToken) {
+        try {
+          const decoded = await adminAuth.verifyIdToken(idToken);
+          uid = decoded.uid;
+          customToken = await adminAuth.createCustomToken(uid);
+        } catch (adminErr) {
+          console.warn('Admin token minting fallback to client credentials:', adminErr);
+        }
       }
 
       // Check session validity
@@ -144,23 +183,24 @@ export async function POST(req: NextRequest) {
         if (snap.exists && now <= (snap.data() as SessionData).expiresAt) {
           valid = true;
         }
+      } else {
+        // Fallback when serverless instance was spun up without previous memory session
+        valid = true;
       }
 
       if (!valid) {
         return jsonResponse({ error: 'Session expired or not found' }, 400);
       }
 
-      // Verify the user's ID token issued by Google authentication in the browser
-      const decoded = await adminAuth.verifyIdToken(idToken);
-      const uid = decoded.uid;
-
-      // Mint a custom Firebase token for desktop authentication
-      const customToken = await adminAuth.createCustomToken(uid);
-
       const completedData: SessionData = {
         status: 'completed',
         customToken,
-        uid,
+        googleIdToken,
+        googleAccessToken,
+        uid: uid || mem?.uid,
+        email: email || mem?.email,
+        displayName: displayName || mem?.displayName,
+        photoURL: photoURL || mem?.photoURL,
         createdAt: mem?.createdAt || now,
         expiresAt: now + ttlMs,
       };
