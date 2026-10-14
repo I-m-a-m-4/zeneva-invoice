@@ -38,6 +38,9 @@ export function apiBase(): string {
     return 'http://localhost:7007';
   }
   const base = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_HOSTED_URL;
+  if (!base || base.includes('zeneva.space')) {
+    return DEFAULT_HOSTED_URL;
+  }
   return base.replace(/\/+$/, '');
 }
 
@@ -46,14 +49,8 @@ export function apiBase(): string {
  * must happen outside the embedded WebView (such as Google OAuth).
  */
 export function browserAuthBase(): string {
-  // Opening external browser from native desktop must always use the hosted production app,
-  // because external browsers on desktop do not run the local dev server and Google OAuth
-  // redirect origins require the hosted production domain (DEFAULT_HOSTED_URL).
-  let base = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_HOSTED_URL;
-  if (!base || base.includes('zeneva.space') || base.includes('localhost')) {
-    base = DEFAULT_HOSTED_URL;
-  }
-  return base.replace(/\/+$/, '');
+  // Always use the verified hosted production domain for browser auth
+  return DEFAULT_HOSTED_URL;
 }
 
 /** Running inside the Android or iOS build specifically - not desktop, not web. */

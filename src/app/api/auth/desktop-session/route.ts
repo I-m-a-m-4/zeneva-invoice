@@ -66,7 +66,7 @@ export async function GET(req: NextRequest) {
         .get();
 
       if (!snap.exists) {
-        return jsonResponse({ status: 'not_found' }, 404);
+        return jsonResponse({ status: 'not_found' }, 200);
       }
 
       const data = snap.data() as SessionData;
@@ -85,7 +85,7 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return jsonResponse({ status: 'not_found' }, 404);
+  return jsonResponse({ status: 'not_found' }, 200);
 }
 
 export async function POST(req: NextRequest) {

@@ -81,10 +81,9 @@ export async function startDesktopGoogleAuth(
   const cancel = () => {
     isCancelled = true;
     if (timerId) clearTimeout(timerId);
-    // Cleanup session on backend
-    fetch(`${authBase}/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`, {
-      method: 'DELETE',
-    }).catch(() => {});
+    // Note: Do not send DELETE on cancel! If a React component re-renders or unmounts,
+    // sending DELETE immediately destroys the session document while the user's browser is opening.
+    // The session will automatically expire via TTL (5 minutes) or be deleted upon successful completion.
     options.onCancel?.();
   };
 

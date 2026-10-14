@@ -11,6 +11,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle2, Loader2, AlertCircle, Laptop, ArrowRight } from 'lucide-react';
 
+function getAuthEndpoint(path: string): string {
+  if (typeof window !== 'undefined') {
+    // If the browser opens on an alternate domain like zeneva.space that lacks the API route, route to Vercel hosted backend
+    if (window.location.hostname.includes('zeneva.space')) {
+      return `https://zeneva-invoice.vercel.app${path}`;
+    }
+  }
+  return path;
+}
+
 function DesktopAuthContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session');
@@ -31,11 +41,11 @@ function DesktopAuthContent() {
     let isMounted = true;
     const verifySession = async () => {
       let attempts = 0;
-      const maxAttempts = 3;
+      const maxAttempts = 6;
 
       while (attempts < maxAttempts && isMounted) {
         try {
-          const res = await fetch(`/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`);
+          const res = await fetch(getAuthEndpoint(`/api/auth/desktop-session?session=${encodeURIComponent(sessionId)}`));
           const data = await res.json().catch(() => ({}));
 
           if (res.ok && data.status) {
@@ -53,14 +63,14 @@ function DesktopAuthContent() {
 
           attempts++;
           if (attempts < maxAttempts) {
-            await new Promise((r) => setTimeout(r, 600));
+            await new Promise((r) => setTimeout(r, 800));
           } else if (isMounted) {
             setError('Invalid or expired authentication session. Please try again from Zeneva Desktop.');
           }
         } catch (err) {
           attempts++;
           if (attempts < maxAttempts) {
-            await new Promise((r) => setTimeout(r, 600));
+            await new Promise((r) => setTimeout(r, 800));
           } else if (isMounted) {
             setError('Could not connect to authentication service. Please check your internet connection.');
           }
@@ -120,7 +130,7 @@ function DesktopAuthContent() {
       const idToken = await user.getIdToken(true);
 
       // Exchange ID token with the desktop session endpoint
-      const res = await fetch('/api/auth/desktop-session', {
+      const res = await fetch(getAuthEndpoint('/api/auth/desktop-session'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
