@@ -11,7 +11,7 @@ import { useFirestore } from '@/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { AppWindow, Smartphone, Save, Link as LinkIcon, Eye, X } from 'lucide-react';
 
-const DEFAULT_DESKTOP_LINK = "https://apps.microsoft.com/detail/9nvn0f8njwmj?hl=en-US&gl=NG&ocid=pdpshare";
+const DEFAULT_DESKTOP_LINK = "https://apps.microsoft.com/detail/9pjxtsnzbxck?hl=en-US&gl=NG";
 const DEFAULT_MOBILE_LINK = "https://play.google.com/store/apps/details?id=com.zeneva.app&hl=en-US&ah=8ZdJB3DBf5hWEO6U2hBOws2DuyY";
 
 export default function AdminAppUpdates() {

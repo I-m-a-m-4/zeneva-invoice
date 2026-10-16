@@ -145,9 +145,9 @@ export type UpdateChannel = 'play' | 'microsoft' | 'tauri' | 'web';
 const PLAY_STORE_URL =
   'https://play.google.com/store/apps/details?id=com.zeneva.app';
 const MS_STORE_URL =
-  'https://apps.microsoft.com/detail/9nvn0f8njwmj';
+  'https://apps.microsoft.com/detail/9pjxtsnzbxck?hl=en-US&gl=NG';
 /** Deep link that opens the Store app directly rather than the browser. */
-const MS_STORE_PROTOCOL = 'ms-windows-store://pdp/?ProductId=9nvn0f8njwmj';
+const MS_STORE_PROTOCOL = 'ms-windows-store://pdp/?ProductId=9pjxtsnzbxck';
 
 export function updateChannel(): UpdateChannel {
   if (!isNativeApp()) return 'web';
