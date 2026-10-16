@@ -1774,22 +1774,6 @@ export default function AuthenticatedLayout({
                     </DropdownMenuContent>
                   </DropdownMenu>
 
-                  {currentUserProfile?.email === 'belloimam431@gmail.com' && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button variant="outline" size="sm" className="hidden sm:inline-flex items-center gap-1.5 h-8 px-2.5 text-xs font-semibold border-orange-200 dark:border-orange-900/50 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 hover:bg-orange-100 hover:text-orange-800 transition-colors shadow-xs" asChild>
-                          <Link href="/admin-imamshaffy">
-                            <ShieldAlert className="h-3.5 w-3.5 text-orange-500 animate-pulse" />
-                            <span>Admin Imamshaffy</span>
-                          </Link>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Open Imamshaffy Super Admin Portal</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-
                   <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="relative h-9 w-9 rounded-full flex justify-center items-center p-0">

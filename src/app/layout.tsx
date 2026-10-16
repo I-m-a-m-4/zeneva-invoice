@@ -44,7 +44,7 @@ const jakarta = Plus_Jakarta_Sans({
   display: 'swap',
 });
 
-const siteUrl = 'https://zeneva.space';
+const siteUrl = 'https://zeneva-invoice.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

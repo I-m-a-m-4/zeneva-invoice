@@ -15,8 +15,7 @@ export default function MarketingFooter() {
   const [isSending, setIsSending] = useState(false);
   const { t } = useI18n();
 
-  const microsoftStoreUrl = "https://apps.microsoft.com/detail/9nvn0f8njwmj?hl=en-US&gl=NG&ocid=pdpshare";
-  const googlePlayStoreUrl = "https://play.google.com/store/apps/details?id=com.zeneva.app&hl=en-US&ah=8ZdJB3DBf5hWEO6U2hBOws2DuyY";
+  const microsoftStoreUrl = "https://apps.microsoft.com/detail/9pjxtsnzbxck?hl=en-US&gl=NG";
 
   const sendEmail = (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,21 +178,6 @@ export default function MarketingFooter() {
                   <li><Link href="/blog/zeneva-vs-clover" className="transition text-neutral-300 hover:text-white">Zeneva vs Clover</Link></li>
                 </ul>
               </div>
-              <div className="mt-6">
-                <a href={googlePlayStoreUrl} target="_blank" rel="noopener noreferrer" className="inline-block transition-transform hover:scale-[1.02] active:scale-[0.98] rounded-[2px] overflow-hidden">
-                  <svg className="w-[140px] h-[42px] block" viewBox="0 0 180 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="0.5" y="0.5" width="179" height="53" rx="2" fill="#f1dfd1" stroke="#d8c5b7" strokeWidth="1" />
-                    <g transform="translate(14, 11)">
-                      <path d="M2.5 1.76c-.35.37-.55.94-.55 1.66v25.16c0 .72.2 1.29.55 1.66l.08.08 13.98-13.98v-.32L3.08 1.68l-.58.08z" fill="#3bccff" />
-                      <path d="M20.61 14.18l-3.52-2.01-3.52 3.52 3.52 3.52 3.52-2.01c1.01-.58 1.01-1.52 0-2.1z" fill="#ffd300" />
-                      <path d="M13.57 15.69l3.52-3.52L3.08 1.68c-.69-.39-1.56-.31-2.12.25l12.61 12.61v1.15z" fill="#55ea47" />
-                      <path d="M13.57 16.31l-12.61 12.61c.56.56 1.43.64 2.12.25l13.98-8.01-3.52-3.52-3.52 3.52v-4.85z" fill="#ff3349" />
-                    </g>
-                    <text x="48" y="21" fill="#1e293b" fontFamily="system-ui, -apple-system, sans-serif" fontSize="9.5" fontWeight="500" letterSpacing="0.05em">{t('landing.getItOn')}</text>
-                    <text x="48" y="38" fill="#1e293b" fontFamily="system-ui, -apple-system, sans-serif" fontSize="19" fontWeight="600" letterSpacing="-0.2px">{t('landing.googlePlay')}</text>
-                  </svg>
-                </a>
-              </div>
             </div>
             <div className="">
               <h4 className="text-xs uppercase tracking-[0.2em] text-white/80">{t('footer.colCompany')}</h4>
@@ -247,15 +231,15 @@ export default function MarketingFooter() {
               </div>
               <div className="mt-5 pt-3 border-t border-white/5">
                 <a 
-                  href="https://apps.microsoft.com/detail/9nvn0f8njwmj?hl=en-US&gl=NG&ocid=pdpshare" 
+                  href="https://apps.microsoft.com/detail/9pjxtsnzbxck?hl=en-US&gl=NG" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-300 hover:text-amber-400 transition"
                   onClick={(e) => {
                     e.preventDefault();
-                    window.open('ms-windows-store://review/?ProductId=9nvn0f8njwmj', '_blank');
+                    window.open('ms-windows-store://review/?ProductId=9pjxtsnzbxck', '_blank');
                     setTimeout(() => {
-                      window.open('https://apps.microsoft.com/detail/9nvn0f8njwmj?hl=en-US&gl=NG&ocid=pdpshare', '_blank');
+                      window.open('https://apps.microsoft.com/detail/9pjxtsnzbxck?hl=en-US&gl=NG', '_blank');
                     }, 800);
                   }}
                 >

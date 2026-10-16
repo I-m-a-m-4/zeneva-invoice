@@ -64,7 +64,6 @@ import WhatsappFab from '@/components/home/whatsapp-fab';
 
 // Client Components
 import { HeroInputForm } from '@/components/home/hero-input-form';
-import { DashboardCarousel } from '@/components/home/dashboard-carousel';
 import { ZenAIInsights } from '@/components/home/zen-ai-insights';
 import { PricingPlans } from '@/components/home/pricing-plans';
 import { SecurityBadges } from '@/components/home/security-badges';
@@ -114,18 +113,17 @@ const businessTypes = [
 ];
 
 export default function Home() {
-    const microsoftStoreUrl = "https://apps.microsoft.com/detail/9nvn0f8njwmj?hl=en-US&gl=NG&ocid=pdpshare";
-    const googlePlayStoreUrl = "https://play.google.com/store/apps/details?id=com.zeneva.app&hl=en-US&ah=8ZdJB3DBf5hWEO6U2hBOws2DuyY";
+    const microsoftStoreUrl = "https://apps.microsoft.com/detail/9pjxtsnzbxck?hl=en-US&gl=NG";
 
     const structuredData = {
         "@context": "https://schema.org",
         "@graph": [
             {
                 "@type": "Organization",
-                "@id": "https://zeneva.space/#organization",
+                "@id": "https://zeneva-invoice.vercel.app/#organization",
                 "name": "Zeneva",
-                "url": "https://zeneva.space",
-                "logo": "https://zeneva.space/logo.png",
+                "url": "https://zeneva-invoice.vercel.app",
+                "logo": "https://zeneva-invoice.vercel.app/logo.png",
                 "sameAs": [
                     "https://twitter.com/zenevahq",
                     "https://linkedin.com/company/zeneva"
@@ -133,13 +131,13 @@ export default function Home() {
             },
             {
                 "@type": "SoftwareApplication",
-                "@id": "https://zeneva.space/#software",
+                "@id": "https://zeneva-invoice.vercel.app/#software",
                 "name": "Zeneva Invoice",
                 "applicationCategory": "BusinessApplication",
                 "operatingSystem": "Windows, Web",
                 "description": "The autonomous invoicing and billing platform with zero-data entry, multi-currency payments, automated reminders, and client management.",
                 "publisher": {
-                    "@id": "https://zeneva.space/#organization"
+                    "@id": "https://zeneva-invoice.vercel.app/#organization"
                 },
                 "featureList": [
                     "Zero-data entry AI invoicing",
@@ -163,16 +161,16 @@ export default function Home() {
             },
             {
                 "@type": "WebPage",
-                "@id": "https://zeneva.space/#webpage",
-                "url": "https://zeneva.space",
+                "@id": "https://zeneva-invoice.vercel.app/#webpage",
+                "url": "https://zeneva-invoice.vercel.app",
                 "name": "Zeneva | Autonomous Invoicing & Global Billing Platform",
                 "about": {
-                    "@id": "https://zeneva.space/#software"
+                    "@id": "https://zeneva-invoice.vercel.app/#software"
                 }
             },
             {
                 "@type": "FAQPage",
-                "@id": "https://zeneva.space/#faq",
+                "@id": "https://zeneva-invoice.vercel.app/#faq",
                 "mainEntity": faqItems.map(item => ({
                     "@type": "Question",
                     "name": item.question,
@@ -225,7 +223,7 @@ export default function Home() {
 
                                 <div className="mt-8 flex flex-nowrap items-center justify-center lg:justify-start gap-3 sm:gap-4">
                                     <a href={microsoftStoreUrl} target="_blank" rel="noopener noreferrer" className="inline-block transition-transform hover:scale-[1.02] active:scale-[0.98] rounded-[2px] overflow-hidden flex-shrink-0">
-                                        <svg className="w-[145px] h-[44px] sm:w-[180px] sm:h-[54px] block" viewBox="0 0 180 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <svg className="w-[155px] h-[48px] sm:w-[190px] sm:h-[58px] block" viewBox="0 0 180 54" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             {/* Background */}
                                             <rect width="180" height="54" rx="2" fill="#f1dfd1" />
                                             
@@ -254,35 +252,17 @@ export default function Home() {
                                             <text x="48" y="38" fill="#1e293b" fontFamily="system-ui, -apple-system, sans-serif" fontSize="16" fontWeight="600" letterSpacing="-0.2"><T k="landing.microsoftStore" /></text>
                                         </svg>
                                     </a>
-                                    <a href={googlePlayStoreUrl} target="_blank" rel="noopener noreferrer" className="inline-block transition-transform hover:scale-[1.02] active:scale-[0.98] rounded-[2px] overflow-hidden flex-shrink-0">
-                                        <svg className="w-[145px] h-[44px] sm:w-[180px] sm:h-[54px] block" viewBox="0 0 180 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            {/* Background */}
-                                            <rect x="0.5" y="0.5" width="179" height="53" rx="2" fill="#f1dfd1" stroke="#d8c5b7" strokeWidth="1" />
-                                            
-                                            {/* Google Play Logo */}
-                                            <g transform="translate(14, 11)">
-                                                <path d="M2.5 1.76c-.35.37-.55.94-.55 1.66v25.16c0 .72.2 1.29.55 1.66l.08.08 13.98-13.98v-.32L3.08 1.68l-.58.08z" fill="#3bccff" />
-                                                <path d="M20.61 14.18l-3.52-2.01-3.52 3.52 3.52 3.52 3.52-2.01c1.01-.58 1.01-1.52 0-2.1z" fill="#ffd300" />
-                                                <path d="M13.57 15.69l3.52-3.52L3.08 1.68c-.69-.39-1.56-.31-2.12.25l12.61 12.61v1.15z" fill="#55ea47" />
-                                                <path d="M13.57 16.31l-12.61 12.61c.56.56 1.43.64 2.12.25l13.98-8.01-3.52-3.52-3.52 3.52v-4.85z" fill="#ff3349" />
-                                            </g>
-                                            
-                                            {/* Text */}
-                                            <text x="48" y="21" fill="#1e293b" fontFamily="system-ui, -apple-system, sans-serif" fontSize="9.5" fontWeight="500" letterSpacing="0.05em"><T k="landing.getItOn" /></text>
-                                            <text x="48" y="38" fill="#1e293b" fontFamily="system-ui, -apple-system, sans-serif" fontSize="19" fontWeight="600" letterSpacing="-0.2px"><T k="landing.googlePlay" /></text>
-                                        </svg>
-                                    </a>
                                 </div>
                             </div>
 
                             {/* Right Column: UI Mockups */}
                             <div className="mt-8 sm:mt-0 relative [perspective:1000px]">
                                 <Image
-                                    src="/hero computer img original.png"
-                                    alt="Product UI"
-                                    width={1600}
-                                    height={1200}
-                                    className="w-full h-auto block"
+                                    src="/hero-invoices-devices.png"
+                                    alt="Zeneva Invoices on Desktop and Mobile"
+                                    width={1024}
+                                    height={682}
+                                    className="w-full h-auto block drop-shadow-2xl transition-transform hover:scale-[1.01] duration-300"
                                     priority
                                     sizes="(max-width: 768px) 100vw, 50vw"
                                 />
@@ -291,9 +271,6 @@ export default function Home() {
                     </main>
 
                     <MarqueeSection />
-
-                    {/* Dashboard Preview Section - Carousel */}
-                    <DashboardCarousel />
 
                     {/* Social Proof Section */}
                     <section className="bg-black">
