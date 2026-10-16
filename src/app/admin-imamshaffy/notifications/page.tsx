@@ -123,7 +123,7 @@ const PREDEFINED_TEMPLATES = [
     id: 'msstore_app',
     title: 'Zeneva on Windows',
     body: 'Faster receipts and offline printing on the shop PC. Available on the Microsoft Store.',
-    link: 'https://apps.microsoft.com/detail/9nvn0f8njwmj?hl=en-US&gl=NG&ocid=pdpshare',
+    link: 'https://apps.microsoft.com/detail/9pjxtsnzbxck?hl=en-US&gl=NG',
     iconName: 'Monitor',
     badge: 'Microsoft Store App'
   },
